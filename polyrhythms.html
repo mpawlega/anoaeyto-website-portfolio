@@ -1,0 +1,961 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phil Kline's Unsilent Night: Polyrhythmic Illumination — anoaeyto</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; user-select:none; }
+        :root {
+            --teal:#00b8a8; --teal-dim:rgba(0,184,168,0.15);
+            --teal-border:rgba(0,184,168,0.35);
+            --white:#ffffff; --text:#d4d4d4; --muted:#888; --faint:#444;
+            --bg:#000; --surface:rgba(255,255,255,0.02); --rule:rgba(255,255,255,0.08);
+        }
+        html { scroll-behavior:auto; }
+        body { background:var(--bg); color:var(--text); font-family:'DM Sans',sans-serif; overflow-x:hidden; cursor:none; }
+
+        .cursor-dot { position:fixed; width:6px; height:6px; background:var(--teal); border-radius:50%; pointer-events:none; z-index:99999; transform:translate(-50%,-50%); }
+        .cursor-ring { position:fixed; width:28px; height:28px; border:1px solid rgba(0,184,168,0.5); border-radius:50%; pointer-events:none; z-index:99998; transform:translate(-50%,-50%); transition:width .2s,height .2s,opacity .2s; }
+
+        .version-hud { position:fixed; top:20px; right:20px; font-size:11px; letter-spacing:1px; color:var(--teal); z-index:9997; text-align:right; line-height:1.6; font-family:'Eurostile','Eurostile Extended',monospace; }
+        .coords-hud  { position:fixed; bottom:20px; left:20px; font-size:11px; letter-spacing:1px; color:var(--teal); z-index:9997; font-family:'Eurostile','Eurostile Extended',monospace; }
+
+        .section-nav { position:fixed; right:40px; top:50%; transform:translateY(-50%); display:flex; flex-direction:column; gap:20px; z-index:100; }
+        .section-nav a { text-decoration:none; color:var(--muted); font-size:11px; letter-spacing:1.5px; transition:color .3s; opacity:.6; font-family:'Eurostile','Eurostile Extended',monospace; }
+        .section-nav a:hover,.section-nav a.active { color:var(--teal); opacity:1; }
+        @media(max-width:1200px){.section-nav{display:none;}}
+
+        /* HERO */
+        .project-hero { width:100%; height:52vh; min-height:320px; max-height:520px; overflow:hidden; position:relative; background:#050505; }
+        .project-hero img { width:100%; height:100%; object-fit:cover; object-position:center 30%; filter:brightness(.9); display:block; }
+        .hero-overlay { position:absolute; inset:0; background:linear-gradient(to bottom,rgba(0,0,0,.15) 30%,var(--bg) 100%); pointer-events:none; }
+
+        /* TITLE */
+        .project-title-section { position:relative; z-index:10; padding:60px 80px; border-bottom:1px solid var(--rule); }
+        .title-eyebrow { font-size:10px; letter-spacing:3px; text-transform:uppercase; color:var(--teal); margin-bottom:18px; font-family:'Eurostile','Eurostile Extended',monospace; }
+        .project-title-section h1 { font-size:clamp(28px,4vw,56px); font-weight:300; letter-spacing:2px; line-height:1.1; color:var(--white); margin-bottom:28px; max-width:900px; opacity:0; font-family:'Eurostile','Eurostile Extended',monospace; animation:fadeInDown .8s cubic-bezier(.22,1,.36,1) forwards; animation-delay:.4s; }
+        .project-title-section .tagline { font-size:15px; line-height:1.65; color:var(--muted); max-width:900px; margin-bottom:52px; opacity:0; font-weight:400; animation:fadeInDown .8s cubic-bezier(.22,1,.36,1) forwards; animation-delay:.5s; }
+        .project-meta-info { display:grid; grid-template-columns:repeat(4,auto); gap:20px; }
+        .meta-item { padding-right:48px; border-right:1px solid var(--rule); }
+        .meta-item:last-of-type { border-right:none; }
+        .meta-label { font-size:9px; letter-spacing:2.5px; text-transform:uppercase; color:var(--faint); margin-bottom:10px; font-family:'Eurostile','Eurostile Extended',monospace; }
+        .meta-value { font-size:13px; color:var(--text); font-weight:400; }
+        .meta-value .tag { display:inline-block; padding:5px 12px; border:1px solid var(--rule); background:var(--surface); font-size:10px; letter-spacing:1px; text-transform:uppercase; color:var(--text); margin-right:10px; margin-bottom:8px; font-family:'Eurostile','Eurostile Extended',monospace; }
+
+        /* CONTENT */
+        .project-content { padding:0 80px 120px; position:relative; z-index:10; }
+        .content-section { margin-top:80px; }
+        .section-header { display:flex; align-items:center; gap:20px; margin-bottom:48px; opacity:0; transform:translateY(20px); transition:opacity .7s cubic-bezier(.22,1,.36,1),transform .7s cubic-bezier(.22,1,.36,1); }
+        .content-section.visible .section-header { opacity:1; transform:translateY(0); }
+        .section-header h2 { font-size:clamp(22px,3vw,36px); font-weight:100; letter-spacing:2px; color:var(--white); white-space:nowrap; font-family:'Eurostile','Eurostile Extended',monospace; }
+        .section-rule { flex:1; height:1px; background:linear-gradient(90deg,var(--teal-border),transparent); }
+        .gallery-intro { font-size:15px; line-height:1.65; color:var(--text); max-width:900px; font-weight:400; }
+        .gallery-intro+.gallery-intro { margin-top:20px; color:var(--muted); }
+
+        /* FUSED CONCEPT + LIVE DEMO BLOCK */
+        .concept-demo-block {
+            margin-top: 48px;
+            border: 1px solid var(--teal-border);
+            background: #000;
+            overflow: hidden;
+        }
+        /* Top: two-column text */
+        .concept-text-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0;
+            border-bottom: 1px solid var(--rule);
+        }
+        .concept-col {
+            padding: 32px 36px;
+            font-size: 14px;
+            line-height: 1.7;
+            color: var(--muted);
+            font-weight: 400;
+        }
+        .concept-col:first-child { border-right: 1px solid var(--rule); }
+        .concept-col-label {
+            font-size: 9px;
+            letter-spacing: 2.5px;
+            text-transform: uppercase;
+            color: var(--teal);
+            margin-bottom: 14px;
+            font-family: 'Eurostile','Eurostile Extended',monospace;
+        }
+        /* Demo header bar — sits above sim strip, holds title + sound toggle */
+        .demo-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 20px;
+            border-bottom: 1px solid var(--rule);
+            background: #020406;
+        }
+        .demo-header-left {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+        .demo-title {
+            font-size: 9px;
+            letter-spacing: 2.5px;
+            text-transform: uppercase;
+            color: var(--faint);
+            font-family: 'Eurostile','Eurostile Extended',monospace;
+        }
+        .demo-subtitle {
+            font-size: 9px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: rgba(0,184,168,0.3);
+            font-family: 'Eurostile','Eurostile Extended',monospace;
+        }
+        #sound-toggle {
+            background: transparent;
+            border: 1px solid rgba(0,184,168,0.25);
+            color: rgba(0,184,168,0.45);
+            font-size: 9px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            font-family: 'Eurostile','Eurostile Extended',monospace;
+            padding: 5px 12px;
+            cursor: pointer;
+            transition: all .2s;
+        }
+        #sound-toggle:hover { border-color: rgba(0,184,168,0.7); color: rgba(0,184,168,0.9); }
+        #sound-toggle.active { border-color: rgba(0,184,168,0.8); color: rgba(0,184,168,1); }
+        /* Middle: LED sim strip */
+        .sim-strip {
+            width: 100%;
+            height: 180px;
+            position: relative;
+            background: #020406;
+            border-bottom: 1px solid var(--rule);
+            overflow: hidden;
+        }
+        .sim-strip canvas { display:block; width:100%; height:100%; }
+        /* Bottom: beat grid */
+        .rhythm-visualizer {
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+            background: #030507;
+        }
+        .rhythm-visualizer canvas { display:block; width:100%; }
+        @media(max-width:900px){
+            .concept-text-row { grid-template-columns: 1fr; }
+            .concept-col:first-child { border-right: none; border-bottom: 1px solid var(--rule); }
+        }
+
+        /* SYSTEM LAYOUT: 2-col */
+        .system-layout { display:grid; grid-template-columns:1fr 1fr; gap:48px; margin-top:48px; align-items:start; }
+        .components-grid { display:grid; grid-template-columns:1fr 1fr; gap:1px; background:var(--rule); border:1px solid var(--rule); }
+        .component-item { background:var(--bg); padding:24px 20px; transition:background .3s; }
+        .component-item:hover { background:rgba(0,184,168,.03); }
+        .component-item h3 { font-size:11px; letter-spacing:2px; text-transform:uppercase; color:var(--white); font-weight:400; margin-bottom:10px; font-family:'Eurostile','Eurostile Extended',monospace; }
+        .component-item p { font-size:12px; line-height:1.75; color:var(--muted); }
+        .component-item .component-tag { display:inline-block; margin-top:12px; font-size:9px; letter-spacing:2px; text-transform:uppercase; color:var(--teal); font-family:'Eurostile','Eurostile Extended',monospace; }
+
+        .process-list { display:flex; flex-direction:column; border:1px solid var(--rule); }
+        .process-item { display:grid; grid-template-columns:56px 1fr; border-bottom:1px solid var(--rule); transition:background .3s; }
+        .process-item:last-child { border-bottom:none; }
+        .process-item:hover { background:rgba(0,184,168,.02); }
+        .process-num { padding:22px 16px; border-right:1px solid var(--rule); font-size:10px; letter-spacing:2px; color:var(--teal); font-family:'Eurostile','Eurostile Extended',monospace; display:flex; align-items:flex-start; padding-top:24px; }
+        .process-body { padding:22px 24px; }
+        .process-body h4 { font-size:11px; letter-spacing:1.5px; text-transform:uppercase; color:var(--white); font-weight:400; margin-bottom:8px; font-family:'Eurostile','Eurostile Extended',monospace; }
+        .process-body p { font-size:12px; line-height:1.75; color:var(--muted); }
+        @media(max-width:1100px){.system-layout{grid-template-columns:1fr;}}
+
+        .tech-stack { display:flex; flex-wrap:wrap; gap:10px; margin-top:32px; }
+        .tech-badge { padding:9px 16px; border:1px solid var(--teal-border); background:var(--teal-dim); color:var(--teal); font-size:10px; letter-spacing:1.5px; text-transform:uppercase; transition:all .25s; font-family:'Eurostile','Eurostile Extended',monospace; }
+        .tech-badge:hover { background:rgba(0,200,150,.18); border-color:var(--teal); }
+
+        /* GALLERY GRID */
+        .gallery-grid { display:grid; grid-template-columns:repeat(3,1fr); grid-template-rows:calc((100vw - 160px - 24px)/3*5/4) calc((100vw - 160px - 24px)/3*5/4); width:100%; column-gap:12px; row-gap:12px; margin-top:48px; }
+        .gallery-item { overflow:hidden; border:1px solid var(--rule); position:relative; background:#080808; }
+        .gallery-item:nth-child(1){grid-column:span 2;}
+        .gallery-item:nth-child(2){grid-column:span 1;}
+        .gallery-item:nth-child(3),.gallery-item:nth-child(4),.gallery-item:nth-child(5){grid-column:span 1;aspect-ratio:4/5;}
+        .gallery-item:nth-child(n+6){display:none;}
+        .gallery-item img,.gallery-item video { width:100%; height:100%; object-fit:cover; display:block; filter:brightness(.88); transition:filter .6s ease-in-out; }
+        .gallery-item:hover img,.gallery-item:hover video{filter:brightness(1);}
+        .gallery-item.dimmed img,.gallery-item.dimmed video{filter:brightness(.45)!important;}
+        .gallery-item.placeholder { background:#0c0c0c; border:1px dashed #1e1e1e; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:12px; }
+        .gallery-item.placeholder .ph-num { font-size:36px; font-weight:100; color:#2a2a2a; font-family:'Eurostile','Eurostile Extended',monospace; letter-spacing:4px; }
+        .gallery-item.placeholder .ph-label { font-size:9px; letter-spacing:2.5px; text-transform:uppercase; color:#2a2a2a; font-family:'Eurostile','Eurostile Extended',monospace; }
+
+        /* LIGHTBOX */
+        .lightbox { position:fixed; inset:0; background:rgba(0,0,0,0.95); z-index:99990; display:flex; align-items:center; justify-content:center; opacity:0; pointer-events:none; transition:opacity .3s; }
+        .lightbox.open { opacity:1; pointer-events:all; }
+        .lightbox-close { position:absolute; top:40px; right:40px; font-size:28px; color:var(--teal); border:none; background:none; cursor:pointer; font-family:inherit; line-height:1; }
+        .lightbox-close:hover { opacity:.7; }
+
+        /* GALLERY transition */
+        .gallery-item { transition: filter 0.5s ease; cursor: pointer; }
+
+        /* Lightbox arrow navigation */
+        .lightbox-arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 99999;
+            background: rgba(0,0,0,0.55);
+            border: 1px solid rgba(0,184,168,0.35);
+            color: var(--teal);
+            font-size: 20px;
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background .2s, border-color .2s;
+            line-height: 1;
+            font-family: monospace;
+        }
+        .lightbox-arrow.prev { left: 40px; }
+        .lightbox-arrow.next { right: 40px; }
+        .lightbox-arrow:hover { background: rgba(0,184,168,0.18); border-color: var(--teal); }
+        .video-loop-container { margin-top:48px; border:1px solid var(--teal-border); background:#060606; position:relative; overflow:hidden; }
+        .video-loop-container video { width:100%; display:block; filter:brightness(.9); transition:filter .6s; }
+        .video-loop-container:hover video{filter:brightness(1);}
+        .video-loop-header { display:flex; align-items:center; justify-content:space-between; padding:16px 20px; border-bottom:1px solid var(--rule); }
+        .video-loop-title { font-size:10px; letter-spacing:2.5px; text-transform:uppercase; color:var(--muted); font-family:'Eurostile','Eurostile Extended',monospace; }
+        .video-loop-status { font-size:10px; letter-spacing:2px; color:var(--teal); font-family:'Eurostile','Eurostile Extended',monospace; }
+
+        /* LINKS */
+        .links-section { display:flex; justify-content:center; gap:10px; padding:0 0 10px; flex-wrap:wrap; align-items:center; }
+        .links-section a:not(.project-nav-item) { text-decoration:none; color:var(--teal); font-size:10px; letter-spacing:1.5px; text-transform:uppercase; transition:all .25s; position:relative; padding:9px 16px; border:1px solid var(--teal); background:var(--teal-dim); font-family:'Eurostile','Eurostile Extended',monospace; }
+        .links-section a:not(.project-nav-item)::before{content:'[';margin-right:4px;opacity:0;transition:opacity .3s;}
+        .links-section a:not(.project-nav-item)::after{content:']';margin-left:4px;opacity:0;transition:opacity .3s;}
+        .links-section a:not(.project-nav-item):hover{background:rgba(0,184,168,.22);}
+        .links-section a:not(.project-nav-item):hover::before,.links-section a:not(.project-nav-item):hover::after{opacity:1;}
+        .links-section .project-nav-item { color:var(--muted); padding:9px 16px; border:1px solid var(--rule); background:transparent; font-size:10px; letter-spacing:1.5px; text-transform:uppercase; transition:all .25s; text-decoration:none; font-family:'Eurostile','Eurostile Extended',monospace; }
+        .links-section .project-nav-item::before{content:'[';margin-right:4px;opacity:0;transition:opacity .3s;}
+        .links-section .project-nav-item::after{content:']';margin-left:4px;opacity:0;transition:opacity .3s;}
+        .links-section .project-nav-item:hover{color:var(--text);border-color:rgba(255,255,255,.2);}
+        .links-section .project-nav-item:hover::before,.links-section .project-nav-item:hover::after{opacity:1;}
+
+        footer { padding:30px 80px; background:var(--bg); border-top:1px solid rgba(255,255,255,.04); border-bottom:1px solid var(--teal-border); display:flex; justify-content:center; align-items:center; }
+        .footer-copy { font-size:12px; letter-spacing:2px; text-transform:uppercase; color:#666; display:flex; flex-wrap:wrap; justify-content:center; font-family:'Eurostile','Eurostile Extended',monospace; }
+        .footer-copy span { display:inline-block; transition:color .15s; }
+        .footer-copy span.cyan{color:var(--teal);}
+
+        @keyframes fadeInDown { from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);} }
+
+        @media(max-width:900px){
+            .project-title-section,.project-content{padding-left:40px;padding-right:40px;}
+            .project-meta-info{grid-template-columns:repeat(2,1fr);gap:32px;}
+            .meta-item{border-right:none;padding-right:0;}
+            .gallery-grid{grid-template-columns:1fr 1fr;grid-template-rows:auto;}
+            .gallery-item:nth-child(1){grid-column:span 2;aspect-ratio:16/9;}
+            .gallery-item:nth-child(2){grid-column:span 2;aspect-ratio:16/9;}
+            .gallery-item:nth-child(3),.gallery-item:nth-child(4),.gallery-item:nth-child(5){grid-column:span 1;}
+        }
+        @media(max-width:600px){
+            .project-title-section,.project-content{padding-left:24px;padding-right:24px;}
+            .project-meta-info{grid-template-columns:1fr;}
+            footer{padding:20px 24px;}
+            .gallery-grid{grid-template-columns:1fr;}
+            .gallery-item:nth-child(n){grid-column:span 1;aspect-ratio:4/3;}
+        }
+    </style>
+</head>
+<body>
+    <div class="cursor-dot" id="dot"></div>
+    <div class="cursor-ring" id="ring"></div>
+    <div class="version-hud">v2.0.1<br>STATUS: ONLINE</div>
+    <div class="coords-hud">X: <span id="coord-x">0000</span> Y: <span id="coord-y">0000</span></div>
+
+    <nav class="section-nav">
+        <a href="#section-01">01</a>
+        <a href="#section-02">02</a>
+        <a href="#section-03">03</a>
+        <a href="#section-04">04</a>
+        <a href="#section-05">05</a>
+    </nav>
+
+    <!-- Hero: project photo -->
+    <section class="project-hero">
+        <img src="./projects/illumination/Untitled6.png" alt="Polyrhythmic Illumination">
+        <div class="hero-overlay"></div>
+    </section>
+
+    <!-- Title & Meta -->
+    <section class="project-title-section">
+        <div class="title-eyebrow">Audiovisual Installation</div>
+        <h1>Phil Kline's Unsilent Night:<br>Polyrhythmic Illumination</h1>
+        <p class="tagline">An immersive audiovisual installation built around custom electronics, LED hardware, and embedded code. Contributing electronics design, physical fabrication, and firmware to Phil Kline's Unsilent Night — translating layered rhythmic voices into pulses of light through individually addressable LED arrays driven by real-time audio analysis.</p>
+        <div class="project-meta-info">
+            <div class="meta-item">
+                <div class="meta-label">Category</div>
+                <div class="meta-value"><span class="tag">Audiovisual Installation</span></div>
+            </div>
+            <div class="meta-item">
+                <div class="meta-label">Timeline</div>
+                <div class="meta-value">2025 – Present</div>
+            </div>
+            <div class="meta-item">
+                <div class="meta-label">Status</div>
+                <div class="meta-value">In Progress</div>
+            </div>
+            <div class="meta-item">
+                <div class="meta-label">Tools</div>
+                <div class="meta-value">
+                    <span class="tag">MAX MSP 8</span>
+                    <span class="tag">Arduino C++</span>
+                    <span class="tag">Blender</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Content -->
+    <section class="project-content">
+
+        <!-- 01 Overview + Live Demo (fused block) -->
+        <div class="content-section">
+            <div class="section-header" id="section-01">
+                <h2>Overview & Concept</h2>
+                <div class="section-rule"></div>
+            </div>
+            <p class="gallery-intro">Phil Kline's Unsilent Night is an annual outdoor sound installation where participants carry boomboxes playing synchronized audio tapes through city streets — creating a moving, distributed orchestra of overlapping sound. Polyrhythmic Illumination extends this tradition into gallery space, building a physically responsive LED environment that gives the composition's rhythmic complexity a visible, spatial form.</p>
+            <p class="gallery-intro">My contribution spans electronics design, firmware, and physical fabrication — building the hardware layer that bridges audio analysis to light. Each LED array is wired and coded to respond to a specific rhythmic voice in the composition, making the counterpoint and syncopation of the piece legible as spatial light choreography.</p>
+
+            <!-- Fused concept + demo block -->
+            <div class="concept-demo-block">
+                <!-- Two-col text -->
+                <div class="concept-text-row">
+                    <div class="concept-col">
+                        <div class="concept-col-label">The Composition</div>
+                        Kline's piece layers five independent rhythmic voices — each at a prime or integer ratio to the others — producing a counterpoint that never fully resolves. The piece resists a singular pulse, instead breathing as a collective organism of overlapping cycles.
+                    </div>
+                    <div class="concept-col">
+                        <div class="concept-col-label">Electronics & Light</div>
+                        Custom Arduino firmware and wired LED arrays give each rhythmic voice a physical presence in the room. As the music unfolds, light pulses propagate in the same ratios — making visible what is ordinarily only heard. The live demo below simulates this relationship.
+                    </div>
+                </div>
+                <!-- Demo header: title + sound toggle in one clean bar -->
+                <div class="demo-header">
+                    <div class="demo-header-left">
+                        <span class="demo-title">POLYRHYTHM SIMULATION — <span style="color:var(--teal);">5 VOICES</span></span>
+                    </div>
+                    <button id="sound-toggle">♪ Sound off</button>
+                </div>
+                <!-- LED sim strip -->
+                <div class="sim-strip">
+                    <canvas id="sim-canvas"></canvas>
+                </div>
+                <!-- Beat grid -->
+                <div class="rhythm-visualizer">
+                    <canvas id="rhythm-canvas"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- 02 System & Process -->
+        <div class="content-section">
+            <div class="section-header" id="section-02">
+                <h2>System & Process</h2>
+                <div class="section-rule"></div>
+            </div>
+            <p class="gallery-intro">The installation is built from three interconnected systems — audio analysis in MAX MSP 8, real-time LED control via Arduino microcontrollers, and spatial composition previsualized in Blender — developed through a research-to-hardware pipeline.</p>
+
+            <div class="system-layout">
+                <div class="components-grid">
+                    <div class="component-item">
+                        <h3>Audio Engine</h3>
+                        <p>MAX MSP 8 handles real-time audio analysis, beat detection, and rhythm extraction. Separate signal chains isolate each polyrhythmic voice and output control data to the LED layer.</p>
+                        <span class="component-tag">MAX MSP 8</span>
+                    </div>
+                    <div class="component-item">
+                        <h3>LED Control</h3>
+                        <p>Arduino microcontrollers receive OSC messages from MAX MSP and drive individually addressable LED strips. Each strip corresponds to one rhythmic voice.</p>
+                        <span class="component-tag">Arduino C++</span>
+                    </div>
+                    <div class="component-item">
+                        <h3>Spatial Design</h3>
+                        <p>The physical layout and light behaviour is modelled in Blender prior to fabrication. Animated light rigs simulate the LED arrays, refining spatial composition before build.</p>
+                        <span class="component-tag">Blender</span>
+                    </div>
+                    <div class="component-item">
+                        <h3>Signal Routing</h3>
+                        <p>OSC protocol bridges MAX MSP and Arduino over local network. Message patterns encode rhythm state, amplitude, and channel identity for precise synchronization.</p>
+                        <span class="component-tag">OSC Protocol</span>
+                    </div>
+                    <div class="component-item">
+                        <h3>LED Arrays</h3>
+                        <p>Individually addressable WS2812B strips arranged per the Blender model. Diffusion panels distribute light to create a luminous, ambient quality.</p>
+                        <span class="component-tag">WS2812B / FastLED</span>
+                    </div>
+                    <div class="component-item">
+                        <h3>Rhythm Mapping</h3>
+                        <p>Each polyrhythmic layer is assigned a distinct spatial zone and colour channel — visual counterpoint that mirrors the musical counterpoint.</p>
+                        <span class="component-tag">Custom Logic</span>
+                    </div>
+                </div>
+
+                <div class="process-list">
+                    <div class="process-item">
+                        <div class="process-num">01</div>
+                        <div class="process-body">
+                            <h4>Compositional Analysis</h4>
+                            <p>Score study and listening sessions to identify the distinct polyrhythmic voices. Each layer is catalogued by tempo, timbre, and spatial relationship, forming the basis of the light mapping schema.</p>
+                        </div>
+                    </div>
+                    <div class="process-item">
+                        <div class="process-num">02</div>
+                        <div class="process-body">
+                            <h4>MAX MSP Patch Development</h4>
+                            <p>Building the audio analysis patch — FFT-based beat detection, rhythm extraction, and multi-channel signal separation. The patch outputs OSC messages encoding rhythmic state for each voice in real time.</p>
+                        </div>
+                    </div>
+                    <div class="process-item">
+                        <div class="process-num">03</div>
+                        <div class="process-body">
+                            <h4>Blender Spatial Modelling</h4>
+                            <p>3D modelling of the installation space and LED configurations. Animated light rigs simulate hardware behaviour, allowing sightlines and light choreography to be refined before build.</p>
+                        </div>
+                    </div>
+                    <div class="process-item">
+                        <div class="process-num">04</div>
+                        <div class="process-body">
+                            <h4>Arduino Prototyping</h4>
+                            <p>Writing firmware in C++ using FastLED to receive OSC messages and translate them into per-channel light patterns. Iterative testing for latency, colour accuracy, and synchronization.</p>
+                        </div>
+                    </div>
+                    <div class="process-item">
+                        <div class="process-num">05</div>
+                        <div class="process-body">
+                            <h4>Integration & Calibration</h4>
+                            <p>Connecting MAX MSP, Arduino, and LED hardware into a unified pipeline. Calibrating OSC timing, refining rhythm-to-light mappings, and adjusting spatial placement through full-system testing.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tech-stack">
+                <div class="tech-badge">MAX MSP 8</div>
+                <div class="tech-badge">Arduino C++</div>
+                <div class="tech-badge">Blender</div>
+                <div class="tech-badge">OSC Protocol</div>
+                <div class="tech-badge">FastLED</div>
+                <div class="tech-badge">WS2812B LEDs</div>
+                <div class="tech-badge">Beat Detection</div>
+                <div class="tech-badge">Spatial Audio</div>
+            </div>
+        </div>
+
+        <!-- 03 Gallery -->
+        <div class="content-section">
+            <div class="section-header" id="section-03">
+                <h2>Gallery</h2>
+                <div class="section-rule"></div>
+            </div>
+            <p class="gallery-intro">Documentation photography and video from the installation.</p>
+
+            <div class="gallery-grid" id="gallery-grid">
+                <div class="gallery-item"></div>
+                <div class="gallery-item"></div>
+                <div class="gallery-item"></div>
+                <div class="gallery-item"></div>
+                <div class="gallery-item"></div>
+            </div>
+        </div>
+
+        <!-- 04 Full Loop Video -->
+        <div class="content-section">
+            <div class="section-header" id="section-04">
+                <h2>Full Installation Loop</h2>
+                <div class="section-rule"></div>
+            </div>
+            <p class="gallery-intro">Complete documentation of the full LED light loop — the entire sequence from start to finish.</p>
+
+            <div class="video-loop-container">
+                <div class="video-loop-header">
+                    <span class="video-loop-title">Full Loop — Polyrhythmic Illumination</span>
+                    <span class="video-loop-status">▶ PLAY</span>
+                </div>
+                <video controls preload="metadata">
+                    <source src="./projects/illumination/Polyrhythmic Illuminations.mp4" type="video/mp4">
+                    Your browser does not support the video element.
+                </video>
+            </div>
+        </div>
+
+        <!-- 05 Links -->
+        <div class="content-section">
+            <div class="section-header" id="section-05">
+                <h2>Links</h2>
+                <div class="section-rule"></div>
+            </div>
+            <p class="gallery-intro" style="margin-bottom:40px;">Event pages and project resources.</p>
+            <div class="links-section">
+                <a href="https://luma.com/5pdp7ljk" target="_blank">Luma — Phil Kline</a>
+                <a href="https://luma.com/2jklit8j?tk=gDow4P" target="_blank">Luma — Globe Studios</a>
+                <a href="https://github.com/mpawlega" target="_blank">GitHub</a>
+                <a href="./index.html" class="project-nav-item">Return to Projects</a>
+            </div>
+        </div>
+
+    </section>
+
+    <!-- Lightbox -->
+    <div class="lightbox" id="lightbox" onclick="closeLightboxOnBackground(event)">
+        <button class="lightbox-close" onclick="closeLightbox()">✕</button>
+        <button class="lightbox-arrow prev" id="lb-prev" onclick="event.stopPropagation(); lbGo(-1)">&#8592;</button>
+        <img id="lightbox-img" alt="Lightbox" onclick="event.stopPropagation()" style="max-width:90vw;max-height:90vh;object-fit:contain;border:1px solid rgba(255,255,255,0.08);">
+        <button class="lightbox-arrow next" id="lb-next" onclick="event.stopPropagation(); lbGo(1)">&#8594;</button>
+    </div>
+
+    <footer>
+        <div class="footer-copy" id="footer-copy">©2026anoaeyto</div>
+    </footer>
+
+    <script>
+        if (history.scrollRestoration) history.scrollRestoration = 'manual';
+        window.scrollTo(0, 0);
+
+        // Cursor
+        const dot = document.getElementById('dot');
+        const ring = document.getElementById('ring');
+        let mx=0,my=0,rx=0,ry=0;
+        document.addEventListener('mousemove', e => {
+            mx=e.clientX; my=e.clientY;
+            dot.style.left=mx+'px'; dot.style.top=my+'px';
+            document.getElementById('coord-x').textContent=String(e.clientX).padStart(4,'0');
+            document.getElementById('coord-y').textContent=String(e.clientY).padStart(4,'0');
+        });
+        (function loop(){rx+=(mx-rx)*.12;ry+=(my-ry)*.12;ring.style.left=rx+'px';ring.style.top=ry+'px';requestAnimationFrame(loop);})();
+        document.querySelectorAll('a,button').forEach(el=>{
+            el.addEventListener('mouseenter',()=>{ring.style.width='50px';ring.style.height='50px';ring.style.opacity='.5';});
+            el.addEventListener('mouseleave',()=>{ring.style.width='28px';ring.style.height='28px';ring.style.opacity='1';});
+        });
+
+        // Section nav
+        const navLinks=document.querySelectorAll('.section-nav a');
+        const sections=document.querySelectorAll('[id^="section-"]');
+        navLinks.forEach(link=>{
+            link.addEventListener('click',e=>{
+                e.preventDefault();
+                const t=document.getElementById(link.getAttribute('href').substring(1));
+                if(t) window.scrollTo({top:window.pageYOffset+t.getBoundingClientRect().top-20,behavior:'smooth'});
+            });
+        });
+        window.addEventListener('scroll',()=>{
+            let cur='';
+            sections.forEach(s=>{if(window.pageYOffset>=s.offsetTop-100)cur=s.id;});
+            navLinks.forEach(l=>{l.classList.remove('active');if(l.getAttribute('href')==='#'+cur)l.classList.add('active');});
+        });
+
+        // Content reveal
+        const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible');});},{threshold:.08});
+        document.querySelectorAll('.content-section').forEach(s=>obs.observe(s));
+
+        // ── GALLERY: crossfading carousel ─────────────────────────────────────
+        // All images assigned to container 0 (first/large item) only.
+        // Containers 1–4 are intentionally left empty.
+        const containerImages = {
+            0: [
+                './projects/illumination/Untitled7.png',
+                './projects/illumination/Untitled.png',
+                './projects/illumination/Untitled1.png',
+                './projects/illumination/Untitled2.png',
+                './projects/illumination/Untitled3.png',
+                './projects/illumination/Untitled4.png',
+                './projects/illumination/Untitled5.png',
+                './projects/illumination/Untitled6.png',
+            ],
+            1: [],
+            2: [],
+            3: [],
+            4: []
+        };
+
+        function startGalleryCarousel(galleryGrid) {
+            const CYCLE_INTERVAL = 5000;
+            const FADE_DURATION  = 1800;
+            const allItems = Array.from(galleryGrid.querySelectorAll('.gallery-item'));
+
+            allItems.forEach((item, itemIdx) => {
+                const images = containerImages[itemIdx] || [];
+                if (!images.length) return; // leave empty containers blank
+
+                item.innerHTML = '';
+                item.style.position = 'relative';
+
+                const state = { idx: 0, layers: [null, null], timer: null, paused: false };
+
+                function makeEl(src) {
+                    const el = document.createElement('img');
+                    el.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:opacity 1.8s cubic-bezier(0.4,0,0.2,1),filter 0.6s ease-in-out;filter:brightness(0.88);';
+                    el.src = src;
+                    el.alt = 'Gallery image';
+                    return el;
+                }
+
+                const layerA = makeEl(images[0]);
+                layerA.style.zIndex = '1';
+                layerA.style.opacity = '0';
+
+                const layerB = makeEl(images[1 % images.length]);
+                layerB.style.zIndex = '2';
+                layerB.style.opacity = '0';
+
+                item.appendChild(layerA);
+                item.appendChild(layerB);
+
+                requestAnimationFrame(() => requestAnimationFrame(() => { layerA.style.opacity = '1'; }));
+
+                state.layers = [layerA, layerB];
+                state.idx = 0;
+
+                function doCycle() {
+                    const showIdx   = (state.idx + 1) % images.length;
+                    const hideLayer = state.layers[state.idx % 2];
+                    const showLayer = state.layers[(state.idx + 1) % 2];
+                    showLayer.src = images[showIdx];
+                    showLayer.style.opacity = '1';
+                    showLayer.style.zIndex  = '2';
+                    hideLayer.style.zIndex  = '1';
+                    state.idx = showIdx;
+                    setTimeout(() => {
+                        hideLayer.style.opacity = '0';
+                        hideLayer.src = images[(showIdx + 1) % images.length];
+                    }, FADE_DURATION + 200);
+                }
+
+                if (images.length >= 2) {
+                    state.timer = setInterval(doCycle, CYCLE_INTERVAL);
+                }
+
+                // Store images list on the element for lightbox access
+                item._images = images;
+                item._state  = state;
+            });
+
+            // Dimming on hover + lightbox on click
+            allItems.forEach(item => {
+                item.addEventListener('mouseenter', () => allItems.forEach(o => { if (o !== item) o.style.filter = 'brightness(0.4)'; }));
+                item.addEventListener('mouseleave', () => allItems.forEach(o => o.style.filter = ''));
+                item.addEventListener('click', () => {
+                    if (!item._images) return;
+                    openLightbox(item._images, item._state.idx);
+                });
+            });
+        }
+
+        // ── LIGHTBOX with arrow navigation ────────────────────────────────────
+        let _lbImages = [];
+        let _lbIdx    = 0;
+
+        function openLightbox(images, startIdx) {
+            _lbImages = images;
+            _lbIdx    = startIdx;
+            const lb  = document.getElementById('lightbox');
+            const img = document.getElementById('lightbox-img');
+            img.src   = _lbImages[_lbIdx];
+            // Show/hide arrows depending on whether there are multiple images
+            const showArrows = _lbImages.length > 1;
+            document.getElementById('lb-prev').style.display = showArrows ? 'flex' : 'none';
+            document.getElementById('lb-next').style.display = showArrows ? 'flex' : 'none';
+            lb.classList.add('open');
+        }
+
+        function lbGo(delta) {
+            _lbIdx = (_lbIdx + delta + _lbImages.length) % _lbImages.length;
+            document.getElementById('lightbox-img').src = _lbImages[_lbIdx];
+        }
+
+        function closeLightbox() { document.getElementById('lightbox').classList.remove('open'); }
+        function closeLightboxOnBackground(e) { if (e.target.id === 'lightbox') closeLightbox(); }
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape')      closeLightbox();
+            if (e.key === 'ArrowLeft')   lbGo(-1);
+            if (e.key === 'ArrowRight')  lbGo(1);
+        });
+
+        // ── Kick off carousel when grid scrolls into view ─────────────────────
+        const galleryGrid = document.getElementById('gallery-grid');
+        const galleryObserver = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    galleryObserver.unobserve(entry.target);
+                    startGalleryCarousel(entry.target);
+                }
+            });
+        }, { threshold: 0.1 });
+        if (galleryGrid) galleryObserver.observe(galleryGrid);
+
+        // ── SHARED TIMING + VOICE DEFINITIONS (both canvases use these)
+        const SHARED = {
+            t0: performance.now(),
+            BAR: 16.0,
+            VISIBLE_BARS: 2,
+            voices: [
+                {div:2, label:'÷2', color:[0,230,210],  alpha:1.0,  row:1/10, lhFrac:.18, note:523.25},
+                {div:3, label:'÷3', color:[0,230,210],  alpha:1.0,  row:3/10, lhFrac:.18, note:659.25},
+                {div:4, label:'÷4', color:[0,230,210],  alpha:1.0,  row:5/10, lhFrac:.18, note:783.99},
+                {div:5, label:'÷5', color:[0,230,210],  alpha:1.0,  row:7/10, lhFrac:.18, note:987.77},
+                {div:7, label:'÷7', color:[0,230,210],  alpha:1.0,  row:9/10, lhFrac:.18, note:1174.66},
+            ]
+        };
+
+        // ── SIM STRIP: LED simulation — synced to SHARED clock
+        (function(){
+            const canvas=document.getElementById('sim-canvas');
+            const ctx=canvas.getContext('2d');
+            const dpr=window.devicePixelRatio||1;
+
+            function resize(){
+                const rect=canvas.parentElement.getBoundingClientRect();
+                canvas.width=rect.width*dpr; canvas.height=rect.height*dpr;
+                canvas.style.width=rect.width+'px'; canvas.style.height=rect.height+'px';
+                ctx.setTransform(dpr,0,0,dpr,0,0);
+            }
+            resize();
+            window.addEventListener('resize',()=>{ctx.setTransform(1,0,0,1,0,0);resize();});
+
+            const LED=120;
+
+            function draw(now){
+                const t=(now-SHARED.t0)/1000;
+                const W=parseFloat(canvas.style.width);
+                const H=parseFloat(canvas.style.height);
+                ctx.clearRect(0,0,W,H);
+                ctx.fillStyle='#020406'; ctx.fillRect(0,0,W,H);
+
+                const SIM_LABEL_W = 32;
+                const trackStart = SIM_LABEL_W;
+
+                SHARED.voices.forEach(v=>{
+                    const y=H*v.row;
+                    const lh = 3;
+                    const [r,g,b]=v.color;
+
+                    const period = SHARED.BAR / v.div;
+                    const raw = (t / period) % 1;
+                    const tri = raw < 0.5 ? raw * 2 : (1 - raw) * 2;
+                    const ballPos = tri;
+
+                    const leftProx  = Math.exp(-ballPos * ballPos / (2 * 0.04 * 0.04));
+                    const rightProx = Math.exp(-(1-ballPos) * (1-ballPos) / (2 * 0.04 * 0.04));
+                    const endProximity = Math.max(leftProx, rightProx);
+                    const burstH = 18;
+                    const burstMult = 1 + endProximity * 1.5;
+
+                    const trackW_sim = W - trackStart;
+
+                    for(let i=0;i<LED;i++){
+                        const x = trackStart + (i+.5)*(trackW_sim/LED);
+                        const ledW=(trackW_sim/LED)*.55;
+                        const ledNorm = i / (LED - 1);
+                        const dist = Math.abs(ledNorm - ballPos);
+                        const spread = 0.007;
+                        const pulse = Math.exp(-(dist * dist) / (2 * spread * spread)) * v.alpha;
+
+                        if(pulse < .008) continue;
+
+                        const glowW = ledW * 22 * burstMult;
+                        const grd = ctx.createLinearGradient(x - glowW/2, y, x + glowW/2, y);
+                        grd.addColorStop(0,    `rgba(${r},${g},${b},0)`);
+                        grd.addColorStop(0.35, `rgba(${r},${g},${b},${pulse*.2})`);
+                        grd.addColorStop(0.5,  `rgba(${r},${g},${b},${pulse*.32})`);
+                        grd.addColorStop(0.65, `rgba(${r},${g},${b},${pulse*.2})`);
+                        grd.addColorStop(1,    `rgba(${r},${g},${b},0)`);
+                        ctx.fillStyle = grd;
+                        ctx.fillRect(x - glowW/2, y - burstH/2, glowW, burstH);
+                    }
+
+                    ctx.strokeStyle=`rgba(${r},${g},${b},.04)`;
+                    ctx.lineWidth=0.5;
+                    ctx.beginPath(); ctx.moveTo(trackStart,y); ctx.lineTo(W,y); ctx.stroke();
+
+                    const rowBand = H / SHARED.voices.length;
+                    const rowIndex = SHARED.voices.indexOf(v);
+                    const labelY = rowIndex * rowBand + rowBand / 2;
+                    ctx.fillStyle=`rgba(${r},${g},${b},.45)`;
+                    ctx.font='8px Eurostile,monospace';
+                    ctx.textAlign='center';
+                    ctx.textBaseline='middle';
+                    ctx.fillText(`1:${v.div}`, SIM_LABEL_W/2, labelY);
+                    ctx.textAlign='left';
+                    ctx.textBaseline='alphabetic';
+                });
+
+                requestAnimationFrame(draw);
+            }
+            requestAnimationFrame(draw);
+        })();
+
+        // ── RHYTHM VISUALIZER: beat grid with full-opacity hits + xylophone sound
+        (function(){
+            const canvas=document.getElementById('rhythm-canvas');
+            const ctx=canvas.getContext('2d');
+            const dpr=window.devicePixelRatio||1;
+
+            let audioCtx=null;
+            let soundOn=false;
+
+            function initAudio(){
+                if(!audioCtx) audioCtx=new(window.AudioContext||window.webkitAudioContext)();
+            }
+
+            function playXylophone(freq){
+                if(!audioCtx||!soundOn) return;
+                const now=audioCtx.currentTime;
+                [1, 2.756].forEach((mult,i)=>{
+                    const osc=audioCtx.createOscillator();
+                    const gain=audioCtx.createGain();
+                    osc.type='sine';
+                    osc.frequency.value=freq*mult;
+                    const vol=i===0?0.09:0.025;
+                    gain.gain.setValueAtTime(0,now);
+                    gain.gain.linearRampToValueAtTime(vol,now+0.03);
+                    gain.gain.exponentialRampToValueAtTime(vol*0.3,now+0.25);
+                    gain.gain.exponentialRampToValueAtTime(0.0001,now+1.6);
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    osc.start(now); osc.stop(now+1.7);
+                });
+            }
+
+            const btn = document.getElementById('sound-toggle');
+            btn.addEventListener('click',()=>{
+                initAudio();
+                if(audioCtx&&audioCtx.state==='suspended') audioCtx.resume();
+                soundOn=!soundOn;
+                btn.textContent=soundOn?'♪ Sound on':'♪ Sound off';
+                btn.classList.toggle('active', soundOn);
+            });
+
+            function resize(){
+                const w=canvas.parentElement.clientWidth;
+                const h=180;
+                canvas.width=w*dpr; canvas.height=h*dpr;
+                canvas.style.width=w+'px'; canvas.style.height=h+'px';
+                ctx.setTransform(dpr,0,0,dpr,0,0);
+            }
+            resize();
+            window.addEventListener('resize',()=>{ctx.setTransform(1,0,0,1,0,0);resize();});
+
+            const LABEL_W=32;
+            const lastBounce=SHARED.voices.map(()=>-1);
+
+            function draw(now){
+                const t=(now-SHARED.t0)/1000;
+                const W=parseFloat(canvas.style.width);
+                const H=parseFloat(canvas.style.height);
+                const rowH=H/SHARED.voices.length;
+                const trackW=W-LABEL_W;
+
+                ctx.clearRect(0,0,W,H);
+                ctx.fillStyle='#030507'; ctx.fillRect(0,0,W,H);
+
+                const globalBarFrac=(t/SHARED.BAR)%1;
+
+                SHARED.voices.forEach((v,vi)=>{
+                    const y0=vi*rowH;
+                    const cellH=rowH*.68;
+                    const cellY=y0+(rowH-cellH)/2;
+                    const [r,g,b]=v.color;
+                    const totalCells=v.div*SHARED.VISIBLE_BARS;
+                    const cellW=trackW/totalCells;
+                    const globalBeat=t/SHARED.BAR*v.div;
+
+                    const halfBeat=Math.floor(globalBeat*2);
+                    if(halfBeat!==lastBounce[vi]){
+                        lastBounce[vi]=halfBeat;
+                        playXylophone(v.note);
+                    }
+
+                    for(let ci=0;ci<totalCells;ci++){
+                        const x=LABEL_W+ci*cellW;
+                        const age=globalBeat-(Math.floor(globalBeat)-totalCells+1+ci);
+                        const frac=Math.max(0,Math.min(1,1-age));
+                        const bright=Math.pow(frac,1.3)*v.alpha;
+                        const hitAmt = Math.pow(Math.max(0,(frac-0.75)/0.25), 2);
+                        const fillAlpha = bright*.28+.04 + hitAmt*(1.0 - bright*.28-.04);
+
+                        ctx.fillStyle=`rgba(${r},${g},${b},${fillAlpha})`;
+                        ctx.fillRect(x+1,cellY,cellW-2,cellH);
+
+                        if(hitAmt > 0.1){
+                            const grd=ctx.createLinearGradient(LABEL_W,0,W,0);
+                            grd.addColorStop(0,   `rgba(${r},${g},${b},0)`);
+                            grd.addColorStop(Math.max(0,(x-LABEL_W-cellW*3)/trackW), `rgba(${r},${g},${b},0)`);
+                            grd.addColorStop(Math.max(0,(x-LABEL_W)/trackW),          `rgba(${r},${g},${b},${hitAmt*0.18})`);
+                            grd.addColorStop((x-LABEL_W+cellW/2)/trackW,              `rgba(${r},${g},${b},${hitAmt*0.38})`);
+                            grd.addColorStop(Math.min(1,(x-LABEL_W+cellW)/trackW),    `rgba(${r},${g},${b},${hitAmt*0.18})`);
+                            grd.addColorStop(Math.min(1,(x-LABEL_W+cellW*3)/trackW),  `rgba(${r},${g},${b},0)`);
+                            grd.addColorStop(1,   `rgba(${r},${g},${b},0)`);
+                            ctx.fillStyle=grd;
+                            ctx.fillRect(LABEL_W, cellY, trackW, cellH);
+                        }
+
+                        if(frac < 0.75 && bright>.25){
+                            ctx.fillStyle=`rgba(${r},${g},${b},${bright})`;
+                            ctx.fillRect(x+1,cellY,1.5,cellH);
+                        }
+
+                        ctx.strokeStyle=`rgba(${r},${g},${b},${0.08 + hitAmt*0.42})`;
+                        ctx.lineWidth=0.5;
+                        ctx.strokeRect(x+.5,cellY+.5,cellW-1,cellH-1);
+                    }
+
+                    const period = SHARED.BAR / v.div;
+                    const rawPh = (t / period) % 1;
+                    const triPh = rawPh < 0.5 ? rawPh * 2 : (1 - rawPh) * 2;
+                    const phX = LABEL_W + trackW * triPh;
+                    ctx.strokeStyle=`rgba(${r},${g},${b},.35)`;
+                    ctx.lineWidth=0.5;
+                    ctx.beginPath(); ctx.moveTo(phX,y0); ctx.lineTo(phX,y0+rowH); ctx.stroke();
+
+                    ctx.fillStyle=`rgba(${r},${g},${b},.45)`;
+                    ctx.font='8px Eurostile,monospace';
+                    ctx.textAlign='center';
+                    ctx.textBaseline='middle';
+                    ctx.fillText(`1:${v.div}`, LABEL_W/2, y0+rowH/2);
+                    ctx.textAlign='left';
+                    ctx.textBaseline='alphabetic';
+
+                    if(vi<SHARED.voices.length-1){
+                        ctx.strokeStyle=`rgba(${r},${g},${b},0.06)`;
+                        ctx.lineWidth=0.5;
+                        ctx.beginPath(); ctx.moveTo(0,y0+rowH); ctx.lineTo(W,y0+rowH); ctx.stroke();
+                    }
+                });
+
+                const [cr,cg,cb]=SHARED.voices[0].color;
+                ctx.strokeStyle=`rgba(${cr},${cg},${cb},0.08)`;
+                ctx.lineWidth=0.5;
+                ctx.beginPath(); ctx.moveTo(LABEL_W,0); ctx.lineTo(LABEL_W,H); ctx.stroke();
+
+                requestAnimationFrame(draw);
+            }
+            requestAnimationFrame(draw);
+        })();
+
+        // Footer animation
+        (function(){
+            const el=document.getElementById('footer-copy');
+            const text='©2026anoaeyto';
+            el.innerHTML=text.split('').map(c=>`<span>${c}</span>`).join('');
+            const chars=el.querySelectorAll('span');
+            let animating=false;
+            function animate(){
+                if(animating)return; animating=true; let i=0;
+                const iv=setInterval(()=>{
+                    if(i<chars.length){if(i>0)chars[i-1].classList.remove('cyan');chars[i].classList.add('cyan');i++;}
+                    else{chars[chars.length-1].classList.remove('cyan');clearInterval(iv);animating=false;setTimeout(animate,3000);}
+                },150);
+            }
+            setTimeout(animate,2000);
+        })();
+    </script>
+</body>
+</html>

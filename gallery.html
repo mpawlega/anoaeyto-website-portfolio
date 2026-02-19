@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gallery - anoaeyto</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+        }
+        
+        body {
+            background-color: #000;
+            color: #d4d4d4;
+            font-family: 'Eurostile', 'Eurostile Extended', monospace;
+            overflow-x: hidden;
+            height: 100vh;
+        }
+
+        /* Grid background */
+        .tech-grid {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(0, 184, 168, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 184, 168, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            z-index: 0;
+            pointer-events: none;
+            opacity: 0.15;
+        }
+
+        /* HUD Elements */
+        .version-hud {
+            position: fixed;
+            top: 10px;
+            right: 20px;
+            font-size: 11px;
+            letter-spacing: 1px;
+            color: #00b8a8;
+            z-index: 9997;
+            text-align: right;
+            line-height: 1.6;
+        }
+
+        .coords-hud {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            font-size: 11px;
+            letter-spacing: 1px;
+            color: #00b8a8;
+            z-index: 9997;
+        }
+
+        /* Main layout */
+        .gallery-wrapper {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 0;
+            width: 100%;
+            height: 100vh;
+            position: relative;
+            z-index: 10;
+            padding-bottom: 60px;
+        }
+
+        /* Left side - image viewer */
+        .gallery-viewer {
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            overflow: hidden;
+        }
+
+        .image-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 30px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(0, 0, 0, 0.6);
+            flex-shrink: 0;
+        }
+
+        .image-title {
+            font-size: 14px;
+            letter-spacing: 2px;
+            color: #00b8a8;
+            font-family: monospace;
+        }
+
+        .image-counter {
+            font-size: 11px;
+            letter-spacing: 2px;
+            color: #888;
+            text-transform: uppercase;
+        }
+
+        /* Main image area */
+        .main-image-area {
+            position: relative;
+            flex: 1;
+            overflow: hidden;
+            background: rgba(0, 0, 0, 0.95);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .main-image-area img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            object-position: center;
+            display: block;
+            opacity: 1;
+            transition: opacity 0.5s ease-out;
+        }
+
+        .main-image-area img.fade-out {
+            opacity: 0;
+        }
+
+        /* Thumbnail section */
+        .thumbnail-section {
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.5);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            flex-shrink: 0;
+            overflow-y: auto;
+            overflow-x: hidden;
+            max-height: 200px;
+            scroll-behavior: smooth;
+        }
+
+        .thumbnail-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+            gap: 12px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .thumbnail-item {
+            position: relative;
+            aspect-ratio: 1 / 1;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            cursor: pointer;
+            overflow: hidden;
+            background: rgba(0, 0, 0, 0.4);
+            transition: border-color 0.15s ease, box-shadow 0.15s ease;
+        }
+
+        .thumbnail-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+            display: block;
+            opacity: 0.6;
+            transition: opacity 0.3s ease;
+        }
+
+        .thumbnail-item:hover img {
+            opacity: 1;
+        }
+
+        .thumbnail-item.active {
+            border-color: rgba(0, 184, 168, 1);
+            box-shadow: 0 0 15px rgba(0, 184, 168, 0.6), inset 0 0 15px rgba(0, 184, 168, 0.2);
+        }
+
+        .thumbnail-item.active img {
+            opacity: 1;
+        }
+
+        /* Right side - info panel */
+        .gallery-info {
+            display: flex;
+            flex-direction: column;
+            padding: 80px 40px;
+            overflow-y: auto;
+            overflow-x: hidden;
+            gap: 30px;
+        }
+
+        .gallery-info h2 {
+            font-size: 26px;
+            font-weight: 100;
+            letter-spacing: 2px;
+            color: #ffffff;
+            line-height: 1.4;
+            word-break: break-word;
+        }
+
+        .info-label {
+            font-size: 11px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: #666;
+            margin-bottom: 12px;
+        }
+
+        .info-text {
+            font-size: 14px;
+            line-height: 1.8;
+            color: #999;
+        }
+
+        .info-divider {
+            width: 100%;
+            height: 1px;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .info-meta {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            margin-top: 60px;
+        }
+
+        .meta-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+        }
+
+        .meta-label {
+            color: #666;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .meta-value {
+            color: #00b8a8;
+            letter-spacing: 1px;
+        }
+
+        .nav-link {
+            display: block;
+            padding: 14px 0;
+            font-size: 11px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: #888;
+            text-decoration: none;
+            transition: color 0.3s ease;
+            line-height: 1.4;
+            margin-top: auto;
+        }
+
+        .nav-link:hover {
+            color: #00b8a8;
+        }
+
+        /* Scrollbar */
+        .gallery-info::-webkit-scrollbar,
+        .thumbnail-section::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .gallery-info::-webkit-scrollbar-track,
+        .thumbnail-section::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .gallery-info::-webkit-scrollbar-thumb,
+        .thumbnail-section::-webkit-scrollbar-thumb {
+            background: rgba(0, 184, 168, 0.3);
+            border-radius: 3px;
+        }
+
+        .gallery-info::-webkit-scrollbar-thumb:hover,
+        .thumbnail-section::-webkit-scrollbar-thumb:hover {
+            background: rgba(0, 184, 168, 0.5);
+        }
+
+        /* Footer */
+        footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 20px 30px;
+            background: #000;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 11px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: #666;
+            text-align: center;
+            z-index: 9;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .gallery-wrapper {
+                grid-template-columns: 1fr;
+            }
+
+            .gallery-viewer {
+                border-right: none;
+            }
+
+            .gallery-info {
+                max-height: 40vh;
+                border-top: 1px solid rgba(255, 255, 255, 0.1);
+            }
+
+            .gallery-info h2 {
+                font-size: 22px;
+            }
+
+            .thumbnail-section {
+                max-height: 150px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="tech-grid"></div>
+
+    <div class="version-hud">
+        v2.0.1<br>
+        STATUS: ONLINE
+    </div>
+    <div class="coords-hud">
+        X: <span id="coord-x">0000</span> Y: <span id="coord-y">0000</span>
+    </div>
+
+    <!-- Main Gallery -->
+    <div class="gallery-wrapper">
+        <!-- LEFT SIDE -->
+        <div class="gallery-viewer">
+            <div class="image-header">
+                <div class="image-title" id="image-title">filename.jpg</div>
+                <div class="image-counter">
+                    <span id="current-index">1</span> / <span id="total-images">0</span>
+                </div>
+            </div>
+
+            <div class="main-image-area">
+                <img src="" alt="Gallery image" id="main-image">
+            </div>
+
+            <div class="thumbnail-section">
+                <div class="thumbnail-gallery" id="thumbnail-gallery"></div>
+            </div>
+        </div>
+
+        <!-- RIGHT SIDE -->
+        <div class="gallery-info">
+            <div>
+                <h2 id="gallery-title">Gallery</h2>
+                <div class="info-label" id="gallery-category">CATEGORY</div>
+            </div>
+
+            <div>
+                <p class="info-text" id="gallery-description">Description goes here.</p>
+            </div>
+
+            <div class="info-divider"></div>
+
+            <div class="info-meta">
+                <div class="meta-row">
+                    <span class="meta-label">Medium</span>
+                    <span class="meta-value" id="medium">—</span>
+                </div>
+                <div class="meta-row">
+                    <span class="meta-label">Year</span>
+                    <span class="meta-value" id="year">—</span>
+                </div>
+                <div class="meta-row">
+                    <span class="meta-label">Images</span>
+                    <span class="meta-value" id="total-count">0</span>
+                </div>
+            </div>
+
+            <a href="./test.html#gallery" class="nav-link">← Back to Portfolio</a>
+        </div>
+    </div>
+
+    <footer id="copyright-text">
+        © 2026 anoaeyto
+    </footer>
+
+    <script>
+        // Gallery data
+        const galleryData = {
+            'gallery-04': {
+                title: 'Abstract Exploration',
+                category: 'Abstract',
+                description: 'An exploration of colour, geometric patterns, typography, and poster design.',
+                medium: 'Digital Art',
+                year: 'ongoing',
+                images: [
+'gallery/abstract/june_12_50_comp.jpg', 'gallery/abstract/sept_6_3_comp.jpg', 'gallery/abstract/july_24_10_comp.jpg', 'gallery/abstract/June_7_11_comp.jpg', 'gallery/abstract/june_3_10_comp.jpg', 'gallery/abstract/july_1_1_comp.jpg', 'gallery/abstract/june_8_25_comp.jpg', 'gallery/abstract/cool donut 1_comp.jpg', 'gallery/abstract/dec_27_1_comp.jpg', 'gallery/abstract/June_7_1_comp.jpg', 'gallery/abstract/june_12_42_comp.jpg', 'gallery/abstract/may_29_35_comp.jpg', 'gallery/abstract/june_12_86_comp.jpg', 'gallery/abstract/june_6_1_comp.jpg', 'gallery/abstract/june_12_75_comp.jpg', 'gallery/abstract/bg1_comp.png', 'gallery/abstract/sept_14_1_comp.jpg', 'gallery/abstract/4_comp.jpg', 'gallery/abstract/Untitled_comp.png', 'gallery/abstract/june_9_37_comp.jpg', 'gallery/abstract/june_3_28 - Copy_comp.jpg', 'gallery/abstract/s041_comp.png', 'gallery/abstract/june_12_12_comp.jpg', 'gallery/abstract/july_4_5_comp.jpg', 'gallery/abstract/june_3_2_comp.jpg', 'gallery/abstract/Screenshot 2025-05-27 2010521_comp.jpg', 'gallery/abstract/oct_5_2_comp.jpg', 'gallery/abstract/Screenshot 2025-05-27 201051_comp.jpg', 'gallery/abstract/Untitled_3_comp.png', 'gallery/abstract/time1_comp.jpg', 'gallery/abstract/june_8_31_comp.jpg', 'gallery/abstract/12_16_2025_1_comp.png', 'gallery/abstract/Untitled_2_comp.png', 'gallery/abstract/july_24_5_comp.jpg', 'gallery/abstract/may_28_42_comp.jpg', 'gallery/abstract/sept_6_15_comp.jpg', 'gallery/abstract/june_5_1_comp.jpg', 'gallery/abstract/sept_6_11_comp.jpg', 'gallery/abstract/cubes_comp.png', 'gallery/abstract/june_12_5_comp.jpg'                ]
+            },
+            'gallery-05': {
+                title: 'Environment Design',
+                category: 'Environment',
+                description: 'An exploration of environment design and world building.',
+                medium: 'Digital Art',
+                year: 'ongoing',
+                images: [
+                    'gallery/environment/planeyts.png', 'gallery/environment/test3.png', 'gallery/environment/12_12_2025_10.png', 'gallery/environment/humpty_dumpty.png'
+                ]
+            },
+            'gallery-06': {
+                title: 'Character Design',
+                category: 'Character',
+                description: 'An exploration of character design in varying media.',
+                medium: 'Mixed',
+                year: 'ongoing',
+                images: [
+                   'gallery/character/flame.jpg',  'gallery/character/june_21_46.jpg', 'gallery/character/july_26_bird.png', 'gallery/character/HD_1.jpg', 'gallery/character/july_6_13.jpg', 'gallery/character/dude_1.jpg', 'gallery/character/unwritten_2.png', 'gallery/character/untitled - Copy.png', 'gallery/character/june_21_57.jpg', 'gallery/character/image (19).PNG', 'gallery/character/dog4.jpg', 'gallery/character/june_15_1.jpg', 'gallery/character/Sprite-0001.png'
+                ]
+            },
+            'gallery-07': {
+                title: 'Misc Photography',
+                category: 'Photography',
+                description: 'An exploration of light, nature, and composition. Captured on Canon EOS R5.',
+                medium: 'Photography',
+                year: 'ongoing',
+                images: [
+                    'gallery/photography/final/2I2A0059.JPG',
+                    'gallery/photography/final/2I2A0288.JPG',
+                    'gallery/photography/final/2I2A0371.JPG',
+                    'gallery/photography/final/2I2A0376.JPG',
+                    'gallery/photography/final/2I2A0382.JPG',
+                    'gallery/photography/final/2I2A0430.JPG',
+                    'gallery/photography/final/2I2A0476.JPG',
+                    'gallery/photography/final/2I2A0480.JPG',
+                    'gallery/photography/final/2I2A0518.JPG',
+                    'gallery/photography/final/2I2A0521.JPG',
+                    'gallery/photography/final/2I2A0534.JPG',
+                    'gallery/photography/final/2I2A0544.JPG',
+                    'gallery/photography/final/2I2A0549.JPG',
+                    'gallery/photography/final/2I2A0581.JPG',
+                    'gallery/photography/final/2I2A0745.JPG',
+                    'gallery/photography/final/2I2A0758.JPG',
+                    'gallery/photography/final/2I2A0836.JPG',
+                    'gallery/photography/final/2I2A0840.JPG',
+                    'gallery/photography/final/2I2A0850.JPG',
+                    'gallery/photography/final/2I2A1322.JPG',
+                    'gallery/photography/final/2I2A1325.JPG',
+                    'gallery/photography/final/2I2A1330.JPG',
+                    'gallery/photography/final/2I2A1340.JPG',
+                    'gallery/photography/final/2I2A1355.JPG',
+                    'gallery/photography/final/2I2A1496.JPG',
+                    'gallery/photography/final/2I2A1535.JPG',
+                    'gallery/photography/final/2I2A1555.JPG',
+                    'gallery/photography/final/2I2A1578.JPG',
+                    'gallery/photography/final/2I2A1760.JPG',
+                    'gallery/photography/final/2I2A1812.JPG',
+                    'gallery/photography/final/2I2A1822.JPG',
+                    'gallery/photography/final/IMG_3739.JPG',
+                    'gallery/photography/final/IMG_3740.JPG',
+                    'gallery/photography/final/IMG_3875.JPG',
+                    'gallery/photography/final/july_2.jpg',
+                    'gallery/photography/final/NCD00005.JPG',
+                    'gallery/photography/final/NCD00031.JPG',
+                    'gallery/photography/final/NCD00033.JPG',
+                    'gallery/photography/final/NCD00035.JPG',
+                    'gallery/photography/final/NCD00065.JPG',
+                    'gallery/photography/final/NCD00073.JPG',
+                    'gallery/photography/final/NCD00087.JPG',
+                    'gallery/photography/final/NCD00110.JPG',
+                    'gallery/photography/final/NCD00121.JPG',
+                    'gallery/photography/final/NCD00170.JPG',
+                    'gallery/photography/final/NCD00186.JPG',
+                    'gallery/photography/final/NCD00203.JPG',
+                    'gallery/photography/final/NCD00218.JPG',
+                    'gallery/photography/final/NCD00220.JPG',
+                    'gallery/photography/final/NCD00227.JPG',
+                    'gallery/photography/final/NCD00233.JPG',
+                    'gallery/photography/final/NCD00265.JPG',
+                    'gallery/photography/final/NCD00367.JPG',
+                    'gallery/photography/final/NCD00372.JPG',
+                    'gallery/photography/final/NCD00407.JPG',
+                    'gallery/photography/final/NCD00446.JPG',
+                    'gallery/photography/final/NCD00451.JPG'
+                ]
+            },
+            'gallery-08': {
+                title: 'Lotus Exhibition',
+                category: 'Lotus',
+                description: 'An exploration of nature and loss of control through modelling. Featured at the University of Waterloo in The Artery Gallery for final course project in FINE 204. ',
+                medium: 'Mixed Media',
+                year: '2024',
+                images: [
+                    'gallery/lotus/NCD00723.JPG',
+                    'gallery/lotus/NCD00657.JPG',
+                    'gallery/lotus/NCD00611.JPG',
+                    'gallery/lotus/NCD00780.JPG',
+                    'gallery/lotus/NCD00538.JPG',
+                    'gallery/lotus/NCD00673.JPG',
+                    'gallery/lotus/NCD00628.JPG',
+                    'gallery/lotus/NCD00787.JPG',
+                    'gallery/lotus/NCD00645.JPG',
+                    'gallery/lotus/NCD00510.JPG',
+                    'gallery/lotus/NCD00683.JPG',
+                    'gallery/lotus/NCD00747.JPG',
+                    'gallery/lotus/NCD00658.JPG',
+                    'gallery/lotus/NCD00669.JPG',
+                    'gallery/lotus/NCD00509.JPG',
+                    'gallery/lotus/NCD00544.JPG',
+                    'gallery/lotus/NCD00635.JPG',
+                    'gallery/lotus/NCD00623.JPG',
+                    'gallery/lotus/NCD00601.JPG',
+                    'gallery/lotus/NCD00653.JPG',
+                    'gallery/lotus/NCD00711.JPG',
+                    'gallery/lotus/NCD00639.JPG',
+                    'gallery/lotus/NCD00752.JPG'
+                ]
+            }
+        };
+
+        let currentIndex = 0;
+        let images = [];
+        const urlParams = new URLSearchParams(window.location.search);
+        const galleryId = urlParams.get('id') || 'gallery-04';
+
+        // Initialize
+        function init() {
+            const data = galleryData[galleryId];
+            if (!data) return;
+            
+            images = data.images;
+            
+            document.getElementById('gallery-title').textContent = data.title;
+            document.getElementById('gallery-category').textContent = data.category;
+            document.getElementById('gallery-description').textContent = data.description;
+            document.getElementById('medium').textContent = data.medium;
+            document.getElementById('year').textContent = data.year;
+            document.getElementById('total-count').textContent = images.length;
+            document.getElementById('total-images').textContent = images.length;
+            document.title = `${data.title} - anoaeyto`;
+            
+            renderThumbnails();
+            showImage(0);
+        }
+
+        function renderThumbnails() {
+            const thumbGrid = document.getElementById('thumbnail-gallery');
+            const fragment = document.createDocumentFragment();
+            
+            images.forEach((img, idx) => {
+                const div = document.createElement('div');
+                div.className = `thumbnail-item ${idx === 0 ? 'active' : ''}`;
+                div.dataset.index = idx;
+                
+                const imgEl = document.createElement('img');
+                imgEl.src = img;
+                imgEl.alt = '';
+                
+                div.appendChild(imgEl);
+                fragment.appendChild(div);
+            });
+            
+            thumbGrid.appendChild(fragment);
+            thumbGrid.addEventListener('click', (e) => {
+                const thumb = e.target.closest('.thumbnail-item');
+                if (thumb) showImage(parseInt(thumb.dataset.index));
+            });
+        }
+
+        function showImage(index) {
+            currentIndex = index;
+            const mainImg = document.getElementById('main-image');
+            const newSrc = images[currentIndex];
+            
+            // Update active thumbnail IMMEDIATELY
+            document.querySelectorAll('.thumbnail-item').forEach((thumb, idx) => {
+                thumb.classList.toggle('active', idx === currentIndex);
+            });
+            
+            // Fade out current image
+            mainImg.classList.add('fade-out');
+            
+            // After fade, change image and fade back in
+            setTimeout(() => {
+                mainImg.src = newSrc;
+                mainImg.classList.remove('fade-out');
+                
+                document.getElementById('current-index').textContent = currentIndex + 1;
+                document.getElementById('image-title').textContent = newSrc.split('/').pop();
+            }, 250);
+        }
+
+        init();
+
+        // Footer animation
+        (function() {
+            const footer = document.getElementById('copyright-text');
+            const text = '©2026anoaeyto';
+            
+            const fragment = document.createDocumentFragment();
+            text.split('').forEach(c => {
+                const span = document.createElement('span');
+                span.textContent = c;
+                fragment.appendChild(span);
+            });
+            footer.innerHTML = '';
+            footer.appendChild(fragment);
+            
+            const spans = footer.querySelectorAll('span');
+            let isAnimating = false;
+            
+            function animate() {
+                if (isAnimating) return;
+                isAnimating = true;
+                let i = 0;
+                
+                const interval = setInterval(() => {
+                    if (i < spans.length) {
+                        if (i > 0) spans[i - 1].style.color = '#666';
+                        spans[i].style.color = '#00b8a8';
+                        i++;
+                    } else {
+                        spans[spans.length - 1].style.color = '#666';
+                        clearInterval(interval);
+                        isAnimating = false;
+                        setTimeout(animate, 5000);
+                    }
+                }, 120);
+            }
+            
+            setTimeout(animate, 1500);
+        })();
+
+        // XY position tracking with throttle
+        let lastUpdate = 0;
+        document.addEventListener('mousemove', (e) => {
+            const now = Date.now();
+            if (now - lastUpdate > 100) {
+                const coordX = document.getElementById('coord-x');
+                const coordY = document.getElementById('coord-y');
+                if (coordX && coordY) {
+                    coordX.textContent = String(e.clientX).padStart(4, '0');
+                    coordY.textContent = String(e.clientY).padStart(4, '0');
+                }
+                lastUpdate = now;
+            }
+        });
+    </script>
+</body>
+</html>
