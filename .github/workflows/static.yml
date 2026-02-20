@@ -30,21 +30,21 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: |
-            0001-0030.mp4
-            cosmic-interlude.html
-            Eurostile_Extended_Regular.ttf
-            gallery.html
-            home.html
-            index.html
-            loading-screen.html
-            loadtest.html
-            new.png
-            polyrhythms.html
-            PressStart2P-Regular.ttf
-            project.html
-            test.png
-            upheavtt.ttf
+          path:
+            - 0001-0030.mp4
+            - cosmic-interlude.html
+            - Eurostile_Extended_Regular.ttf
+            - gallery.html
+            - home.html
+            - index.html
+            - loading-screen.html
+            - loadtest.html
+            - new.png
+            - polyrhythms.html
+            - PressStart2P-Regular.ttf
+            - project.html
+            - test.png
+            - upheavtt.ttf
 
       - name: Deploy to GitHub Pages
         id: deployment
