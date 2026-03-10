@@ -1,0 +1,965 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>University of Waterloo Tea Club — anoaeyto</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,300;0,400;1,300;1,400&family=Courier+Prime:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
+    <style>
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; user-select:none; }
+
+:root {
+    --teal:      #00c8b4;
+    --teal-line: rgba(0,200,180,0.18);
+    --teal-dim:  rgba(0,200,180,0.07);
+    --cream:     #ddd8cc;
+    --bg:        #000;
+    --rule:      rgba(255,255,255,0.07);
+    --muted:     rgba(221,216,204,0.5);
+}
+
+html, body {
+    width: 100%; height: 100%;
+    background: var(--bg);
+    overflow: hidden;
+    cursor: none;
+    font-family: 'Courier Prime', monospace;
+    color: var(--cream);
+}
+
+/* ── GRID BACKGROUND (from file 2) ── */
+body::before {
+    content: ''; position: fixed; inset: 0; z-index: 99990; pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='6' height='6'%3E%3Crect width='6' height='6' fill='none'/%3E%3Crect x='0.5' y='0.5' width='5' height='5' fill='none' stroke='rgba(0%2C200%2C180%2C0.07)' stroke-width='0.4'/%3E%3Crect x='1.5' y='1.5' width='3' height='3' fill='rgba(0%2C200%2C180%2C0.018)'/%3E%3C/svg%3E");
+    background-size: 6px 6px;
+}
+
+/* ── CURSOR ── */
+#cursor-dot {
+    position: fixed; width: 5px; height: 5px; background: var(--teal);
+    border-radius: 50%; pointer-events: none; z-index: 99999;
+    transform: translate(-50%,-50%);
+}
+#cursor-ring {
+    position: fixed; width: 22px; height: 22px;
+    border: 1px solid rgba(0,200,180,0.45); border-radius: 50%;
+    pointer-events: none; z-index: 99998; transform: translate(-50%,-50%);
+    transition: width 0.18s, height 0.18s, border-color 0.18s;
+}
+#cursor-ring.expanded { width: 36px; height: 36px; border-color: rgba(0,200,180,0.85); }
+
+/* ── HUD ── */
+.hud-tr {
+    position: fixed; top: 22px; right: 24px;
+    font-size: 10px; letter-spacing: 1.5px; line-height: 1.7;
+    color: var(--teal); opacity: 0.7; z-index: 9999; pointer-events: none; text-align: right;
+}
+.hud-bl {
+    position: fixed; bottom: 22px; left: 24px;
+    font-size: 10px; letter-spacing: 1.5px;
+    color: var(--teal); opacity: 0.7; z-index: 9999; pointer-events: none;
+}
+
+/* ── CORNER BRACKETS ── */
+.brackets { position: fixed; inset: 0; pointer-events: none; z-index: 9001; }
+.bracket { position: absolute; width: 28px; height: 28px; }
+.bracket.tl { top: 14px; left: 14px;   border-top: 1px solid var(--teal-line); border-left: 1px solid var(--teal-line); }
+.bracket.tr { top: 14px; right: 14px;  border-top: 1px solid var(--teal-line); border-right: 1px solid var(--teal-line); }
+.bracket.bl { bottom: 14px; left: 14px;  border-bottom: 1px solid var(--teal-line); border-left: 1px solid var(--teal-line); }
+.bracket.br { bottom: 14px; right: 14px; border-bottom: 1px solid var(--teal-line); border-right: 1px solid var(--teal-line); }
+
+/* ── SECTION NAV (from file 3) ── */
+.section-nav {
+    position: fixed; right: 32px; top: 50%; transform: translateY(-50%);
+    display: flex; flex-direction: column; gap: 14px; z-index: 9000; pointer-events: all;
+}
+.section-nav a {
+    text-decoration: none; color: rgba(0,200,180,0.35);
+    font-size: 10px; letter-spacing: 2px;
+    transition: color 0.3s, opacity 0.3s;
+    font-family: 'Courier Prime', monospace;
+}
+.section-nav a:hover, .section-nav a.active { color: var(--teal); }
+
+/* ── TOP BAR ── */
+.top-bar {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 9000;
+    padding: clamp(18px,2.2vh,28px) clamp(24px,3vw,52px);
+    pointer-events: none;
+}
+.back-link {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-size: clamp(9px,0.75vw,12px); letter-spacing: 3px; text-transform: uppercase;
+    color: rgba(221,216,204,0.55); text-decoration: none;
+    transition: color 0.25s; pointer-events: all;
+}
+.back-link::before { content: '←'; color: var(--teal); opacity: 0.8; }
+.back-link:hover { color: #fff; }
+
+/* ── PROGRESS BAR ── */
+.progress-bar-wrap {
+    position: fixed; bottom: 0; left: 0; right: 0; z-index: 9000;
+    height: 1px; background: rgba(255,255,255,0.05);
+}
+.progress-bar-fill {
+    height: 100%; background: var(--teal); width: 0%;
+    transition: width 0.12s ease; opacity: 0.5;
+}
+
+/* ── PANEL DOTS ── */
+.panel-dots {
+    position: fixed; bottom: 22px; left: 50%; transform: translateX(-50%);
+    display: flex; gap: 8px; z-index: 9000; pointer-events: all;
+}
+.panel-dot {
+    width: 4px; height: 4px; border-radius: 50%;
+    background: rgba(221,216,204,0.2); transition: all 0.3s; cursor: none;
+}
+.panel-dot.active { background: var(--teal); width: 18px; border-radius: 2px; }
+
+/* ── NAV ARROWS ── */
+.nav-arrow {
+    position: fixed; top: 50%; transform: translateY(-50%);
+    z-index: 9000; pointer-events: all;
+    background: none; border: none; cursor: none;
+    color: rgba(0,200,180,0.3); font-size: 20px;
+    padding: 16px 10px;
+    transition: color 0.2s, opacity 0.2s;
+    font-family: 'Courier Prime', monospace;
+    letter-spacing: 1px;
+    display: flex; flex-direction: column; align-items: center; gap: 6px;
+}
+.nav-arrow:hover, .nav-arrow.active-press { color: var(--teal); }
+.nav-arrow.active-press { color: var(--teal); opacity: 1; }
+.nav-arrow span { font-size: 9px; letter-spacing: 2px; text-transform: uppercase; }
+#arrow-left  { left: 10px; }
+#arrow-right { right: 10px; }
+.nav-arrow.disabled { opacity: 0.12; pointer-events: none; }
+
+/* ── SCROLL TRACK ── */
+.scroll-track {
+    display: flex;
+    height: 100vh;
+    will-change: transform;
+    transition: transform 0.72s cubic-bezier(0.77,0,0.18,1);
+}
+
+/* ── BASE PANEL ── */
+.panel {
+    width: 100vw;
+    height: 100vh;
+    flex-shrink: 0;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+/* ─────────────────────────────────────────────
+   PANEL 0 · HERO
+───────────────────────────────────────────── */
+.panel-hero { justify-content: flex-end; }
+.panel-hero img {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%; object-fit: cover; object-position: center 30%;
+    filter: brightness(0.48) saturate(0.85);
+    transition: filter 0.8s;
+}
+.panel-hero:hover img { filter: brightness(0.58) saturate(0.95); }
+.hero-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(180deg,
+        rgba(0,0,0,0.2) 0%, transparent 35%,
+        rgba(0,0,0,0.6) 62%, rgba(0,0,0,0.94) 88%, #000 100%);
+}
+.hero-content {
+    position: relative; z-index: 2;
+    padding: 0 clamp(28px,5vw,80px) clamp(40px,5vh,64px);
+}
+.hero-eyebrow {
+    font-size: clamp(9px,0.7vw,11px); letter-spacing: 5px; text-transform: uppercase;
+    color: var(--teal); opacity: 0.85; margin-bottom: 14px;
+}
+.hero-title {
+    font-family: 'Cormorant', Georgia, serif; font-weight: 300;
+    font-size: clamp(52px,9vw,136px); letter-spacing: -2px; line-height: 0.88;
+    color: #fff; margin-bottom: 32px;
+}
+.hero-hint {
+    display: flex; align-items: center; gap: 14px;
+    font-size: 10px; letter-spacing: 3px; text-transform: uppercase;
+    color: rgba(221,216,204,0.3);
+}
+.hint-line { width: 36px; height: 1px; background: rgba(0,200,180,0.35); }
+.hint-arrow { color: var(--teal); opacity: 0.5; animation: nudge 2s ease-in-out infinite; }
+@keyframes nudge { 0%,100%{transform:translateX(0)} 50%{transform:translateX(6px)} }
+
+/* ─────────────────────────────────────────────
+   PANEL 1 · ABOUT
+───────────────────────────────────────────── */
+.panel-about {
+    background: #000;
+    justify-content: center;
+    padding: clamp(70px,9vh,100px) clamp(28px,6vw,100px) clamp(30px,4vh,50px);
+}
+.about-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: clamp(40px,6vw,100px); height: 100%;
+    align-items: center;
+}
+.about-label {
+    font-size: 9px; letter-spacing: 4px; text-transform: uppercase;
+    color: rgba(0,200,180,0.45); margin-bottom: 16px;
+}
+.about-tagline {
+    font-family: 'Cormorant', Georgia, serif; font-weight: 300;
+    font-size: clamp(20px,2.4vw,38px); line-height: 1.25; color: #fff;
+    margin-bottom: 18px;
+}
+.about-tagline em { font-style: italic; color: rgba(0,200,180,0.85); }
+.about-body {
+    font-family: 'Cormorant', Georgia, serif;
+    font-size: clamp(14px,1.05vw,17px); line-height: 1.75; color: var(--muted);
+}
+.meta-table {
+    display: flex; flex-direction: column;
+    border: 1px solid rgba(0,200,180,0.18);
+    height: fit-content;
+}
+.meta-row {
+    padding: clamp(12px,1.5vh,18px) clamp(16px,1.8vw,24px);
+    border-bottom: 1px solid rgba(0,200,180,0.1);
+    background: rgba(0,200,180,0.05);
+    transition: background 0.3s;
+    display: flex; flex-direction: column; gap: 5px;
+}
+.meta-row:last-child { border-bottom: none; }
+.meta-row:hover { background: rgba(0,200,180,0.12); }
+.meta-label {
+    font-size: 8px; letter-spacing: 3px; text-transform: uppercase;
+    color: rgba(0,200,180,0.6);
+}
+.meta-value {
+    font-family: 'Cormorant', Georgia, serif;
+    font-size: clamp(12px,0.9vw,15px); color: var(--cream); line-height: 1.5;
+}
+.meta-tag {
+    font-family: 'Courier Prime', monospace;
+    font-size: 9px; letter-spacing: 1.5px; text-transform: uppercase;
+    color: rgba(0,200,180,0.85);
+}
+.meta-tag::after { content: '  ·  '; color: rgba(0,200,180,0.25); }
+.meta-tag:last-child::after { content: ''; }
+
+/* ─────────────────────────────────────────────
+   PANEL 2 · WHAT I DID
+───────────────────────────────────────────── */
+.panel-roles {
+    background: #000;
+    flex-direction: row;
+}
+.roles-sidebar {
+    width: clamp(180px,20vw,280px); flex-shrink: 0;
+    border-right: 1px solid var(--rule);
+    display: flex; flex-direction: column; justify-content: flex-end;
+    padding: clamp(28px,4vw,52px);
+    background: rgba(0,200,180,0.02);
+}
+.roles-num {
+    font-family: 'Cormorant', Georgia, serif; font-weight: 300;
+    font-size: clamp(70px,11vw,160px); line-height: 0.8; letter-spacing: -6px;
+    color: rgba(0,200,180,0.05); display: block; margin-bottom: 14px;
+}
+.roles-sidebar h2 {
+    font-family: 'Cormorant', Georgia, serif; font-weight: 300;
+    font-size: clamp(20px,2.2vw,34px); color: #fff; margin-bottom: 10px;
+}
+.roles-sidebar p {
+    font-family: 'Cormorant', Georgia, serif;
+    font-size: clamp(12px,0.9vw,15px); line-height: 1.7; color: var(--muted);
+}
+.roles-grid {
+    flex: 1;
+    display: grid; grid-template-columns: repeat(3,1fr); grid-template-rows: repeat(2,1fr);
+    gap: 1px; background: var(--rule);
+}
+.role-item {
+    background: rgba(0,200,180,0.04);
+    padding: clamp(16px,2vh,28px) clamp(16px,1.8vw,24px);
+    display: flex; flex-direction: column; justify-content: flex-start; gap: 8px;
+    transition: background 0.3s;
+}
+.role-item:hover { background: rgba(0,200,180,0.1); }
+.role-item h3 {
+    font-family: 'Cormorant', Georgia, serif; font-weight: 400;
+    font-size: clamp(15px,1.25vw,22px); color: #fff; margin-bottom: 4px;
+}
+.role-item h3::before {
+    content: ''; display: block; width: 14px; height: 1px;
+    background: var(--teal); opacity: 0.45; margin-bottom: 10px;
+}
+.role-item p {
+    font-family: 'Cormorant', Georgia, serif;
+    font-size: clamp(12px,0.95vw,16px); line-height: 1.75; color: var(--muted);
+}
+
+/* ─────────────────────────────────────────────
+   GALLERY PANELS
+───────────────────────────────────────────── */
+.panel-gallery {
+    width: 100vw;
+    background: #000;
+    flex-direction: column;
+    flex-shrink: 0;
+    overflow: hidden;
+}
+
+/* Gallery header - tight vertical alignment */
+.gallery-head {
+    padding: clamp(50px,7vh,72px) clamp(28px,5vw,80px) clamp(8px,1vh,14px);
+    display: flex; align-items: center; gap: 16px; flex-shrink: 0;
+}
+.gallery-num {
+    font-size: 10px; letter-spacing: 2px; color: rgba(0,200,180,0.4);
+    flex-shrink: 0; line-height: 1;
+    /* vertically centered with h2 by align-items:center on parent */
+}
+.gallery-head h2 {
+    font-family: 'Cormorant', Georgia, serif; font-weight: 300;
+    font-size: clamp(22px,2.8vw,46px); letter-spacing: 0.5px; color: #fff;
+    flex-shrink: 0; line-height: 1;
+}
+.gallery-rule {
+    flex: 1; height: 1px;
+    background: linear-gradient(90deg, var(--teal-line), transparent);
+    /* vertically centered by align-items:center on parent */
+}
+.gallery-desc {
+    font-family: 'Cormorant', Georgia, serif;
+    font-size: clamp(12px,0.95vw,15px); line-height: 1.7; color: var(--muted);
+    max-width: 500px; flex-shrink: 0;
+    padding: 0 clamp(28px,5vw,80px) clamp(10px,1.2vh,16px);
+}
+
+/* Horizontal strip of images */
+.gstrip {
+    display: flex; gap: 2px; flex: 1; overflow-x: auto; overflow-y: hidden;
+    padding: 0 clamp(28px,5vw,80px) clamp(16px,2vh,26px);
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    /* allow internal horizontal scroll without triggering panel nav */
+    touch-action: pan-x;
+}
+.gstrip::-webkit-scrollbar { display: none; }
+
+.gitem {
+    position: relative; overflow: hidden; flex-shrink: 0;
+    background: #050a09;
+    height: 100%;
+}
+.gitem img, .gitem video {
+    width: 100%; height: 100%; object-fit: cover; display: block;
+    filter: brightness(0.68) saturate(0.85);
+    transition: filter 0.4s;
+    /* NO transform/scale on hover */
+}
+.gitem:hover img, .gitem:hover video {
+    filter: brightness(0.95) saturate(1.05);
+}
+.gitem.dimmed img, .gitem.dimmed video {
+    filter: brightness(0.22) saturate(0.4);
+}
+.gitem-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(180deg, transparent 55%, rgba(0,0,0,0.65) 100%);
+    opacity: 0; transition: opacity 0.3s;
+    display: flex; align-items: flex-end; padding: 10px 12px;
+}
+.gitem:hover .gitem-overlay { opacity: 1; }
+.gitem-idx { font-size: 9px; letter-spacing: 3px; color: var(--teal); opacity: 0.75; }
+
+/* Aspect ratio helpers */
+.ar-2-3  { aspect-ratio: 2/3; }
+.ar-1-1  { aspect-ratio: 1/1; }
+.ar-9-16 { aspect-ratio: 9/16; }
+.ar-16-9 { aspect-ratio: 16/9; }
+.ar-16-10{ aspect-ratio: 16/10; }
+
+/* Slightly reduced vertical image size */
+.gstrip { max-height: calc(100vh - 155px); }
+
+/* ─────────────────────────────────────────────
+   PANEL · LINKS
+───────────────────────────────────────────── */
+.panel-links {
+    background: #000; justify-content: center;
+    padding: clamp(28px,5vw,80px);
+}
+.links-wrap { display: flex; flex-direction: column; }
+.links-label {
+    font-size: 9px; letter-spacing: 4px; text-transform: uppercase;
+    color: rgba(0,200,180,0.4); margin-bottom: 20px;
+}
+.links-title {
+    font-family: 'Cormorant', Georgia, serif; font-weight: 300;
+    font-size: clamp(32px,5vw,72px); color: #fff; line-height: 0.92;
+    letter-spacing: -1px; margin-bottom: clamp(28px,4vh,48px);
+}
+.link-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: clamp(12px,1.5vh,18px) 0;
+    border-top: 1px solid var(--rule); text-decoration: none;
+    max-width: 520px;
+    transition: border-color 0.3s;
+}
+.link-row:last-child { border-bottom: 1px solid var(--rule); }
+.link-row:hover { border-top-color: rgba(0,200,180,0.3); }
+.link-name {
+    font-family: 'Cormorant', Georgia, serif; font-weight: 300;
+    font-size: clamp(16px,1.8vw,26px); color: rgba(221,216,204,0.55);
+    transition: color 0.3s;
+}
+.link-row:hover .link-name { color: #fff; }
+.link-arrow {
+    font-size: 14px; color: var(--teal);
+    opacity: 0; transition: opacity 0.3s, transform 0.3s;
+}
+.link-row:hover .link-arrow { opacity: 1; transform: translateX(4px); }
+.footer-copy {
+    position: absolute; bottom: 22px; right: clamp(24px,3vw,52px);
+    font-size: 10px; letter-spacing: 2px; color: rgba(255,255,255,0.2);
+}
+.footer-copy span { display: inline-block; transition: color 0.15s; }
+.footer-copy span.cyan { color: var(--teal); }
+
+/* ── LIGHTBOX ── */
+#lightbox {
+    position: fixed; inset: 0; z-index: 100000;
+    background: rgba(0,0,0,0.96);
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0; pointer-events: none; transition: opacity 0.3s;
+}
+#lightbox.open { opacity: 1; pointer-events: all; }
+#lightbox-img {
+    max-width: 88vw; max-height: 88vh; object-fit: contain;
+    opacity: 0; transition: opacity 0.35s;
+    border: 1px solid rgba(0,200,180,0.1);
+}
+#lightbox.open #lightbox-img { opacity: 1; }
+#lightbox-img.fading { opacity: 0 !important; }
+#lb-close {
+    position: fixed; top: 22px; right: 24px;
+    font-family: 'Courier Prime', monospace; font-size: 10px;
+    letter-spacing: 3px; text-transform: uppercase;
+    color: var(--teal); opacity: 0.6; background: none; border: none;
+    transition: opacity 0.2s; cursor: none;
+}
+#lb-close:hover { opacity: 1; }
+.lb-arrow {
+    position: absolute; top: 50%; transform: translateY(-50%);
+    background: none; border: none; font-size: 22px;
+    color: rgba(0,200,180,0.3); transition: color 0.2s; padding: 14px; cursor: none;
+}
+.lb-arrow:hover { color: var(--teal); }
+#lb-prev { left: 20px; } #lb-next { right: 20px; }
+#lb-counter {
+    position: absolute; bottom: 24px; left: 50%; transform: translateX(-50%);
+    font-size: 9px; letter-spacing: 3px; color: rgba(0,200,180,0.4);
+    font-family: 'Courier Prime', monospace;
+}
+    </style>
+</head>
+<body>
+
+<div id="cursor-dot"></div>
+<div id="cursor-ring"></div>
+<div class="hud-tr">v2.0.2<br>STATUS: <span style="color:var(--teal)">ONLINE</span></div>
+<div class="hud-bl">X: <span id="coord-x">0000</span>&nbsp; Y: <span id="coord-y">0000</span></div>
+
+<!-- Corner brackets -->
+<div class="brackets">
+    <div class="bracket tl"></div><div class="bracket tr"></div>
+    <div class="bracket bl"></div><div class="bracket br"></div>
+</div>
+
+<!-- Section Nav -->
+<nav class="section-nav" id="section-nav">
+    <a href="#" data-idx="0">00</a>
+    <a href="#" data-idx="1">01</a>
+    <a href="#" data-idx="2">02</a>
+    <a href="#" data-idx="3">03</a>
+    <a href="#" data-idx="4">04</a>
+    <a href="#" data-idx="5">05</a>
+    <a href="#" data-idx="6">06</a>
+    <a href="#" data-idx="7">07</a>
+    <a href="#" data-idx="8">08</a>
+    <a href="#" data-idx="9">09</a>
+</nav>
+
+<div class="top-bar"><a href="./testing2.html" class="back-link">Back to portfolio</a></div>
+<div class="progress-bar-wrap"><div class="progress-bar-fill" id="progress"></div></div>
+<div class="panel-dots" id="panel-dots"></div>
+
+<!-- Nav arrows -->
+<button class="nav-arrow disabled" id="arrow-left">
+    <span style="font-size:18px;">←</span>
+</button>
+<button class="nav-arrow" id="arrow-right">
+    <span style="font-size:18px;">→</span>
+</button>
+
+<!-- ══════════════════════════════════════════
+     SCROLL TRACK
+═════════════════════════════════════════════ -->
+<div class="scroll-track" id="track">
+
+<!-- 0 · HERO ──────────────────────────────── -->
+<div class="panel panel-hero" data-panel="Intro">
+    <img src="./projects/tea/posters/poster.jpg" alt="" onerror="this.src='./projects/poster.jpg'">
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+        <div class="hero-eyebrow">Brand Development &amp; Digital Design</div>
+        <h1 class="hero-title">Tea and<br>Culture Club</h1>
+        <div class="hero-hint">
+            <div class="hint-line"></div>
+            <span>Scroll or use arrow keys</span>
+            <span class="hint-arrow">→</span>
+        </div>
+    </div>
+</div>
+
+<!-- 1 · ABOUT ─────────────────────────────── -->
+<div class="panel panel-about" data-panel="About">
+    <div class="about-grid">
+        <div class="about-left">
+            <div class="about-label">01 — Overview</div>
+            <h2 class="about-tagline">A year building the visual identity for UW's Tea Club — across <em>print, social, and video.</em></h2>
+            <p class="about-body">I grew the community by 600+ followers, designing event posters, stickers, and weekly content while collaborating with other campus clubs to create a distinctive, recognisable brand presence.</p>
+        </div>
+        <div class="meta-table">
+            <div class="meta-row">
+                <div class="meta-label">Category</div>
+                <div class="meta-value"><span class="meta-tag">Brand Design</span><span class="meta-tag">Social Media</span></div>
+            </div>
+            <div class="meta-row">
+                <div class="meta-label">Timeline</div>
+                <div class="meta-value">2024 – 2025</div>
+            </div>
+            <div class="meta-row">
+                <div class="meta-label">Status</div>
+                <div class="meta-value">Completed</div>
+            </div>
+            <div class="meta-row">
+                <div class="meta-label">Scope</div>
+                <div class="meta-value"><span class="meta-tag">Brand Strategy</span><span class="meta-tag">Social Growth</span><span class="meta-tag">Print</span><span class="meta-tag">Video</span><span class="meta-tag">Community</span></div>
+            </div>
+            <div class="meta-row">
+                <div class="meta-label">Tools</div>
+                <div class="meta-value"><span class="meta-tag">Photoshop</span><span class="meta-tag">Premiere Pro</span><span class="meta-tag">Blender</span><span class="meta-tag">Figma</span><span class="meta-tag">HTML / CSS</span></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 2 · WHAT I DID ───────────────────────── -->
+<div class="panel panel-roles" data-panel="Roles">
+    <div class="roles-sidebar">
+        <span class="roles-num">02</span>
+        <h2>What I Did</h2>
+        <p>Six areas of work across the full brand lifecycle — from social content to physical print collateral.</p>
+    </div>
+    <div class="roles-grid">
+        <div class="role-item">
+            <h3>Weekly Content &amp; Growth</h3>
+            <p>Managed weekly Instagram posts. Grew follower count by 600+ using Blender 3D assets and custom colour gradients.</p>
+        </div>
+        <div class="role-item">
+            <h3>Cross-Club Events</h3>
+            <p>Partnered with Cheese Club and DJ Club for joint events. Curated collaborative playlists to extend the brand beyond visual design.</p>
+        </div>
+        <div class="role-item">
+            <h3>Reels &amp; Video</h3>
+            <p>Produced and edited short-form video for Instagram Reels and stories, shot and cut in-house using Adobe Premiere Pro.</p>
+        </div>
+        <div class="role-item">
+            <h3>Posters &amp; Stickers</h3>
+            <p>Designed 100–200 copies of event posters and pixel art stickers. So well-received other club booths inquired about the design.</p>
+        </div>
+        <div class="role-item">
+            <h3>Visual Identity</h3>
+            <p>Evolved the brand visual language over a year, experimenting with styles and palettes refined on community feedback.</p>
+        </div>
+        <div class="role-item">
+            <h3>Website Assets</h3>
+            <p>Designed website components in Figma and collaborated with executives to bring them to life in HTML / CSS.</p>
+        </div>
+    </div>
+</div>
+
+<!-- 3 · W25 POSTERS ─────────────────────── -->
+<div class="panel panel-gallery" data-panel="W25 Posters">
+    <div class="gallery-head">
+        <span class="gallery-num">03</span>
+        <h2>W25 Event Posters</h2>
+        <div class="gallery-rule"></div>
+    </div>
+    <div class="gallery-desc">Poster-format Instagram posts for Winter 2025, each featuring event timing, campus location, and tea selections.</div>
+    <div class="gstrip" id="strip-posters">
+        <div class="gitem ar-2-3" data-src="./projects/tea/posters/around_the_world.png"><img src="./projects/tea/posters/around_the_world.png" alt=""><div class="gitem-overlay"><span class="gitem-idx">01</span></div></div>
+        <div class="gitem ar-2-3" data-src="./projects/tea/posters/green_teas_2.jpg"><img src="./projects/tea/posters/green_teas_2.jpg" alt=""><div class="gitem-overlay"><span class="gitem-idx">02</span></div></div>
+        <div class="gitem ar-2-3" data-src="./projects/tea/posters/essential_3.jpg"><img src="./projects/tea/posters/essential_3.jpg" alt=""><div class="gitem-overlay"><span class="gitem-idx">03</span></div></div>
+        <div class="gitem ar-2-3" data-src="./projects/tea/posters/steeps_9.jpg"><img src="./projects/tea/posters/steeps_9.jpg" alt=""><div class="gitem-overlay"><span class="gitem-idx">04</span></div></div>
+        <div class="gitem ar-2-3" data-src="./projects/tea/posters/white_teas.jpg"><img src="./projects/tea/posters/white_teas.jpg" alt=""><div class="gitem-overlay"><span class="gitem-idx">05</span></div></div>
+        <div class="gitem ar-2-3" data-src="./projects/tea/posters/calm.jpg"><img src="./projects/tea/posters/calm.jpg" alt=""><div class="gitem-overlay"><span class="gitem-idx">06</span></div></div>
+        <div class="gitem ar-2-3" data-src="./projects/tea/posters/fruit_3.jpg"><img src="./projects/tea/posters/fruit_3.jpg" alt=""><div class="gitem-overlay"><span class="gitem-idx">07</span></div></div>
+        <div class="gitem ar-2-3" data-src="./projects/tea/posters/meet_3_3.jpg"><img src="./projects/tea/posters/meet_3_3.jpg" alt=""><div class="gitem-overlay"><span class="gitem-idx">08</span></div></div>
+        <div class="gitem ar-2-3" data-src="./projects/tea/posters/first_meet.jpg"><img src="./projects/tea/posters/first_meet.jpg" alt=""><div class="gitem-overlay"><span class="gitem-idx">09</span></div></div>
+        <div class="gitem ar-2-3" data-src="./projects/tea/posters/meet_4.jpg"><img src="./projects/tea/posters/meet_4.jpg" alt=""><div class="gitem-overlay"><span class="gitem-idx">10</span></div></div>
+        <div class="gitem ar-2-3" data-src="./projects/tea/posters/latest-Recovered.jpg"><img src="./projects/tea/posters/latest-Recovered.jpg" alt=""><div class="gitem-overlay"><span class="gitem-idx">11</span></div></div>
+        <div class="gitem ar-2-3" data-src="./projects/tea/posters/lastmeet.jpg"><img src="./projects/tea/posters/lastmeet.jpg" alt=""><div class="gitem-overlay"><span class="gitem-idx">12</span></div></div>
+        <div class="gitem ar-2-3" data-src="./projects/tea/posters/7_3_2025.jpg"><img src="./projects/tea/posters/7_3_2025.jpg" alt=""><div class="gitem-overlay"><span class="gitem-idx">13</span></div></div>
+        <div class="gitem ar-2-3" data-src="./projects/tea/posters/meet_5.jpg"><img src="./projects/tea/posters/meet_5.jpg" alt=""><div class="gitem-overlay"><span class="gitem-idx">14</span></div></div>
+        <div class="gitem ar-2-3" data-src="./projects/tea/posters/FINAL.jpg"><img src="./projects/tea/posters/FINAL.jpg" alt=""><div class="gitem-overlay"><span class="gitem-idx">15</span></div></div>
+    </div>
+</div>
+
+<!-- 4 · FLYERS ──────────────────────────── -->
+<div class="panel panel-gallery" data-panel="Flyers">
+    <div class="gallery-head">
+        <span class="gallery-num">04</span>
+        <h2>Flyers</h2>
+        <div class="gallery-rule"></div>
+    </div>
+    <div class="gallery-desc">Full-page flyer designs for event promotion and campus-wide distribution.</div>
+    <div class="gstrip">
+        <div class="gitem ar-2-3" data-src="./projects/tea/posters/poster_9.jpg"><img src="./projects/tea/posters/poster_9.jpg" alt=""><div class="gitem-overlay"><span class="gitem-idx">01</span></div></div>
+        <div class="gitem ar-2-3" data-src="./projects/tea/posters/poster_8.jpg"><img src="./projects/tea/posters/poster_8.jpg" alt=""><div class="gitem-overlay"><span class="gitem-idx">02</span></div></div>
+        <div class="gitem ar-2-3" data-src="./projects/tea/posters/poster_6.jpg"><img src="./projects/tea/posters/poster_6.jpg" alt=""><div class="gitem-overlay"><span class="gitem-idx">03</span></div></div>
+        <div class="gitem ar-2-3" data-src="./projects/tea/posters/poster_1_final.jpg"><img src="./projects/tea/posters/poster_1_final.jpg" alt=""><div class="gitem-overlay"><span class="gitem-idx">04</span></div></div>
+        <div class="gitem ar-2-3" data-src="./projects/tea/posters/poster_new.jpg"><img src="./projects/tea/posters/poster_new.jpg" alt=""><div class="gitem-overlay"><span class="gitem-idx">05</span></div></div>
+        <div class="gitem ar-2-3" data-src="./projects/tea/posters/Story_Post_QR_11.jpg"><img src="./projects/tea/posters/Story_Post_QR_11.jpg" alt=""><div class="gitem-overlay"><span class="gitem-idx">06</span></div></div>
+    </div>
+</div>
+
+<!-- 5 · F24 POSTS ───────────────────────── -->
+<div class="panel panel-gallery" data-panel="F24 Posts">
+    <div class="gallery-head">
+        <span class="gallery-num">05</span>
+        <h2>F24 Event Posts</h2>
+        <div class="gallery-rule"></div>
+    </div>
+    <div class="gallery-desc">Square-format Instagram posts for Fall 2024 weekly sessions.</div>
+    <div class="gstrip">
+        <div class="gitem ar-1-1" data-src="./projects/tea/posters/Week_2_Green_Teas_4.jpg"><img src="./projects/tea/posters/Week_2_Green_Teas_4.jpg" alt=""><div class="gitem-overlay"><span class="gitem-idx">01</span></div></div>
+        <div class="gitem ar-1-1" data-src="./projects/tea/posters/Week_3.jpg"><img src="./projects/tea/posters/Week_3.jpg" alt=""><div class="gitem-overlay"><span class="gitem-idx">02</span></div></div>
+        <div class="gitem ar-1-1" data-src="./projects/tea/posters/Week_4_2.jpg"><img src="./projects/tea/posters/Week_4_2.jpg" alt=""><div class="gitem-overlay"><span class="gitem-idx">03</span></div></div>
+        <div class="gitem ar-1-1" data-src="./projects/tea/posters/Week_8_2.jpg"><img src="./projects/tea/posters/Week_8_2.jpg" alt=""><div class="gitem-overlay"><span class="gitem-idx">04</span></div></div>
+        <div class="gitem ar-1-1" data-src="./projects/tea/posters/become_member-Recovered-Recovered.jpg"><img src="./projects/tea/posters/become_member-Recovered-Recovered.jpg" alt=""><div class="gitem-overlay"><span class="gitem-idx">05</span></div></div>
+        <div class="gitem ar-1-1" data-src="./projects/tea/posters/december.jpg"><img src="./projects/tea/posters/december.jpg" alt=""><div class="gitem-overlay"><span class="gitem-idx">06</span></div></div>
+        <div class="gitem ar-1-1" data-src="./projects/tea/posters/Week_5_10.jpg"><img src="./projects/tea/posters/Week_5_10.jpg" alt=""><div class="gitem-overlay"><span class="gitem-idx">07</span></div></div>
+        <div class="gitem ar-1-1" data-src="./projects/tea/posters/end_of_term.jpg"><img src="./projects/tea/posters/end_of_term.jpg" alt=""><div class="gitem-overlay"><span class="gitem-idx">08</span></div></div>
+        <div class="gitem ar-1-1" data-src="./projects/tea/posters/dominos.jpg"><img src="./projects/tea/posters/dominos.jpg" alt=""><div class="gitem-overlay"><span class="gitem-idx">09</span></div></div>
+        <div class="gitem ar-1-1" data-src="./projects/tea/posters/week_cheese_tea.jpg"><img src="./projects/tea/posters/week_cheese_tea.jpg" alt=""><div class="gitem-overlay"><span class="gitem-idx">10</span></div></div>
+        <div class="gitem ar-1-1" data-src="./projects/tea/posters/week_2_oolong_14.jpg"><img src="./projects/tea/posters/week_2_oolong_14.jpg" alt=""><div class="gitem-overlay"><span class="gitem-idx">11</span></div></div>
+        <div class="gitem ar-1-1" data-src="./projects/tea/posters/week_1_spices.jpg"><img src="./projects/tea/posters/week_1_spices.jpg" alt=""><div class="gitem-overlay"><span class="gitem-idx">12</span></div></div>
+    </div>
+</div>
+
+<!-- 6 · BRAND ASSETS ────────────────────── -->
+<div class="panel panel-gallery" data-panel="Brand Assets">
+    <div class="gallery-head">
+        <span class="gallery-num">06</span>
+        <h2>Infographics &amp; Brand Assets</h2>
+        <div class="gallery-rule"></div>
+    </div>
+    <div class="gallery-desc">Sticker designs, Spotify artwork, infographics, and promotional brand graphics.</div>
+    <div class="gstrip">
+        <div class="gitem ar-1-1" data-src="./projects/tea/socials/meet_execs_F24_1.jpg"><img src="./projects/tea/socials/meet_execs_F24_1.jpg" alt=""><div class="gitem-overlay"><span class="gitem-idx">01</span></div></div>
+        <div class="gitem ar-1-1" data-src="./projects/tea/socials/become_member.jpg"><img src="./projects/tea/socials/become_member.jpg" alt=""><div class="gitem-overlay"><span class="gitem-idx">02</span></div></div>
+        <div class="gitem ar-1-1" data-src="./projects/tea/socials/main.jpg"><img src="./projects/tea/socials/main.jpg" alt=""><div class="gitem-overlay"><span class="gitem-idx">03</span></div></div>
+        <div class="gitem ar-1-1" data-src="./projects/tea/socials/main_link_QR.jpg"><img src="./projects/tea/socials/main_link_QR.jpg" alt=""><div class="gitem-overlay"><span class="gitem-idx">04</span></div></div>
+        <div class="gitem ar-1-1" data-src="./projects/tea/socials/meet_5.png"><img src="./projects/tea/socials/meet_5.png" alt=""><div class="gitem-overlay"><span class="gitem-idx">05</span></div></div>
+        <div class="gitem ar-1-1" data-src="./projects/tea/socials/member_2.png"><img src="./projects/tea/socials/member_2.png" alt=""><div class="gitem-overlay"><span class="gitem-idx">06</span></div></div>
+        <div class="gitem ar-1-1" data-src="./projects/tea/socials/Sticker_1_rim_final_2.jpg"><img src="./projects/tea/socials/Sticker_1_rim_final_2.jpg" alt=""><div class="gitem-overlay"><span class="gitem-idx">07</span></div></div>
+        <div class="gitem ar-1-1" data-src="./projects/tea/socials/sticker_5.png"><img src="./projects/tea/socials/sticker_5.png" alt=""><div class="gitem-overlay"><span class="gitem-idx">08</span></div></div>
+        <div class="gitem ar-1-1" data-src="./projects/tea/socials/sticker_9.png"><img src="./projects/tea/socials/sticker_9.png" alt=""><div class="gitem-overlay"><span class="gitem-idx">09</span></div></div>
+        <div class="gitem ar-1-1" data-src="./projects/tea/socials/Tea_Club_Playlist.jpg"><img src="./projects/tea/socials/Tea_Club_Playlist.jpg" alt=""><div class="gitem-overlay"><span class="gitem-idx">10</span></div></div>
+    </div>
+</div>
+
+<!-- 7 · REELS ───────────────────────────── -->
+<div class="panel panel-gallery" data-panel="Reels">
+    <div class="gallery-head">
+        <span class="gallery-num">07</span>
+        <h2>Reels &amp; Video</h2>
+        <div class="gallery-rule"></div>
+    </div>
+    <div class="gallery-desc">Short-form video for Instagram Reels and stories. Hover to play.</div>
+    <div class="gstrip">
+        <div class="gitem ar-9-16"><video src="./projects/tea/videos/Automatic.mp4" loop muted playsinline onmouseenter="this.play()" onmouseleave="this.pause();this.currentTime=0;"></video><div class="gitem-overlay"><span class="gitem-idx">01</span></div></div>
+        <div class="gitem ar-9-16"><video src="./projects/tea/videos/reel_3_2.mp4" loop muted playsinline onmouseenter="this.play()" onmouseleave="this.pause();this.currentTime=0;"></video><div class="gitem-overlay"><span class="gitem-idx">02</span></div></div>
+        <div class="gitem ar-9-16"><video src="./projects/tea/videos/reel_1_1.mp4" loop muted playsinline onmouseenter="this.play()" onmouseleave="this.pause();this.currentTime=0;"></video><div class="gitem-overlay"><span class="gitem-idx">03</span></div></div>
+        <div class="gitem ar-9-16"><video src="./projects/tea/videos/reminder_4.mp4" loop muted playsinline onmouseenter="this.play()" onmouseleave="this.pause();this.currentTime=0;"></video><div class="gitem-overlay"><span class="gitem-idx">04</span></div></div>
+        <div class="gitem ar-9-16"><video src="./projects/tea/videos/reminder_7.mp4" loop muted playsinline onmouseenter="this.play()" onmouseleave="this.pause();this.currentTime=0;"></video><div class="gitem-overlay"><span class="gitem-idx">05</span></div></div>
+        <div class="gitem ar-9-16"><video src="./projects/tea/videos/tea_bag_trimmed.mp4" loop muted playsinline onmouseenter="this.play()" onmouseleave="this.pause();this.currentTime=0;"></video><div class="gitem-overlay"><span class="gitem-idx">06</span></div></div>
+    </div>
+</div>
+
+<!-- 8 · WEBSITE ─────────────────────────── -->
+<div class="panel panel-gallery" data-panel="Website">
+    <div class="gallery-head">
+        <span class="gallery-num">08</span>
+        <h2>Website Design</h2>
+        <div class="gallery-rule"></div>
+    </div>
+    <div class="gallery-desc">Figma designs built in HTML / CSS, in collaboration with club executives.</div>
+    <div class="gstrip">
+        <div class="gitem ar-16-10" data-src="./projects/tea/1.PNG"><img src="./projects/tea/1.PNG" alt=""><div class="gitem-overlay"><span class="gitem-idx">Landing Page</span></div></div>
+        <div class="gitem ar-16-10" data-src="./projects/tea/2.PNG"><img src="./projects/tea/2.PNG" alt=""><div class="gitem-overlay"><span class="gitem-idx">Pricing Tiers</span></div></div>
+        <div class="gitem ar-16-10" data-src="./projects/tea/3.PNG"><img src="./projects/tea/3.PNG" alt=""><div class="gitem-overlay"><span class="gitem-idx">Photo Gallery</span></div></div>
+        <div class="gitem ar-16-10" data-src="./projects/tea/4.PNG"><img src="./projects/tea/4.PNG" alt=""><div class="gitem-overlay"><span class="gitem-idx">Team Section</span></div></div>
+    </div>
+</div>
+
+<!-- 9 · LINKS ───────────────────────────── -->
+<div class="panel panel-links" data-panel="Links">
+    <div class="links-wrap">
+        <div class="links-label">09 — Links</div>
+        <h2 class="links-title">See the<br>work live.</h2>
+        <div>
+            <a href="https://www.instagram.com/uwtea/" target="_blank" class="link-row"><span class="link-name">Instagram</span><span class="link-arrow">↗</span></a>
+            <a href="https://wusa.ca/product/uw-tea-and-culture-club/" target="_blank" class="link-row"><span class="link-name">WUSA Club Directory</span><span class="link-arrow">↗</span></a>
+            <a href="https://tea.imkunal.ca/" target="_blank" class="link-row"><span class="link-name">Club Website</span><span class="link-arrow">↗</span></a>
+            <a href="https://www.figma.com/proto/qmmRfvGPG8AZ97fc8kJj19/UW-Tea-Club-Brand-and-Website-Development?node-id=0-1&t=UzZKTCZ80NfZgzmJ-1" target="_blank" class="link-row"><span class="link-name">Figma Prototype</span><span class="link-arrow">↗</span></a>
+            <a href="testing2.html" class="link-row"><span class="link-name">← Return to Projects</span><span class="link-arrow"></span></a>
+        </div>
+    </div>
+    <div class="footer-copy" id="copyright-text">© 2026 anoaeyto</div>
+</div>
+
+</div><!-- /track -->
+
+<!-- LIGHTBOX -->
+<div id="lightbox">
+    <img id="lightbox-img" src="" alt="">
+    <button class="lb-arrow" id="lb-prev">←</button>
+    <button class="lb-arrow" id="lb-next">→</button>
+    <div id="lb-counter"><span id="lb-cur">1</span> / <span id="lb-tot">1</span></div>
+    <button id="lb-close">close ×</button>
+</div>
+
+<script>
+/* ── CURSOR ── */
+(function(){
+    const dot=document.getElementById('cursor-dot'),ring=document.getElementById('cursor-ring');
+    let mx=0,my=0,rx=0,ry=0;
+    document.addEventListener('mousemove',e=>{
+        mx=e.clientX;my=e.clientY;
+        dot.style.left=mx+'px';dot.style.top=my+'px';
+        document.getElementById('coord-x').textContent=String(mx).padStart(4,'0');
+        document.getElementById('coord-y').textContent=String(my).padStart(4,'0');
+    });
+    (function loop(){rx+=(mx-rx)*0.1;ry+=(my-ry)*0.1;ring.style.left=rx+'px';ring.style.top=ry+'px';requestAnimationFrame(loop);})();
+    document.querySelectorAll('a,button,.gitem,.meta-row,.role-item,.link-row,.section-nav a').forEach(el=>{
+        el.addEventListener('mouseenter',()=>ring.classList.add('expanded'));
+        el.addEventListener('mouseleave',()=>ring.classList.remove('expanded'));
+    });
+})();
+
+/* ── HORIZONTAL ENGINE ── */
+(function(){
+    const track=document.getElementById('track');
+    const panels=Array.from(track.children);
+    const dotsEl=document.getElementById('panel-dots');
+    const progress=document.getElementById('progress');
+    const navLinks=document.querySelectorAll('.section-nav a');
+    const arrowLeft=document.getElementById('arrow-left');
+    const arrowRight=document.getElementById('arrow-right');
+    let cur=0, lbOpen=false;
+
+    // Build dots
+    panels.forEach((_,i)=>{
+        const d=document.createElement('div');
+        d.className='panel-dot'+(i===0?' active':'');
+        d.addEventListener('click',()=>goTo(i));
+        dotsEl.appendChild(d);
+    });
+    const dots=dotsEl.querySelectorAll('.panel-dot');
+
+    function offsetOf(i){
+        let x=0;
+        for(let j=0;j<i;j++) x+=panels[j].getBoundingClientRect().width||window.innerWidth;
+        return x;
+    }
+
+    function updateArrows(){
+        arrowLeft.classList.toggle('disabled', cur===0);
+        arrowRight.classList.toggle('disabled', cur===panels.length-1);
+    }
+
+    function updateSectionNav(i){
+        navLinks.forEach((a,j)=>{
+            a.classList.toggle('active', j===i);
+        });
+    }
+
+    function goTo(i){
+        if(lbOpen)return;
+        i=Math.max(0,Math.min(panels.length-1,i));
+        cur=i;
+        const px=offsetOf(i);
+        track.style.transform=`translateX(${-px}px)`;
+        dots.forEach((d,j)=>d.classList.toggle('active',j===i));
+        const total=offsetOf(panels.length);
+        const pct=(px/Math.max(1,total-window.innerWidth))*100;
+        progress.style.width=Math.min(100,pct)+'%';
+        updateArrows();
+        updateSectionNav(i);
+    }
+
+    // Arrow button clicks with flash highlight
+    arrowLeft.addEventListener('click',()=>{
+        arrowLeft.classList.add('active-press');
+        setTimeout(()=>arrowLeft.classList.remove('active-press'),300);
+        goTo(cur-1);
+    });
+    arrowRight.addEventListener('click',()=>{
+        arrowRight.classList.add('active-press');
+        setTimeout(()=>arrowRight.classList.remove('active-press'),300);
+        goTo(cur+1);
+    });
+
+    // Section nav clicks
+    navLinks.forEach((a,i)=>{
+        a.addEventListener('click',e=>{
+            e.preventDefault();
+            goTo(i);
+        });
+    });
+
+    // Wheel — only navigate if the gstrip isn't scrollable / at edge
+    let wLock=false;
+    window.addEventListener('wheel',e=>{
+        if(lbOpen)return;
+
+        // Check if cursor is over a gstrip with scrollable content
+        const target = e.target;
+        const strip = target.closest ? target.closest('.gstrip') : null;
+        if(strip){
+            const atLeft  = strip.scrollLeft <= 0;
+            const atRight = strip.scrollLeft >= (strip.scrollWidth - strip.clientWidth - 2);
+            // If scrolling horizontally inside strip, let it scroll
+            if(Math.abs(e.deltaX) > Math.abs(e.deltaY)){
+                // horizontal scroll inside strip — don't navigate panels
+                return;
+            }
+            // Vertical wheel: navigate panels only at strip edges
+            if(e.deltaY > 0 && !atRight) return;
+            if(e.deltaY < 0 && !atLeft) return;
+        }
+
+        e.preventDefault();
+        if(wLock)return; wLock=true; setTimeout(()=>wLock=false,600);
+        goTo(cur+(e.deltaY>0||e.deltaX>0?1:-1));
+    },{passive:false});
+
+    // Keys
+    document.addEventListener('keydown',e=>{
+        if(lbOpen){
+            if(e.key==='Escape')closeLb();
+            if(e.key==='ArrowLeft')lbStep(-1);
+            if(e.key==='ArrowRight')lbStep(1);
+            return;
+        }
+        if(e.key==='ArrowRight'||e.key==='ArrowDown'){
+            arrowRight.classList.add('active-press');
+            setTimeout(()=>arrowRight.classList.remove('active-press'),300);
+            goTo(cur+1);
+        }
+        if(e.key==='ArrowLeft'||e.key==='ArrowUp'){
+            arrowLeft.classList.add('active-press');
+            setTimeout(()=>arrowLeft.classList.remove('active-press'),300);
+            goTo(cur-1);
+        }
+    });
+
+    // Touch
+    let tx=null;
+    window.addEventListener('touchstart',e=>{tx=e.touches[0].clientX;});
+    window.addEventListener('touchend',e=>{
+        if(tx===null)return;
+        const dx=tx-e.changedTouches[0].clientX;
+        if(Math.abs(dx)>40)goTo(cur+(dx>0?1:-1));
+        tx=null;
+    });
+
+    window._setLb=v=>{lbOpen=v;};
+    goTo(0);
+    updateArrows();
+})();
+
+/* ── GALLERY HOVER DIM (dim siblings, no scale) ── */
+document.querySelectorAll('.gstrip').forEach(strip=>{
+    const items=strip.querySelectorAll('.gitem');
+    items.forEach(item=>{
+        item.addEventListener('mouseenter',()=>items.forEach(s=>{if(s!==item)s.classList.add('dimmed');}));
+        item.addEventListener('mouseleave',()=>items.forEach(s=>s.classList.remove('dimmed')));
+    });
+});
+
+/* ── LIGHTBOX ── */
+(function(){
+    const lb=document.getElementById('lightbox');
+    const img=document.getElementById('lightbox-img');
+    const cur=document.getElementById('lb-cur');
+    const tot=document.getElementById('lb-tot');
+    let items=[],idx=0,busy=false;
+
+    function open(el){
+        const strip=el.closest('.gstrip');
+        items=strip?Array.from(strip.querySelectorAll('.gitem[data-src]')):[];
+        idx=items.indexOf(el);
+        tot.textContent=items.length||1; cur.textContent=idx+1;
+        img.style.opacity='0'; img.src=el.dataset.src||'';
+        lb.classList.add('open'); window._setLb(true);
+        const show=()=>{img.style.transition='opacity 0.35s';img.style.opacity='1';};
+        img.complete&&img.naturalWidth?show():(img.onload=show,img.onerror=show);
+        navVis();
+    }
+    function close(){lb.classList.remove('open');window._setLb(false);setTimeout(()=>{img.src='';img.style.opacity='0';img.style.transition='';},300);}
+    function step(dir){
+        if(busy||!items.length)return; busy=true;
+        img.classList.add('fading');
+        setTimeout(()=>{
+            idx=((idx+dir)%items.length+items.length)%items.length;
+            img.src=items[idx].dataset.src||''; cur.textContent=idx+1;
+            const show=()=>{img.classList.remove('fading');setTimeout(()=>busy=false,250);};
+            img.complete&&img.naturalWidth?setTimeout(show,0):(img.onload=show,img.onerror=show);
+            navVis();
+        },180);
+    }
+    function navVis(){
+        document.getElementById('lb-prev').style.display=items.length>1?'block':'none';
+        document.getElementById('lb-next').style.display=items.length>1?'block':'none';
+    }
+    window.closeLb=close; window.lbStep=step;
+    document.querySelectorAll('.gitem[data-src]').forEach(el=>el.addEventListener('click',()=>open(el)));
+    document.getElementById('lb-prev').addEventListener('click',e=>{e.stopPropagation();step(-1);});
+    document.getElementById('lb-next').addEventListener('click',e=>{e.stopPropagation();step(1);});
+    document.getElementById('lb-close').addEventListener('click',close);
+    lb.addEventListener('click',e=>{if(e.target===lb)close();});
+})();
+
+/* ── FOOTER ANIMATION ── */
+(function(){
+    const el=document.getElementById('copyright-text'); if(!el)return;
+    el.innerHTML=el.textContent.split('').map(c=>`<span>${c}</span>`).join('');
+    const ch=el.querySelectorAll('span'); let a=false;
+    function run(){if(a)return;a=true;let i=0;const t=setInterval(()=>{if(i<ch.length){if(i>0)ch[i-1].classList.remove('cyan');ch[i].classList.add('cyan');i++;}else{ch[ch.length-1].classList.remove('cyan');clearInterval(t);a=false;setTimeout(run,7000);}},480);}
+    setTimeout(run,2000);
+})();
+</script>
+</body>
+</html>

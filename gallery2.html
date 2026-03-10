@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gallery — anoaeyto</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,300;0,400;1,300;1,400&family=Courier+Prime:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
+    <style>
+
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; user-select:none; }
+
+:root {
+    --teal:      #00c8b4;
+    --teal-line: rgba(0,200,180,0.2);
+    --cream:     #ddd8cc;
+    --bg:        #000;
+    --orange:    #c85a28;
+}
+
+html { scroll-behavior:smooth; }
+body {
+    background:var(--bg); color:var(--cream);
+    font-family:'Courier Prime', monospace;
+    overflow-x:hidden; overflow-y:auto;
+    opacity:0; animation:fadeBody 0.5s ease forwards;
+    cursor:none;
+}
+@keyframes fadeBody { to { opacity:1; } }
+
+body::before {
+    content:''; position:fixed; inset:0; z-index:9999; pointer-events:none;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='6' height='6'%3E%3Crect width='6' height='6' fill='none'/%3E%3Crect x='0.5' y='0.5' width='5' height='5' fill='none' stroke='rgba(0%2C200%2C180%2C0.07)' stroke-width='0.4'/%3E%3Crect x='1.5' y='1.5' width='3' height='3' fill='rgba(0%2C200%2C180%2C0.018)'/%3E%3C/svg%3E");
+    background-size:6px 6px;
+}
+a, button { cursor:none; }
+
+/* CURSOR */
+#cursor-dot {
+    position:fixed; width:5px; height:5px; background:var(--teal);
+    border-radius:50%; pointer-events:none; z-index:99999;
+    transform:translate(-50%,-50%); transition:background 0.2s;
+}
+#cursor-dot.on-interactive { background:var(--orange); }
+#cursor-ring {
+    position:fixed; width:22px; height:22px;
+    border:1px solid rgba(0,200,180,0.45); border-radius:50%;
+    pointer-events:none; z-index:99998; transform:translate(-50%,-50%);
+    transition:width 0.18s, height 0.18s, border-color 0.18s;
+}
+#cursor-ring.expanded { width:34px; height:34px; border-color:rgba(0,200,180,0.9); }
+#cursor-ring.on-interactive { border-color:rgba(200,90,40,0.85); }
+
+/* HUD */
+.hud-tr {
+    position:fixed; top:clamp(24px,2.5vw,40px); right:24px;
+    font-size:clamp(8px,0.65vw,13px); letter-spacing:2px; line-height:1.9;
+    color:var(--teal); opacity:0.45; z-index:9000; pointer-events:none; text-align:right;
+}
+@keyframes swirlGlow {
+    0%,100% { text-shadow:0 0 4px rgba(0,200,180,0.9),0 0 10px rgba(0,200,180,0.35); opacity:0.85; }
+    50%      { text-shadow:0 0 6px rgba(0,220,200,1),0 0 14px rgba(0,200,180,0.55); opacity:1; }
+}
+.status-online { animation:swirlGlow 3.4s ease-in-out infinite; color:var(--teal); }
+.hud-bl {
+    position:fixed; bottom:20px; left:24px;
+    font-size:clamp(8px,0.65vw,13px); letter-spacing:2px;
+    color:var(--teal); opacity:0.45; z-index:9000; pointer-events:none;
+}
+
+/* BRACKETS */
+.brackets { position:fixed; inset:0; pointer-events:none; z-index:9001; }
+.bracket  { position:absolute; width:28px; height:28px; }
+.bracket.tl { top:14px;    left:14px;  border-top:1px solid var(--teal-line); border-left:1px solid var(--teal-line); }
+.bracket.tr { top:14px;    right:14px; border-top:1px solid var(--teal-line); border-right:1px solid var(--teal-line); }
+.bracket.bl { bottom:14px; left:14px;  border-bottom:1px solid var(--teal-line); border-left:1px solid var(--teal-line); }
+.bracket.br { bottom:14px; right:14px; border-bottom:1px solid var(--teal-line); border-right:1px solid var(--teal-line); }
+
+/* TOP BAR */
+#top-bar {
+    position:fixed; top:0; left:0; right:0; z-index:500;
+    padding:clamp(20px,2.5vh,32px) clamp(28px,4vw,60px);
+    padding-right:clamp(160px,14vw,220px);
+    display:flex; align-items:center; justify-content:space-between;
+    background:linear-gradient(to bottom, rgba(0,0,0,0.85) 0%, transparent 100%);
+    pointer-events:none;
+}
+.back-link {
+    display:inline-flex; align-items:center; gap:8px;
+    font-size:clamp(9px,0.8vw,13px); letter-spacing:3px; text-transform:uppercase;
+    color:rgba(255,255,255,0.6); text-decoration:none;
+    transition:color 0.25s; pointer-events:all;
+}
+.back-link::before { content:'←'; opacity:0.7; transition:opacity 0.25s; }
+.back-link:hover { color:#fff; }
+.back-link:hover::before { opacity:1; }
+.gallery-switcher {
+    display:flex; align-items:center; gap:clamp(14px,2vw,28px);
+    pointer-events:all;
+}
+.gsw-label {
+    font-size:clamp(8px,0.65vw,11px); letter-spacing:3px; text-transform:uppercase;
+    color:var(--teal); opacity:0.55; pointer-events:none;
+    padding-right:8px; border-right:1px solid rgba(0,200,180,0.2);
+}
+.gsw-link {
+    font-size:clamp(9px,0.8vw,13px); letter-spacing:3px; text-transform:uppercase;
+    color:rgba(255,255,255,0.6); text-decoration:none;
+    transition:color 0.25s; position:relative; padding-bottom:3px;
+}
+.gsw-link::after {
+    content:''; position:absolute; bottom:0; left:0;
+    width:0; height:1px; background:var(--teal); transition:width 0.3s;
+}
+.gsw-link:hover { color:#fff; }
+.gsw-link:hover::after { width:100%; }
+
+/* PAGE */
+.page-content {
+    padding-top:clamp(90px,11vh,130px);
+    padding-bottom:clamp(80px,10vh,120px);
+}
+
+/* GALLERY HEADER */
+.gallery-header {
+    display:flex; align-items:flex-end; justify-content:space-between;
+    padding:0 clamp(16px,3vw,48px) clamp(20px,3vh,32px);
+}
+.gallery-header-left { display:flex; flex-direction:column; gap:7px; }
+.gallery-eyebrow {
+    font-size:clamp(8px,0.7vw,13px); letter-spacing:3px; text-transform:uppercase;
+    color:var(--teal); opacity:0.75;
+}
+.gallery-title {
+    font-family:'Cormorant', Georgia, serif;
+    font-weight:300; font-size:clamp(20px,2.5vw,48px);
+    letter-spacing:4px; line-height:1; color:#fff;
+}
+.gallery-desc {
+    font-size:clamp(8px,0.7vw,13px); letter-spacing:3px; text-transform:uppercase;
+    color:rgba(220,216,204,0.7); margin-top:2px;
+    display:flex; align-items:center; gap:10px;
+}
+.gallery-desc-dot {
+    width:3px; height:3px; border-radius:50%;
+    background:rgba(220,216,204,0.4); flex-shrink:0;
+}
+.gallery-count {
+    font-size:clamp(8px,0.65vw,13px); letter-spacing:2px;
+    color:var(--teal); opacity:0.75; font-family:'Courier Prime', monospace;
+}
+
+.masonry-grid {
+    columns:4;
+    column-gap:12px;
+    padding:0 clamp(16px,3vw,48px);
+}
+.grid-item {
+    position:relative;
+    break-inside:avoid;
+    margin-bottom:12px;
+    overflow:hidden;
+    background:#080f0e;
+    display:block;
+}
+.grid-item img {
+    width:100%; height:auto;
+    display:block;
+    filter:brightness(0.72) saturate(0.85);
+    transition:filter 0.4s ease;
+}
+.grid-item:hover img { filter:brightness(0.92) saturate(1.1); }
+
+.grid-overlay {
+    position:absolute; inset:0; pointer-events:none;
+    display:flex; align-items:flex-end; justify-content:flex-end;
+    padding:10px;
+    background:linear-gradient(to top, rgba(0,0,0,0.5) 0%, transparent 40%);
+    opacity:0; transition:opacity 0.3s ease;
+}
+.grid-item:hover .grid-overlay { opacity:1; }
+.grid-idx {
+    font-size:clamp(8px,0.6vw,10px); letter-spacing:3px;
+    color:var(--teal); opacity:0.7; font-family:'Courier Prime', monospace;
+}
+
+/* BOTTOM GLOW */
+body::after {
+    content:''; position:fixed; bottom:0; left:0; right:0; height:60vh;
+    pointer-events:none; z-index:1;
+    background:
+        radial-gradient(ellipse 60vw 50vh at 80% 120%, rgba(0,200,180,0.1) 0%, transparent 70%),
+        radial-gradient(ellipse 40vw 35vh at 95% 115%, rgba(0,200,180,0.07) 0%, transparent 70%),
+        radial-gradient(ellipse 30vw 25vh at 65% 120%, rgba(0,200,180,0.05) 0%, transparent 70%);
+}
+footer {
+    position:fixed; bottom:0; right:0; z-index:600; pointer-events:none;
+    padding:clamp(18px,2.5vh,28px) clamp(20px,4vw,80px);
+}
+.footer-copy { font-size:clamp(7px,0.65vw,11px); letter-spacing:2px; color:rgba(255,255,255,0.2); }
+.footer-copy span.cyan { color:var(--teal); }
+
+/* LIGHTBOX */
+#lightbox {
+    position:fixed; inset:0; z-index:10000;
+    background:rgba(0,0,0,0.96);
+    display:flex; align-items:center; justify-content:center;
+    opacity:0; pointer-events:none; transition:opacity 0.4s ease;
+}
+#lightbox.open { opacity:1; pointer-events:all; }
+#lightbox-backdrop { position:absolute; inset:0; z-index:1; }
+#lightbox-inner {
+    position:relative; z-index:2;
+    display:inline-flex; align-items:center; justify-content:center;
+}
+#lightbox-img {
+    display:block; max-width:88vw; max-height:88vh;
+    object-fit:contain; pointer-events:all;
+    opacity:0; transition:opacity 0.45s ease;
+}
+#lightbox.open #lightbox-img { opacity:1; }
+
+/* Close button: fixed to viewport top-right, above the image */
+#lb-close {
+    position:fixed; top:6px; right:6px; z-index:10003;
+    background:transparent; border:none; font-family:'Courier Prime', monospace;
+    font-size:clamp(8px,0.7vw,11px); letter-spacing:3px; text-transform:uppercase;
+    color:var(--teal); opacity:0.6; transition:opacity 0.2s; padding:6px;
+    display:none;
+}
+#lightbox.open ~ * #lb-close,
+#lb-close { display:none; }
+#lightbox.open #lb-close { display:block; }
+#lb-close:hover { opacity:1; }
+
+.lb-arrow {
+    position:absolute; top:50%; transform:translateY(-50%);
+    z-index:3; background:transparent; border:none;
+    padding:16px 12px; font-family:'Courier Prime', monospace;
+    font-size:clamp(14px,1.4vw,20px);
+    color:rgba(0,200,180,0.3); transition:color 0.2s; line-height:1;
+}
+.lb-arrow:hover { color:var(--teal); }
+.lb-arrow.prev { left:-44px; }
+.lb-arrow.next { right:-44px; }
+#lb-counter {
+    position:absolute; bottom:-26px; left:50%; transform:translateX(-50%);
+    z-index:3; font-size:clamp(8px,0.65vw,11px); letter-spacing:3px;
+    color:rgba(0,200,180,0.4); white-space:nowrap;
+}
+
+    </style>
+</head>
+<body>
+
+<div id="cursor-dot"></div>
+<div id="cursor-ring"></div>
+<div class="hud-tr">v2.0.1<br>STATUS: <span class="status-online">ONLINE</span></div>
+<div class="hud-bl">X: <span id="coord-x">0000</span> &nbsp;Y: <span id="coord-y">0000</span></div>
+<div class="brackets">
+    <div class="bracket tl"></div><div class="bracket tr"></div>
+    <div class="bracket bl"></div><div class="bracket br"></div>
+</div>
+
+<div id="top-bar">
+    <a href="./testing2.html" class="back-link">Back to portfolio</a>
+    <nav class="gallery-switcher" id="gallery-switcher">
+        <span class="gsw-label">Other Galleries</span>
+    </nav>
+</div>
+
+<div class="page-content">
+    <div class="gallery-header">
+        <div class="gallery-header-left">
+            <div class="gallery-eyebrow" id="gal-eyebrow">Gallery</div>
+            <div class="gallery-title"   id="gal-title">—</div>
+            <div class="gallery-desc">
+                <span id="gal-desc">—</span>
+                <span class="gallery-desc-dot"></span>
+                <span class="gallery-count" id="gal-count"></span>
+            </div>
+        </div>
+    </div>
+    <div class="masonry-grid" id="masonry-grid"></div>
+</div>
+
+<footer>
+    <div class="footer-copy" id="copyright-text">© 2026 anoaeyto</div>
+</footer>
+
+<div id="lightbox">
+    <div id="lightbox-backdrop"></div>
+    <div id="lightbox-inner">
+        <img id="lightbox-img" src="" alt="">
+        <button class="lb-arrow prev" id="lb-prev">&#8592;</button>
+        <button class="lb-arrow next" id="lb-next">&#8594;</button>
+        <div id="lb-counter"><span id="lb-cur">1</span>&thinsp;/&thinsp;<span id="lb-tot">1</span></div>
+    </div>
+    <button id="lb-close">close</button>
+</div>
+
+<script>
+if (history.scrollRestoration) history.scrollRestoration = 'manual';
+window.scrollTo(0, 0);
+
+const galleryData = {
+    'gallery-04': {
+        title:'Abstract Exploration', category:'Abstract', desc:'Digital Art · Ongoing',
+        images:['gallery/abstract/june_12_50_comp.jpg','gallery/abstract/sept_6_3_comp.jpg','gallery/abstract/july_24_10_comp.jpg','gallery/abstract/June_7_11_comp.jpg','gallery/abstract/june_3_10_comp.jpg','gallery/abstract/july_1_1_comp.jpg','gallery/abstract/june_8_25_comp.jpg','gallery/abstract/cool donut 1_comp.jpg','gallery/abstract/dec_27_1_comp.jpg','gallery/abstract/June_7_1_comp.jpg','gallery/abstract/june_12_42_comp.jpg','gallery/abstract/may_29_35_comp.jpg','gallery/abstract/june_12_86_comp.jpg','gallery/abstract/june_6_1_comp.jpg','gallery/abstract/june_12_75_comp.jpg','gallery/abstract/bg1_comp.png','gallery/abstract/sept_14_1_comp.jpg','gallery/abstract/4_comp.jpg','gallery/abstract/Untitled_comp.png','gallery/abstract/june_9_37_comp.jpg','gallery/abstract/june_3_28 - Copy_comp.jpg','gallery/abstract/s041_comp.png','gallery/abstract/june_12_12_comp.jpg','gallery/abstract/july_4_5_comp.jpg','gallery/abstract/june_3_2_comp.jpg','gallery/abstract/Screenshot 2025-05-27 2010521_comp.jpg','gallery/abstract/oct_5_2_comp.jpg','gallery/abstract/Screenshot 2025-05-27 201051_comp.jpg','gallery/abstract/Untitled_3_comp.png','gallery/abstract/time1_comp.jpg','gallery/abstract/june_8_31_comp.jpg','gallery/abstract/12_16_2025_1_comp.png','gallery/abstract/Untitled_2_comp.png','gallery/abstract/july_24_5_comp.jpg','gallery/abstract/may_28_42_comp.jpg','gallery/abstract/sept_6_15_comp.jpg','gallery/abstract/june_5_1_comp.jpg','gallery/abstract/sept_6_11_comp.jpg','gallery/abstract/cubes_comp.png','gallery/abstract/june_12_5_comp.jpg']
+    },
+    'gallery-05': {
+        title:'Environment Design', category:'Environment', desc:'Digital Art · Ongoing',
+        images:['gallery/environment/planeyts.png','gallery/environment/test3.png','gallery/environment/12_12_2025_10.png','gallery/environment/humpty_dumpty.png']
+    },
+    'gallery-06': {
+        title:'Character Design', category:'Character', desc:'Mixed · Ongoing',
+        images:['gallery/character/flame.jpg','gallery/character/june_21_46.jpg','gallery/character/july_26_bird.png','gallery/character/HD_1.jpg','gallery/character/july_6_13.jpg','gallery/character/dude_1.jpg','gallery/character/unwritten_2.png','gallery/character/untitled - Copy.png','gallery/character/june_21_57.jpg','gallery/character/image (19).PNG','gallery/character/dog4.jpg','gallery/character/june_15_1.jpg','gallery/character/Sprite-0001.png']
+    },
+    'gallery-07': {
+        title:'Misc Photography', category:'Photography', desc:'Photography · Ongoing',
+        images:['gallery/photography/final/2I2A0059.JPG','gallery/photography/final/2I2A0288.JPG','gallery/photography/final/2I2A0371.JPG','gallery/photography/final/2I2A0376.JPG','gallery/photography/final/2I2A0382.JPG','gallery/photography/final/2I2A0430.JPG','gallery/photography/final/2I2A0476.JPG','gallery/photography/final/2I2A0480.JPG','gallery/photography/final/2I2A0518.JPG','gallery/photography/final/2I2A0521.JPG','gallery/photography/final/2I2A0534.JPG','gallery/photography/final/2I2A0544.JPG','gallery/photography/final/2I2A0549.JPG','gallery/photography/final/2I2A0581.JPG','gallery/photography/final/2I2A0745.JPG','gallery/photography/final/2I2A0758.JPG','gallery/photography/final/2I2A0836.JPG','gallery/photography/final/2I2A0840.JPG','gallery/photography/final/2I2A0850.JPG','gallery/photography/final/2I2A1322.JPG','gallery/photography/final/2I2A1325.JPG','gallery/photography/final/2I2A1330.JPG','gallery/photography/final/2I2A1340.JPG','gallery/photography/final/2I2A1355.JPG','gallery/photography/final/2I2A1496.JPG','gallery/photography/final/2I2A1535.JPG','gallery/photography/final/2I2A1555.JPG','gallery/photography/final/2I2A1578.JPG','gallery/photography/final/2I2A1760.JPG','gallery/photography/final/2I2A1812.JPG','gallery/photography/final/2I2A1822.JPG','gallery/photography/final/IMG_3739.JPG','gallery/photography/final/IMG_3740.JPG','gallery/photography/final/IMG_3875.JPG','gallery/photography/final/july_2.jpg','gallery/photography/final/NCD00005.JPG','gallery/photography/final/NCD00031.JPG','gallery/photography/final/NCD00033.JPG','gallery/photography/final/NCD00035.JPG','gallery/photography/final/NCD00065.JPG','gallery/photography/final/NCD00073.JPG','gallery/photography/final/NCD00087.JPG','gallery/photography/final/NCD00110.JPG','gallery/photography/final/NCD00121.JPG','gallery/photography/final/NCD00170.JPG','gallery/photography/final/NCD00186.JPG','gallery/photography/final/NCD00203.JPG','gallery/photography/final/NCD00218.JPG','gallery/photography/final/NCD00220.JPG','gallery/photography/final/NCD00227.JPG','gallery/photography/final/NCD00233.JPG','gallery/photography/final/NCD00265.JPG','gallery/photography/final/NCD00367.JPG','gallery/photography/final/NCD00372.JPG','gallery/photography/final/NCD00407.JPG','gallery/photography/final/NCD00446.JPG','gallery/photography/final/NCD00451.JPG']
+    },
+    'gallery-08': {
+        title:'Lotus Exhibition', category:'Lotus', desc:'Mixed Media · 2024',
+        images:['gallery/lotus/NCD00723.JPG','gallery/lotus/NCD00657.JPG','gallery/lotus/NCD00611.JPG','gallery/lotus/NCD00780.JPG','gallery/lotus/NCD00538.JPG','gallery/lotus/NCD00673.JPG','gallery/lotus/NCD00628.JPG','gallery/lotus/NCD00787.JPG','gallery/lotus/NCD00645.JPG','gallery/lotus/NCD00510.JPG','gallery/lotus/NCD00683.JPG','gallery/lotus/NCD00747.JPG','gallery/lotus/NCD00658.JPG','gallery/lotus/NCD00669.JPG','gallery/lotus/NCD00509.JPG','gallery/lotus/NCD00544.JPG','gallery/lotus/NCD00635.JPG','gallery/lotus/NCD00623.JPG','gallery/lotus/NCD00601.JPG','gallery/lotus/NCD00653.JPG','gallery/lotus/NCD00711.JPG','gallery/lotus/NCD00639.JPG','gallery/lotus/NCD00752.JPG']
+    }
+};
+
+const gid  = new URLSearchParams(window.location.search).get('id') || 'gallery-04';
+const data = galleryData[gid] || galleryData['gallery-04'];
+const imgs = data.images;
+
+document.getElementById('gal-eyebrow').textContent = data.category;
+document.getElementById('gal-title').textContent   = data.title;
+document.getElementById('gal-desc').textContent    = data.desc;
+document.getElementById('gal-count').textContent   = imgs.length + ' images';
+document.title = data.title + ' — anoaeyto';
+
+/* gallery switcher */
+(function(){
+    const sw = document.getElementById('gallery-switcher');
+    const meta = { 'gallery-04':'Abstract','gallery-05':'Environment','gallery-06':'Character','gallery-07':'Photography','gallery-08':'Lotus' };
+    Object.entries(meta).forEach(([id, label]) => {
+        if (id === gid) return;
+        const a = document.createElement('a');
+        a.href = './gallery2.html?id=' + id;
+        a.className = 'gsw-link';
+        a.textContent = label;
+        sw.appendChild(a);
+    });
+})();
+
+/* build grid */
+const grid = document.getElementById('masonry-grid');
+imgs.forEach((src, i) => {
+    const item = document.createElement('div');
+    item.className = 'grid-item';
+    item.dataset.index = i;
+
+    const img = document.createElement('img');
+    img.alt = '';
+    img.src = src;
+
+    const ov = document.createElement('div');
+    ov.className = 'grid-overlay';
+    const idx = document.createElement('div');
+    idx.className = 'grid-idx';
+    idx.textContent = String(i+1).padStart(2,'0') + ' / ' + String(imgs.length).padStart(2,'0');
+    ov.appendChild(idx);
+
+    item.appendChild(img);
+    item.appendChild(ov);
+    grid.appendChild(item);
+});
+
+/* lightbox */
+(function(){
+    const lb     = document.getElementById('lightbox');
+    const lbImg  = document.getElementById('lightbox-img');
+    const lbBdrop= document.getElementById('lightbox-backdrop');
+    const lbCur  = document.getElementById('lb-cur');
+    const lbTot  = document.getElementById('lb-tot');
+    let idx = 0, busy = false;
+
+    lbTot.textContent = imgs.length;
+
+    function open(i) {
+        idx = ((i % imgs.length) + imgs.length) % imgs.length;
+        lbImg.style.opacity = '0';
+        lbImg.src = imgs[idx];
+        lbCur.textContent = idx + 1;
+        lb.classList.add('open');
+        document.body.style.overflow = 'hidden';
+        const show = () => { lbImg.style.transition='opacity 0.45s ease'; lbImg.style.opacity='1'; };
+        if (lbImg.complete && lbImg.naturalWidth) show();
+        else { lbImg.addEventListener('load', show, {once:true}); lbImg.addEventListener('error', show, {once:true}); }
+    }
+
+    function close() {
+        lb.classList.remove('open');
+        document.body.style.overflow = '';
+        setTimeout(() => { lbImg.src=''; lbImg.style.opacity='0'; lbImg.style.transition=''; }, 400);
+    }
+
+    function go(i) {
+        if (busy) return; busy = true;
+        lbImg.style.transition = 'opacity 0.2s ease';
+        lbImg.style.opacity = '0';
+        setTimeout(() => {
+            idx = ((i % imgs.length) + imgs.length) % imgs.length;
+            lbImg.src = imgs[idx];
+            lbCur.textContent = idx + 1;
+            const show = () => { lbImg.style.transition='opacity 0.3s ease'; lbImg.style.opacity='1'; setTimeout(()=>{ lbImg.style.transition=''; busy=false; },320); };
+            if (lbImg.complete && lbImg.naturalWidth) show();
+            else { lbImg.addEventListener('load', show, {once:true}); lbImg.addEventListener('error', show, {once:true}); }
+        }, 200);
+    }
+
+    grid.addEventListener('click', e => {
+        const item = e.target.closest('.grid-item');
+        if (item) open(parseInt(item.dataset.index));
+    });
+
+    document.getElementById('lb-prev').addEventListener('click', e => { e.stopPropagation(); go(idx-1); });
+    document.getElementById('lb-next').addEventListener('click', e => { e.stopPropagation(); go(idx+1); });
+    document.getElementById('lb-close').addEventListener('click', close);
+    lbBdrop.addEventListener('click', close);
+    lbImg.addEventListener('click', e => e.stopPropagation());
+
+    document.addEventListener('keydown', e => {
+        if (!lb.classList.contains('open')) return;
+        if (e.key==='Escape') close();
+        if (e.key==='ArrowLeft')  go(idx-1);
+        if (e.key==='ArrowRight') go(idx+1);
+    });
+})();
+
+/* cursor */
+(function(){
+    const dot = document.getElementById('cursor-dot');
+    const ring = document.getElementById('cursor-ring');
+    let mx=0,my=0,rx=0,ry=0;
+    document.addEventListener('mousemove', e => {
+        mx=e.clientX; my=e.clientY;
+        dot.style.left=mx+'px'; dot.style.top=my+'px';
+        document.getElementById('coord-x').textContent=String(mx).padStart(4,'0');
+        document.getElementById('coord-y').textContent=String(my).padStart(4,'0');
+    });
+    (function loop(){ rx+=(mx-rx)*0.1; ry+=(my-ry)*0.1; ring.style.left=rx+'px'; ring.style.top=ry+'px'; requestAnimationFrame(loop); })();
+    document.addEventListener('mouseover', e => {
+        if (e.target.closest('a,button,.grid-item')) { ring.classList.add('expanded','on-interactive'); dot.classList.add('on-interactive'); }
+    });
+    document.addEventListener('mouseout', e => {
+        if (e.target.closest('a,button,.grid-item')) { ring.classList.remove('expanded','on-interactive'); dot.classList.remove('on-interactive'); }
+    });
+})();
+
+/* copyright */
+(function(){
+    const el = document.getElementById('copyright-text');
+    el.innerHTML = '© 2026 anoaeyto'.split('').map(c=>`<span>${c}</span>`).join('');
+    const ch = el.querySelectorAll('span'); let anim=false;
+    function run(){
+        if(anim)return; anim=true; let i=0;
+        const t=setInterval(()=>{
+            if(i<ch.length){if(i>0)ch[i-1].classList.remove('cyan');ch[i].classList.add('cyan');i++;}
+            else{ch[ch.length-1].classList.remove('cyan');clearInterval(t);anim=false;setTimeout(run,7000);}
+        },480);
+    }
+    setTimeout(run,2000);
+})();
+</script>
+</body>
+</html>

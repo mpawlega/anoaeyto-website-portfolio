@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>About — Preview</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,300;0,400;1,300;1,400&family=Courier+Prime:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+    --teal:      #00c8b4;
+    --teal-dark: #009d8e;
+    --teal-deep: #012e2a;
+    --cream:     #ede8dc;
+    --cream-2:   #e4dfd2;
+    --ink:       #0e0c0a;
+    --orange:    #c85a28;
+
+    --px:        clamp(28px, 5vw, 10vw);
+    --rule:      1px solid rgba(14,12,10,0.10);
+    --rule-mid:  1px solid rgba(14,12,10,0.07);
+
+    --mono-2xs:  clamp(7px,  0.42vw, 0.72vw);
+    --mono-xs:   clamp(8px,  0.52vw, 0.9vw);
+    --mono-sm:   clamp(9px,  0.65vw, 1.1vw);
+
+    /* Type — all vw-capped for 4K */
+    --t-eyebrow: clamp(28px, 3.5vw, 5.5vw);
+    --t-name:    clamp(60px, 9vw,  13.5vw);
+    --t-quote:   clamp(20px, 2.4vw, 4vw);
+    --t-bio:     clamp(11px, 0.88vw, 1.5vw);
+}
+
+body { background: var(--cream); font-family: 'Courier Prime', monospace; color: var(--ink); }
+
+/* paper grain */
+body::after {
+    content:''; position:fixed; inset:0; pointer-events:none; z-index:9999;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+    background-size:200px 200px; opacity:0.5; mix-blend-mode:multiply;
+}
+
+/* ═══════════════════════════════════════════
+   SECTION WRAPPER
+   ═══════════════════════════════════════════ */
+.about-outer { width:100%; }
+.about {
+    position:relative;
+    background:var(--cream);
+    border-top:1px solid rgba(0,200,180,0.14);
+    overflow:hidden;
+}
+
+/* ── TOP HEADER BAR ── */
+.about-bar {
+    position:relative; z-index:2;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:clamp(12px,1.5vh,2.6vh) var(--px);
+    border-bottom:var(--rule);
+    gap:clamp(12px,2vw,4vw);
+}
+.about-bar-l { display:flex; align-items:center; gap:clamp(8px,1vw,1.8vw); }
+.bar-num   { font-size:var(--mono-sm); letter-spacing:2px; color:var(--teal-dark); opacity:.85; }
+.bar-dash  { width:clamp(12px,1.3vw,2.5vw); height:1px; background:rgba(14,12,10,0.13); }
+.bar-title { font-size:var(--mono-sm); letter-spacing:4px; text-transform:uppercase; color:rgba(14,12,10,0.35); }
+
+.about-bar-r { display:flex; align-items:center; gap:clamp(12px,1.8vw,3.5vw); }
+.bar-coords {
+    display:flex; gap:clamp(8px,1vw,1.8vw);
+    font-size:var(--mono-2xs); letter-spacing:2px; text-transform:uppercase;
+    color:rgba(14,12,10,0.22);
+}
+.bar-coords strong { color:var(--teal-dark); font-weight:400; opacity:.75; }
+
+/* OTW pill */
+.otw-pill {
+    display:inline-flex; align-items:center; gap:clamp(5px,.5vw,.9vw);
+    font-size:var(--mono-2xs); letter-spacing:3px; text-transform:uppercase;
+    color:var(--ink); border:1px solid rgba(14,12,10,0.18);
+    padding:clamp(5px,.5vw,.9vw) clamp(9px,1vw,1.8vw);
+    position:relative; overflow:hidden; cursor:default; transition:color .3s;
+}
+.otw-pill::before {
+    content:''; position:absolute; inset:0; background:var(--teal);
+    transform:scaleX(0); transform-origin:left;
+    transition:transform .42s cubic-bezier(.22,1,.36,1); z-index:0;
+}
+.otw-pill:hover::before { transform:scaleX(1); }
+.otw-pill:hover { color:#000; }
+.otw-dot {
+    position:relative; z-index:1;
+    width:clamp(4px,.36vw,.64vw); height:clamp(4px,.36vw,.64vw);
+    border-radius:50%; background:var(--teal-dark); flex-shrink:0;
+    animation:pulse 2.2s ease-in-out infinite;
+}
+.otw-pill span:last-child { position:relative; z-index:1; }
+@keyframes pulse {
+    0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(0,157,142,.5);}
+    50%{opacity:.5;box-shadow:0 0 0 clamp(3px,.28vw,5px) rgba(0,157,142,0);}
+}
+
+/* ═══════════════════════════════════════════
+   HERO ROW — big name spans full width,
+   photo punches through from left column
+   ═══════════════════════════════════════════ */
+.about-hero {
+    position:relative; z-index:1;
+    display:grid;
+    grid-template-columns: clamp(200px,28vw,40vw) 1fr;
+    border-bottom:var(--rule);
+    /* slightly taller cream-2 tone on left */
+}
+
+/* ── photo column ── */
+.about-photo-col {
+    position:relative;
+    background:var(--cream-2);
+    border-right:var(--rule);
+    display:flex; align-items:flex-end; justify-content:center;
+    padding:clamp(24px,4vw,7vw) clamp(20px,3vw,5.5vw) 0;
+    overflow:hidden;
+}
+/* subtle inked left-edge rules — column markers */
+.about-photo-col::before {
+    content:'';
+    position:absolute; left:0; top:0; bottom:0; width:3px;
+    background:linear-gradient(180deg, var(--teal-dark) 0%, transparent 100%);
+    opacity:.18;
+}
+
+.about-photo-wrap {
+    position:relative;
+    width:100%;
+    max-width:clamp(160px,22vw,360px);
+    aspect-ratio:1/1.72;
+    flex-shrink:0;
+}
+.about-photo-wrap img {
+    position:absolute; inset:0;
+    width:100%; height:100%;
+    object-fit:cover; object-position:38% 8%;
+    display:block;
+    filter:contrast(1.03) saturate(0.85) brightness(0.86);
+    -webkit-mask-image:url('./pixel-mask.jpg');
+    mask-image:url('./pixel-mask.jpg');
+    -webkit-mask-size:100% 100%;
+    mask-size:100% 100%;
+    -webkit-mask-repeat:no-repeat;
+    mask-repeat:no-repeat;
+    -webkit-mask-mode:luminance;
+    mask-mode:luminance;
+}
+
+/* ── heading column ── */
+.about-name-col {
+    display:flex; flex-direction:column; justify-content:flex-end;
+    padding:clamp(20px,3vh,5vh) clamp(24px,3.5vw,6.5vw) clamp(20px,3vh,4vh);
+    position:relative; overflow:hidden;
+}
+
+/* Giant "anoaeyto." — runs off-edge intentionally */
+.about-name-eyebrow {
+    display:flex; align-items:center; gap:clamp(10px,1vw,1.8vw);
+    font-size:var(--mono-xs); letter-spacing:4px; text-transform:uppercase;
+    color:rgba(14,12,10,.30);
+    margin-bottom:clamp(8px,.8vw,1.5vw);
+}
+.about-name-eyebrow::before {
+    content:''; width:clamp(14px,1.4vw,2.6vw); height:1px;
+    background:var(--teal-dark); opacity:.65; flex-shrink:0;
+}
+.about-name-hello {
+    font-family:'Cormorant',Georgia,serif;
+    font-weight:300; font-style:italic;
+    font-size:var(--t-eyebrow);
+    color:rgba(14,12,10,.28);
+    line-height:1; letter-spacing:-.02em;
+    margin-bottom:clamp(2px,.2vw,4px);
+}
+.about-name-main {
+    font-family:'Cormorant',Georgia,serif;
+    font-weight:300;
+    font-size:var(--t-name);
+    color:var(--ink);
+    line-height:.88; letter-spacing:-.04em;
+    /* bleeds slightly past column */
+    margin-right:clamp(-20px,-2vw,-3vw);
+}
+.about-name-main em { font-style:normal; color:var(--teal-dark); }
+
+/* ═══════════════════════════════════════════
+   QUOTE ROW — full-width dark band
+   matches the original's quote treatment
+   ═══════════════════════════════════════════ */
+.about-quote-band {
+    position:relative; z-index:1;
+    background:#0e0c0a;
+    padding:clamp(22px,3.5vh,5.5vh) var(--px);
+    border-bottom:var(--rule);
+    display:flex; align-items:center;
+    gap:clamp(16px,2vw,4vw);
+    overflow:hidden;
+}
+/* teal scan line left accent */
+.about-quote-band::before {
+    content:''; position:absolute; left:0; top:0; bottom:0; width:3px;
+    background:linear-gradient(180deg,var(--teal) 0%,transparent 100%);
+    opacity:.55;
+}
+.about-quote-text {
+    font-family:'Cormorant',Georgia,serif;
+    font-style:italic; font-weight:300;
+    font-size:var(--t-quote);
+    color:rgba(237,232,220,.82);
+    line-height:1.25; letter-spacing:-.01em;
+    flex:1;
+}
+.about-quote-text em { font-style:normal; color:var(--teal); }
+.about-quote-attr {
+    font-size:var(--mono-2xs); letter-spacing:3px; text-transform:uppercase;
+    color:rgba(237,232,220,.22); flex-shrink:0; writing-mode:vertical-rl;
+    transform:rotate(180deg);
+}
+
+/* ═══════════════════════════════════════════
+   CONTENT ROW — bio | stats+meta
+   ═══════════════════════════════════════════ */
+.about-content {
+    position:relative; z-index:1;
+    display:grid;
+    grid-template-columns: clamp(200px,28vw,40vw) 1fr clamp(160px,20vw,28vw);
+    border-bottom:var(--rule);
+}
+
+/* ── Bio column ── */
+.about-bio-col {
+    padding:clamp(24px,3.5vh,5.5vh) clamp(24px,3.5vw,6.5vw);
+    border-right:var(--rule);
+    display:flex; flex-direction:column; gap:clamp(18px,2.5vh,4vh);
+}
+.about-bio-label {
+    display:flex; align-items:center; gap:clamp(8px,.9vw,1.6vw);
+    font-size:var(--mono-2xs); letter-spacing:3px; text-transform:uppercase;
+    color:rgba(14,12,10,.25);
+}
+.about-bio-label::before {
+    content:''; width:clamp(10px,1vw,1.8vw); height:1px;
+    background:var(--teal-dark); opacity:.55; flex-shrink:0;
+}
+.about-bio-text {
+    font-size:var(--t-bio);
+    letter-spacing:.4px; line-height:1.9;
+    color:rgba(14,12,10,.52);
+}
+.about-bio-text em     { font-style:italic; color:rgba(14,12,10,.78); }
+.about-bio-text strong { font-weight:400; font-style:italic; color:rgba(14,12,10,.78); }
+
+/* meta rows inside bio col */
+.about-meta-block {
+    border-top:var(--rule-mid);
+    padding-top:clamp(12px,1.4vh,2.4vh);
+    display:flex; flex-direction:column;
+}
+.about-meta-row {
+    display:grid; grid-template-columns:clamp(38px,3.8vw,7vw) 1fr;
+    gap:clamp(8px,.8vw,1.5vw);
+    padding:clamp(5px,.5vw,.95vw) 0;
+    border-bottom:1px solid rgba(14,12,10,.055);
+    align-items:baseline;
+}
+.about-meta-row:last-child { border-bottom:none; }
+.meta-lbl {
+    font-size:var(--mono-2xs); letter-spacing:2.5px; text-transform:uppercase;
+    color:rgba(14,12,10,.22);
+}
+.meta-val {
+    font-size:var(--mono-2xs); letter-spacing:2px; text-transform:uppercase;
+    color:rgba(14,12,10,.55); display:flex; align-items:center;
+    gap:clamp(5px,.45vw,.85vw);
+}
+.meta-dot {
+    width:clamp(4px,.34vw,.62vw); height:clamp(4px,.34vw,.62vw);
+    border-radius:50%; background:var(--teal-dark); flex-shrink:0;
+    animation:pulse 2.4s ease-in-out infinite;
+}
+
+/* ── Skills column ── */
+.about-skills-col {
+    padding:clamp(24px,3.5vh,5.5vh) clamp(24px,3.5vw,6.5vw);
+    border-right:var(--rule);
+    display:flex; flex-direction:column; gap:clamp(18px,2.5vh,4vh);
+}
+.about-skills-label {
+    display:flex; align-items:center; gap:clamp(8px,.9vw,1.6vw);
+    font-size:var(--mono-2xs); letter-spacing:3px; text-transform:uppercase;
+    color:rgba(14,12,10,.25);
+}
+.about-skills-label::before {
+    content:''; width:clamp(10px,1vw,1.8vw); height:1px;
+    background:var(--teal-dark); opacity:.55; flex-shrink:0;
+}
+.skill-group { display:flex; flex-direction:column; gap:clamp(6px,.6vw,1.1vw); }
+.skill-row {
+    display:grid; grid-template-columns:clamp(38px,3.8vw,7vw) 1fr;
+    gap:clamp(8px,.8vw,1.5vw); align-items:baseline;
+    padding-bottom:clamp(5px,.5vw,.95vw);
+    border-bottom:1px solid rgba(14,12,10,.055);
+}
+.skill-row:last-child { border-bottom:none; }
+.skill-lbl {
+    font-size:var(--mono-2xs); letter-spacing:2.5px; text-transform:uppercase;
+    color:rgba(14,12,10,.22); white-space:nowrap;
+}
+.skill-items { display:flex; flex-wrap:wrap; }
+.skill-items span {
+    font-size:var(--mono-2xs); letter-spacing:2px; text-transform:uppercase;
+    color:rgba(14,12,10,.42); white-space:nowrap;
+    transition:color .2s ease; cursor:default;
+}
+.skill-items span:not(:last-child)::after {
+    content:'·'; margin:0 clamp(4px,.38vw,.7vw); color:rgba(14,12,10,.14);
+}
+.skill-items span:hover,
+.skill-items span.tag-active { color:var(--teal-dark); }
+
+/* ── Stat panels column ── */
+.about-stats-col {
+    display:grid; grid-template-rows:1fr 1fr;
+    grid-template-columns:1fr 1fr;
+}
+.about-stat {
+    padding:clamp(16px,2.2vh,4vh) clamp(14px,1.6vw,3vw);
+    border-right:var(--rule); border-bottom:var(--rule);
+    display:flex; flex-direction:column; justify-content:flex-end;
+    position:relative; overflow:hidden; cursor:default;
+    background:var(--cream);
+}
+.about-stat:nth-child(2)  { border-right:none; background:var(--orange); }
+.about-stat:nth-child(3)  { background:var(--teal-dark); border-bottom:none; }
+.about-stat:nth-child(4)  { background:var(--teal-deep); border-right:none; border-bottom:none; }
+
+/* shimmer */
+.about-stat::after {
+    content:''; position:absolute; top:0; left:-100%; width:55%; height:100%;
+    background:linear-gradient(90deg,transparent,rgba(255,255,255,.09),transparent);
+    transition:left .55s cubic-bezier(.22,1,.36,1); pointer-events:none;
+}
+.about-stat:hover::after { left:160%; }
+
+.stat-val {
+    font-family:'Cormorant',Georgia,serif; font-weight:300;
+    font-size:clamp(20px,2vw,3.5vw); line-height:.88; letter-spacing:-.03em;
+    transition:color .35s;
+}
+.stat-val--sm { font-size:clamp(9px,.82vw,1.45vw); letter-spacing:0; line-height:1.35; }
+.about-stat:nth-child(1) .stat-val { color:rgba(14,12,10,.20); }
+.about-stat:nth-child(1):hover .stat-val { color:var(--ink); }
+.about-stat:nth-child(2) .stat-val,
+.about-stat:nth-child(3) .stat-val,
+.about-stat:nth-child(4) .stat-val { color:rgba(255,255,255,.22); }
+.about-stat:nth-child(2):hover .stat-val,
+.about-stat:nth-child(3):hover .stat-val,
+.about-stat:nth-child(4):hover .stat-val { color:#fff; }
+
+.stat-lbl {
+    font-size:var(--mono-2xs); letter-spacing:2.5px; text-transform:uppercase;
+    margin-top:clamp(4px,.45vw,.85vw); transition:color .35s;
+}
+.about-stat:nth-child(1) .stat-lbl { color:rgba(14,12,10,.28); }
+.about-stat:nth-child(1):hover .stat-lbl { color:rgba(14,12,10,.62); }
+.about-stat:nth-child(2) .stat-lbl,
+.about-stat:nth-child(3) .stat-lbl,
+.about-stat:nth-child(4) .stat-lbl { color:rgba(255,255,255,.26); }
+.about-stat:nth-child(2):hover .stat-lbl,
+.about-stat:nth-child(3):hover .stat-lbl,
+.about-stat:nth-child(4):hover .stat-lbl { color:rgba(255,255,255,.62); }
+
+/* ── RESPONSIVE ── */
+@media (max-width:1100px) {
+    .about-content { grid-template-columns:1fr 1fr; }
+    .about-stats-col { grid-column:1/-1; grid-template-columns:repeat(4,1fr); grid-template-rows:1fr; }
+    .about-stat { border-bottom:none; }
+    .about-stat:nth-child(3) { border-bottom:none; }
+    .about-stat:nth-child(2) { border-right:var(--rule); }
+    .about-stat:nth-child(3) { border-right:var(--rule); }
+}
+@media (max-width:860px) {
+    .about-hero { grid-template-columns:1fr; }
+    .about-photo-col { border-right:none; border-bottom:var(--rule); min-height:55vw; align-items:center; padding-bottom:clamp(24px,4vw,7vw); }
+    .about-content { grid-template-columns:1fr; }
+    .about-bio-col { border-right:none; border-bottom:var(--rule); }
+    .about-skills-col { border-right:none; border-bottom:var(--rule); }
+    .about-stats-col { grid-template-columns:repeat(4,1fr); grid-column:unset; }
+    .bar-coords { display:none; }
+}
+@media (max-width:520px) {
+    .about-stats-col { grid-template-columns:1fr 1fr; grid-template-rows:1fr 1fr; }
+    .about-stat:nth-child(2) { border-right:none; }
+    .about-stat:nth-child(3) { border-bottom:var(--rule); border-right:var(--rule); }
+    .about-stat:nth-child(4) { border-right:none; }
+    .about-bar { flex-wrap:wrap; }
+    .about-quote-attr { display:none; }
+}
+@media (min-width:2400px) {
+    :root {
+        --t-name:   clamp(70px,8vw,12vw);
+        --t-quote:  clamp(24px,2.2vw,3.6vw);
+        --t-eyebrow:clamp(32px,3vw,5vw);
+    }
+}
+</style>
+</head>
+<body>
+
+<section class="about-outer" id="about-outer">
+<section class="about" id="about">
+
+    <!-- TOP BAR -->
+    <div class="about-bar">
+        <div class="about-bar-l">
+            <span class="bar-num">01</span>
+            <div class="bar-dash"></div>
+            <span class="bar-title">About</span>
+        </div>
+        <div class="about-bar-r">
+            <div class="bar-coords">
+                <span><strong>RA</strong> 05h 34m 32s</span>
+                <span><strong>DEC</strong> +22° 00′ 52″</span>
+                <span><strong>LOC</strong> <span id="abt-time">——</span></span>
+            </div>
+            <div class="otw-pill">
+                <span class="otw-dot"></span>
+                <span>Open to Work</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- HERO ROW: photo + big name -->
+    <div class="about-hero">
+        <div class="about-photo-col">
+            <div class="about-photo-wrap">
+                <img src="./landing/life.jpg" alt="Matilda Pawlega">
+            </div>
+        </div>
+        <div class="about-name-col">
+            <div class="about-name-eyebrow">Astrophysics &amp; Design · UWaterloo</div>
+            <div class="about-name-hello">Hello, this is</div>
+            <div class="about-name-main">anoaeyto.</div>
+        </div>
+    </div>
+
+    <!-- QUOTE BAND -->
+    <div class="about-quote-band">
+        <p class="about-quote-text">
+            "I build things that exist at the intersection of
+            <em>data, light,</em> and human experience."
+        </p>
+        <span class="about-quote-attr">Astrophysics &amp; Design · Waterloo</span>
+    </div>
+
+    <!-- CONTENT ROW: bio | skills | stats -->
+    <div class="about-content">
+
+        <div class="about-bio-col">
+            <div class="about-bio-label">Bio</div>
+            <p class="about-bio-text">
+                I'm <em>Matilda</em> — creator, explorer, storyteller.
+                An <strong>Astrophysics</strong> undergrad fascinated by
+                the edge where science meets art. From <em>cosmic installations</em>
+                to brand worlds — I build and document the journey.
+                Passionate about interactive design, world building, and learning.
+            </p>
+            <div class="about-meta-block">
+                <div class="about-meta-row">
+                    <span class="meta-lbl">Status</span>
+                    <span class="meta-val"><span class="meta-dot"></span>Available</span>
+                </div>
+                <div class="about-meta-row">
+                    <span class="meta-lbl">Open to</span>
+                    <span class="meta-val">Freelance · Collab · Full-Time</span>
+                </div>
+                <div class="about-meta-row">
+                    <span class="meta-lbl">Based</span>
+                    <span class="meta-val">Waterloo, ON</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="about-skills-col">
+            <div class="about-skills-label">Skills</div>
+            <div class="skill-group">
+                <div class="skill-row">
+                    <span class="skill-lbl">Tools</span>
+                    <div class="skill-items">
+                        <span>Blender</span><span>TouchDesigner</span>
+                        <span>Adobe CC</span><span>Python</span>
+                        <span>Figma</span><span>Aseprite</span>
+                    </div>
+                </div>
+                <div class="skill-row">
+                    <span class="skill-lbl">Practice</span>
+                    <div class="skill-items">
+                        <span>Interactive Art</span><span>Brand Identity</span>
+                        <span>Motion Design</span><span>Photography</span>
+                        <span>Art Direction</span>
+                    </div>
+                </div>
+                <div class="skill-row">
+                    <span class="skill-lbl">Study</span>
+                    <div class="skill-items">
+                        <span>Astrophysics</span><span>Fine Arts</span>
+                        <span>UWaterloo</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="about-stats-col">
+            <div class="about-stat">
+                <div class="stat-val">BSc</div>
+                <div class="stat-lbl">Astrophysics &amp; Fine Arts</div>
+            </div>
+            <div class="about-stat">
+                <div class="stat-val stat-val--sm">Design &amp;<br>Interactive Art</div>
+                <div class="stat-lbl">Discipline</div>
+            </div>
+            <div class="about-stat">
+                <div class="stat-val">04</div>
+                <div class="stat-lbl">Projects</div>
+            </div>
+            <div class="about-stat">
+                <div class="stat-val">03</div>
+                <div class="stat-lbl">Years Active</div>
+            </div>
+        </div>
+
+    </div>
+
+</section>
+</section>
+
+<script>
+(function(){
+    const el = document.getElementById('abt-time');
+    if(!el) return;
+    function u(){ el.textContent = new Date().toLocaleTimeString('en-CA',{timeZone:'America/Toronto',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false}); }
+    u(); setInterval(u,1000);
+})();
+
+(function(){
+    const tags = [...document.querySelectorAll('.skill-items span')];
+    if(!tags.length) return;
+    let i=0;
+    function step(){
+        tags.forEach(t=>t.classList.remove('tag-active'));
+        tags[i].classList.add('tag-active');
+        i=(i+1)%tags.length;
+        setTimeout(step,i===0?5000:1900);
+    }
+    setTimeout(step,1600);
+})();
+</script>
+</body>
+</html>
