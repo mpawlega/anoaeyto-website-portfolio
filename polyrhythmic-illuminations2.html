@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>UW Tea & Culture Club — anoaeyto</title>
+    <title>Phil Kline's Unsilent Night: Polyrhythmic Illumination — anoaeyto</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Courier+Prime:ital,wght@0,400;1,400&family=Spectral:wght@300;400&display=swap" rel="stylesheet">
@@ -46,8 +46,7 @@ body::before {
 #cursor-ring { position:fixed; width:24px; height:24px; border:1.5px solid rgba(0,200,180,0.6); border-radius:50%; pointer-events:none; z-index:999998; top:0; left:0; transform:translate(-50%,-50%); will-change:transform; transition:width 0.18s ease, height 0.18s ease, border-color 0.18s ease; }
 #cursor-ring.expanded { width:36px; height:36px; border-color:rgba(0,200,180,1); }
 
-
-/* ── TOP BAR (back link + logo) ── */
+/* ── TOP BAR ── */
 .top-bar {
     position: fixed; top: 0; left: 0; right: 0; z-index: 8000;
     padding: clamp(20px,2.5vh,32px) clamp(28px,4vw,56px);
@@ -149,7 +148,7 @@ body::before {
 .panel-hero { justify-content: flex-end; background: #000; }
 .panel-hero img {
     position: absolute; inset: 0;
-    width: 100%; height: 100%; object-fit: cover; object-position: center 30%;
+    width: 100%; height: 100%; object-fit: cover; object-position: center 40%;
     filter: brightness(0.44) saturate(0.9);
     transition: filter 0.8s;
 }
@@ -161,13 +160,11 @@ body::before {
             rgba(0,0,0,0.55) 60%, rgba(0,0,0,0.96) 88%, #000 100%),
         linear-gradient(90deg, rgba(0,0,0,0.45) 0%, transparent 45%);
 }
-/* thin teal scanline at bottom of hero */
 .hero-scanline {
     position: absolute; bottom: 0; left: 0; right: 0; z-index: 4; height: 1px;
     background: linear-gradient(90deg, transparent 0%, rgba(0,200,180,0.55) 15%, rgba(0,200,180,0.22) 50%, rgba(0,200,180,0.55) 85%, transparent 100%);
 }
 @keyframes fadeInAnim { from{opacity:0;} to{opacity:1;} }
-
 
 .hero-content {
     position: relative; z-index: 6;
@@ -180,7 +177,7 @@ body::before {
 }
 .hero-title {
     font-family: 'Cormorant', Georgia, serif; font-weight: 300; font-style: italic;
-    font-size: clamp(56px,9.5vw,148px); letter-spacing: -0.03em; line-height: 0.88;
+    font-size: clamp(48px,8vw,128px); letter-spacing: -0.03em; line-height: 0.88;
     color: #fff; margin-bottom: 28px;
     animation: riseIn 1.0s 0.6s ease both;
 }
@@ -197,7 +194,7 @@ body::before {
 @keyframes riseIn { from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);} }
 
 /* ─────────────────────────────────────────────
-   PANEL 1 · OVERVIEW  (left / right split)
+   PANEL 1 · OVERVIEW
 ───────────────────────────────────────────── */
 .panel-overview {
     background: #000;
@@ -212,8 +209,6 @@ body::before {
         radial-gradient(ellipse 55% 55% at 0% 95%, rgba(0,200,180,0.06) 0%, transparent 55%),
         radial-gradient(ellipse 30% 30% at 96% 6%, rgba(0,200,180,0.04) 0%, transparent 50%);
 }
-
-/* ── LEFT col: eyebrow + tagline + meta ── */
 .ov-left {
     flex: 0 0 42%;
     display: flex; flex-direction: column; justify-content: center;
@@ -240,7 +235,6 @@ body::before {
 }
 .overview-tagline em { font-style: italic; }
 .overview-tagline em .kw { color: rgba(0,200,180,0.75); font-style: italic; }
-
 .overview-meta {
     font-size: clamp(8px,0.68vw,10px); letter-spacing: 2.5px; line-height: 2.0;
     opacity: 0; transition: none;
@@ -253,7 +247,6 @@ body::before {
 .overview-meta span:not(.overview-meta-sep):hover { color: rgba(255,255,255,0.88); }
 .overview-meta span.tag-active { color: rgba(0,200,180,0.82); }
 
-/* ── RIGHT col: stats grid ── */
 .ov-right {
     flex: 1;
     display: flex; flex-direction: column; justify-content: center;
@@ -272,7 +265,6 @@ body::before {
     flex: 1; height: 1px;
     background: linear-gradient(90deg, rgba(0,200,180,0.12), transparent);
 }
-
 .overview-stats {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -304,14 +296,235 @@ body::before {
 }
 
 /* ─────────────────────────────────────────────
-   GALLERY PANELS  (left sidebar + right strip)
+   PANEL 2 · CONCEPT + LIVE SIM
+───────────────────────────────────────────── */
+.panel-concept {
+    background: #000;
+    flex-direction: row !important;
+    align-items: stretch;
+    overflow: hidden;
+}
+.panel-concept::before {
+    content: ''; position: absolute; inset: 0; pointer-events: none;
+    background: radial-gradient(ellipse 60% 60% at 100% 100%, rgba(0,200,180,0.05) 0%, transparent 60%);
+}
+.concept-left {
+    flex: 0 0 38%;
+    display: flex; flex-direction: column; justify-content: center;
+    padding: clamp(88px,11vh,128px) clamp(28px,3.5vw,52px) clamp(40px,5vh,72px) clamp(40px,5vw,72px);
+    border-right: 1px solid rgba(0,200,180,0.1);
+    position: relative; z-index: 1;
+    gap: clamp(18px,2.5vh,28px);
+}
+.concept-eyebrow {
+    font-size: clamp(10px,0.72vw,12px); letter-spacing: 4px; text-transform: uppercase;
+    color: rgba(0,200,180,0.7);
+    display: flex; align-items: center; gap: 12px;
+}
+.concept-eyebrow::after {
+    content: ''; flex: 1; height: 1px;
+    background: linear-gradient(90deg, rgba(0,200,180,0.18), transparent);
+}
+.concept-heading {
+    font-family: 'Cormorant', Georgia, serif; font-weight: 300; font-style: italic;
+    font-size: clamp(32px,4vw,64px); line-height: 1.05; color: #fff;
+    letter-spacing: -0.02em;
+}
+.concept-body {
+    font-size: clamp(11px,0.85vw,14px); letter-spacing: 0.3px; line-height: 1.85;
+    color: rgba(221,216,204,0.62);
+}
+
+
+.concept-right {
+    flex: 1;
+    display: flex; flex-direction: column; justify-content: center;
+    padding: clamp(88px,11vh,120px) clamp(32px,4vw,56px) clamp(40px,5vh,64px) clamp(32px,4vw,56px);
+    position: relative; z-index: 1;
+    gap: 0;
+}
+.concept-right-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: clamp(16px,2.2vh,28px);
+}
+.concept-right-label {
+    font-size: clamp(10px,0.72vw,12px); letter-spacing: 3px; text-transform: uppercase;
+    color: rgba(0,200,180,0.7);
+}
+#sound-toggle {
+    background: transparent; border: 1px solid rgba(0,200,180,0.22);
+    color: rgba(0,200,180,0.45); font-size: clamp(8px,0.65vw,10px); letter-spacing: 2px;
+    text-transform: uppercase; font-family: 'Courier Prime', monospace;
+    padding: 5px 14px; transition: all 0.2s; cursor: none;
+}
+#sound-toggle:hover { border-color: rgba(0,200,180,0.7); color: rgba(0,200,180,0.9); }
+#sound-toggle.active { border-color: rgba(0,200,180,0.8); color: var(--teal); }
+.sim-canvas-wrap {
+    border: 1px solid rgba(0,200,180,0.1);
+    background: #000; overflow: hidden;
+    margin-bottom: 2px;
+    position: relative;
+}
+.sim-canvas-wrap::after {
+    content: ''; position: absolute; inset: 0; pointer-events: none;
+    background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.08) 2px, rgba(0,0,0,0.08) 3px);
+    mix-blend-mode: overlay;
+}
+#sim-canvas {
+    display: block; width: 100%;
+    height: clamp(80px,12vh,140px);
+}
+.rhythm-canvas-wrap {
+    border: 1px solid rgba(0,200,180,0.08); border-top: none;
+    background: #000; overflow: hidden;
+    position: relative;
+}
+.rhythm-canvas-wrap::after {
+    content: ''; position: absolute; inset: 0; pointer-events: none;
+    background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.06) 2px, rgba(0,0,0,0.06) 3px);
+    mix-blend-mode: overlay;
+}
+#rhythm-canvas {
+    display: block; width: 100%;
+    height: clamp(100px,18vh,200px);
+}
+.sim-legend {
+    display: flex; align-items: center; gap: 8px;
+    padding: 10px 0 0;
+    border-top: 1px solid rgba(0,200,180,0.07);
+    margin-top: 10px;
+}
+.sim-legend-label {
+    font-size: clamp(8px,0.6vw,9px); letter-spacing: 3px; text-transform: uppercase;
+    color: rgba(0,200,180,0.4); margin-right: 4px;
+}
+.sim-legend-item {
+    font-family: 'Courier Prime', monospace;
+    font-size: clamp(9px,0.7vw,11px); letter-spacing: 2px;
+    color: rgba(0,200,180,0.65);
+}
+.sim-legend-sep { color: rgba(0,200,180,0.2); font-size: 10px; }
+
+/* ─────────────────────────────────────────────
+   PANEL 3 · SYSTEM & PROCESS
+───────────────────────────────────────────── */
+.panel-system {
+    background: #000;
+    flex-direction: row !important;
+    align-items: stretch;
+    overflow: hidden;
+}
+.panel-system::before {
+    content: ''; position: absolute; inset: 0; pointer-events: none;
+    background: radial-gradient(ellipse 50% 50% at 5% 95%, rgba(0,200,180,0.05) 0%, transparent 55%);
+}
+.system-left {
+    flex: 0 0 clamp(220px,22vw,320px);
+    display: flex; flex-direction: column; justify-content: space-between;
+    padding: clamp(80px,10vh,120px) clamp(24px,2.5vw,40px) clamp(32px,4vh,56px) clamp(32px,4vw,56px);
+    border-right: 1px solid rgba(0,200,180,0.1);
+    position: relative; z-index: 1; flex-shrink: 0;
+}
+.system-num {
+    font-size: clamp(11px,0.8vw,13px); letter-spacing: 3px;
+    color: rgba(0,200,180,0.7); line-height: 1;
+}
+.system-title {
+    font-family: 'Cormorant', Georgia, serif; font-weight: 300;
+    font-size: clamp(22px,2.4vw,38px); letter-spacing: -0.3px;
+    color: #fff; line-height: 1.1;
+}
+.system-rule {
+    width: 100%; height: 1px;
+    background: linear-gradient(90deg, rgba(0,200,180,0.16), transparent);
+}
+.system-desc {
+    font-family: 'Cormorant', Georgia, serif;
+    font-size: clamp(14px,1.1vw,18px); line-height: 1.75;
+    color: rgba(221,216,204,0.65);
+}
+
+
+.system-right {
+    flex: 1; min-width: 0;
+    display: flex; flex-direction: column;
+    padding: clamp(72px,9vh,108px) clamp(24px,3vw,48px) clamp(24px,3vh,40px) clamp(24px,3vw,40px);
+    overflow: hidden;
+}
+.process-grid {
+    flex: 1; min-height: 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 2px;
+}
+.process-card {
+    border: 1px solid rgba(0,200,180,0.1);
+    background: rgba(0,0,0,0.55);
+    display: flex; flex-direction: column;
+    padding: clamp(14px,1.8vh,22px) clamp(14px,1.4vw,20px);
+    transition: border-color 0.25s, background 0.25s;
+    position: relative; overflow: hidden;
+    min-height: 0;
+}
+.process-card::before {
+    content: ''; position: absolute; inset: 0;
+    background: var(--cream);
+    transform: scaleY(0); transform-origin: bottom;
+    transition: transform 0.42s cubic-bezier(0.22,1,0.36,1);
+    z-index: 0;
+}
+.process-card:hover,
+.process-card.cycling {
+    border-color: rgba(221,216,204,0.35);
+}
+.process-card:hover::before,
+.process-card.cycling::before { transform: scaleY(1); }
+.process-card-num {
+    font-size: clamp(28px,3vw,48px);
+    font-family: 'Cormorant', Georgia, serif; font-weight: 300;
+    color: rgba(0,200,180,0.25); line-height: 1;
+    margin-bottom: clamp(10px,1.4vh,18px);
+    transition: color 0.28s ease;
+    position: relative; z-index: 1;
+}
+.process-card:hover .process-card-num,
+.process-card.cycling .process-card-num { color: var(--teal-dark); }
+.process-card-title {
+    font-size: clamp(11px,0.9vw,14px); letter-spacing: 2.5px; text-transform: uppercase;
+    color: rgba(221,216,204,0.88);
+    margin-bottom: clamp(8px,1.1vh,14px);
+    transition: color 0.28s ease;
+    position: relative; z-index: 1;
+}
+.process-card:hover .process-card-title,
+.process-card.cycling .process-card-title { color: var(--ink); }
+.process-card-body {
+    font-size: clamp(11px,0.9vw,14px); line-height: 1.75;
+    color: rgba(221,216,204,0.52);
+    flex: 1;
+    transition: color 0.28s ease;
+    position: relative; z-index: 1;
+}
+.process-card:hover .process-card-body,
+.process-card.cycling .process-card-body { color: var(--ink); opacity: 0.75; }
+.process-card-tag {
+    margin-top: clamp(12px,1.6vh,20px);
+    font-size: clamp(9px,0.7vw,11px); letter-spacing: 2px; text-transform: uppercase;
+    color: var(--teal); opacity: 0.6;
+    position: relative; z-index: 1;
+    transition: color 0.28s ease, opacity 0.28s ease;
+}
+.process-card:hover .process-card-tag,
+.process-card.cycling .process-card-tag { color: var(--teal-dark); opacity: 1; }
+
+/* ─────────────────────────────────────────────
+   GALLERY PANELS  (same as tea page)
 ───────────────────────────────────────────── */
 .panel-gallery {
     background: #000; overflow: hidden;
     flex-direction: row !important;
 }
-
-/* ── fixed left sidebar ── */
 .gallery-sidebar {
     flex: 0 0 clamp(220px,22vw,320px);
     display: flex; flex-direction: column; justify-content: space-between;
@@ -324,7 +537,6 @@ body::before {
     background: radial-gradient(ellipse 80% 60% at 0% 100%, rgba(0,200,180,0.04) 0%, transparent 60%);
 }
 .gallery-sidebar-top { display: flex; flex-direction: column; gap: clamp(18px,2.5vh,28px); }
-
 .gallery-num {
     font-size: clamp(11px,0.8vw,13px); letter-spacing: 3px;
     color: rgba(0,200,180,0.7); line-height: 1;
@@ -343,11 +555,7 @@ body::before {
     font-size: clamp(14px,1.1vw,18px); line-height: 1.75;
     color: rgba(221,216,204,0.65);
 }
-
-/* bottom section of sidebar */
-.gallery-sidebar-bottom {
-    display: flex; flex-direction: column; gap: 10px;
-}
+.gallery-sidebar-bottom { display: flex; flex-direction: column; gap: 10px; }
 .gallery-count {
     font-size: clamp(10px,0.72vw,12px); letter-spacing: 2.5px; text-transform: uppercase;
     color: rgba(0,200,180,0.65);
@@ -357,11 +565,7 @@ body::before {
     font-size: clamp(10px,0.72vw,12px); letter-spacing: 2.5px; text-transform: uppercase;
     color: rgba(221,216,204,0.5);
 }
-.gallery-scroll-hint-arrow {
-    color: var(--teal); opacity: 0.85; animation: nudge 2s ease-in-out infinite;
-}
-
-/* ── right scrollable area ── */
+.gallery-scroll-hint-arrow { color: var(--teal); opacity: 0.85; animation: nudge 2s ease-in-out infinite; }
 .gallery-main {
     flex: 1; min-width: 0;
     display: flex; flex-direction: column;
@@ -393,9 +597,6 @@ body::before {
     object-fit: cover; display: block; background: #000;
     filter: brightness(0.92) saturate(1.05); transition: filter 0.4s;
 }
-.gitem--reel { aspect-ratio: 9/16; height: 100% !important; width: auto !important; flex-shrink: 0; }
-.gitem--reel video { position: absolute; inset: 0; width: 100% !important; height: 100% !important; object-fit: fill; }
-.gitem--reel:not(:first-child) video { transform: scaleX(3.0) scaleY(1.8); transform-origin: center center; }
 .gitem.dimmed img, .gitem.dimmed video { filter: brightness(0.18) saturate(0.3); }
 .gitem-overlay {
     position: absolute; inset: 0; display: flex; align-items: flex-end;
@@ -403,13 +604,57 @@ body::before {
 }
 .gitem:hover .gitem-overlay { opacity: 1; }
 .gitem-idx { font-size: 8px; letter-spacing: 3px; color: var(--teal); opacity: 0.7; }
-
 .ar-1-1   { aspect-ratio: 1/1; }
+.ar-3-4   { aspect-ratio: 3/4; }
+.ar-4-3   { aspect-ratio: 4/3; }
+.ar-9-16  { aspect-ratio: 9/16; }
 .ar-16-10 { aspect-ratio: 16/10; }
-.gstrip.gstrip--website .gitem { height: 82%; align-self: center; }
 
 /* ─────────────────────────────────────────────
-   PANEL · LINKS  (left title / right links)
+   PANEL · VIDEO  (full-bleed video showcase)
+───────────────────────────────────────────── */
+.panel-video {
+    background: #000;
+    flex-direction: row !important;
+    align-items: stretch;
+    overflow: hidden;
+}
+.video-left {
+    flex: 0 0 clamp(220px,22vw,320px);
+    display: flex; flex-direction: column; justify-content: space-between;
+    padding: clamp(80px,10vh,120px) clamp(24px,2.5vw,40px) clamp(32px,4vh,56px) clamp(32px,4vw,56px);
+    border-right: 1px solid rgba(0,200,180,0.1);
+    position: relative; z-index: 1; flex-shrink: 0;
+}
+.video-main {
+    flex: 1; position: relative; overflow: hidden;
+    display: flex; flex-direction: column; justify-content: center;
+    padding: clamp(48px,6vh,80px) clamp(24px,3vw,40px) clamp(24px,3vh,40px) clamp(20px,2.5vw,36px);
+}
+#showcase-video {
+    width: 100%; height: 100%; object-fit: contain; display: block;
+    filter: brightness(0.9); transition: filter 0.5s;
+}
+.video-frame-wrap {
+    border: 1px solid rgba(0,200,180,0.15);
+    background: #030303; overflow: hidden;
+    position: relative;
+}
+.video-frame-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 18px; border-bottom: 1px solid rgba(0,200,180,0.08);
+}
+.video-frame-label {
+    font-size: clamp(9px,0.68vw,11px); letter-spacing: 2.5px; text-transform: uppercase;
+    color: rgba(221,216,204,0.4);
+}
+.video-frame-status {
+    font-size: clamp(9px,0.68vw,11px); letter-spacing: 2px; color: var(--teal);
+}
+.video-frame-wrap:hover #showcase-video { filter: brightness(1.0); }
+
+/* ─────────────────────────────────────────────
+   PANEL · LINKS
 ───────────────────────────────────────────── */
 .panel-links {
     background: #000; flex-direction: row !important;
@@ -423,8 +668,6 @@ body::before {
         radial-gradient(ellipse 65% 55% at 85% 80%, rgba(0,200,180,0.05) 0%, transparent 60%),
         radial-gradient(ellipse 40% 35% at 10% 20%, rgba(0,200,180,0.04) 0%, transparent 55%);
 }
-
-/* left: title block */
 .links-left {
     flex: 0 0 42%;
     display: flex; flex-direction: column; justify-content: space-between;
@@ -455,8 +698,6 @@ body::before {
 }
 .links-back span { color: var(--teal); opacity: 0.75; }
 .links-back:hover { color: rgba(221,216,204,0.85); }
-
-/* right: links columns */
 .links-right {
     flex: 1;
     display: flex; flex-direction: column; justify-content: center;
@@ -494,7 +735,6 @@ body::before {
     transition: color 0.22s, transform 0.22s; position: relative; z-index: 1;
 }
 .link-btn:hover .link-btn-arrow, .link-btn.cycling .link-btn-arrow { color: #fff; transform: translateX(3px); }
-
 .links-col-projects { display: flex; flex-direction: column; gap: 2px; }
 .project-card-link {
     display: flex; flex-direction: column; gap: 5px; justify-content: center;
@@ -524,7 +764,6 @@ body::before {
     transition: opacity 0.18s, transform 0.18s; position: relative; z-index: 1;
 }
 .project-card-link:hover .proj-arrow, .project-card-link.cycling .proj-arrow { opacity: 1; color: #fff; transform: translateX(3px); }
-
 .footer-copy {
     position: absolute; bottom: 22px; right: clamp(24px,3vw,52px);
     font-size: 9px; letter-spacing: 2px; color: rgba(255,255,255,0.18);
@@ -568,40 +807,6 @@ body::before {
     padding: 6px 0 0; align-self: center;
 }
 
-/* ── VIDEO LIGHTBOX ── */
-#video-lightbox {
-    position: fixed; inset: 0; z-index: 100001;
-    background: rgba(0,0,0,0.97);
-    display: flex; align-items: center; justify-content: center;
-    opacity: 0; pointer-events: none; transition: opacity 0.3s;
-}
-#video-lightbox.open { opacity: 1; pointer-events: all; }
-#vlb-wrap { position: relative; display: flex; flex-direction: column; align-items: flex-end; gap: 0; }
-#vlb-video {
-    max-width: min(88vw, calc(82vh * 9 / 16)); max-height: 82vh;
-    width: auto; height: auto;
-    border: 1px solid rgba(0,200,180,0.1); display: block; cursor: none;
-}
-#vlb-close {
-    font-family: 'Courier Prime', monospace; font-size: 9px;
-    letter-spacing: 3px; text-transform: uppercase;
-    color: rgba(0,200,180,0.48); background: none; border: none;
-    padding: 6px 0 6px 12px; cursor: none; align-self: flex-end; transition: color 0.2s;
-    margin-bottom: 6px;
-}
-#vlb-close:hover { color: var(--teal); }
-.vlb-arrow {
-    position: fixed; top: 50%; transform: translateY(-50%);
-    background: none; border: none; font-size: 20px;
-    color: rgba(0,200,180,0.28); transition: color 0.2s; padding: 14px; cursor: none;
-}
-.vlb-arrow:hover { color: var(--teal); }
-#vlb-prev { left: 16px; } #vlb-next { right: 16px; }
-#vlb-counter {
-    font-size: 9px; letter-spacing: 3px; color: rgba(0,200,180,0.38);
-    font-family: 'Courier Prime', monospace; text-align: center; padding: 6px 0 0; align-self: center;
-}
-
     </style>
 </head>
 <body>
@@ -609,10 +814,8 @@ body::before {
 <div id="cursor-dot"></div>
 <div id="cursor-ring"></div>
 
-
-
 <div class="top-bar">
-    <a href="./testing2.html" class="back-link"><span class="back-arrow">←</span> Portfolio</a>
+    <a href="./anoaeyto.html" class="back-link"><span class="back-arrow">←</span> Portfolio</a>
     <div class="top-bar-logo" id="top-bar-logo">ANOAEYTO</div>
 </div>
 
@@ -626,12 +829,12 @@ body::before {
 
 <!-- 0 · HERO -->
 <div class="panel panel-hero" data-panel="Intro">
-    <img src="./projects/tea/posters/poster.jpg" alt="" onerror="this.src='./projects/poster.jpg'">
+    <img src="./projects/illumination/Untitled6.png" alt="Polyrhythmic Illumination" onerror="this.style.display='none'">
     <div class="hero-overlay"></div>
     <div class="hero-scanline"></div>
     <div class="hero-content">
-        <div class="hero-eyebrow">Brand Development &amp; Digital Design</div>
-        <h1 class="hero-title">Tea and<br>Culture Club</h1>
+        <div class="hero-eyebrow">Audiovisual Installation · 2025–Present</div>
+        <h1 class="hero-title">Polyrhythmic<br>Illumination</h1>
         <div class="hero-hint">
             <div class="hint-line"></div>
             <span>Scroll or arrow keys</span>
@@ -642,249 +845,239 @@ body::before {
 
 <!-- 1 · OVERVIEW -->
 <div class="panel panel-overview" data-panel="Overview">
-    <!-- left: eyebrow + tagline + meta -->
     <div class="ov-left">
         <div class="overview-header">
             <span class="overview-eyebrow">01 — Overview</span>
             <div class="overview-rule"></div>
         </div>
-        <h2 class="overview-tagline">A year building the visual identity for UW's Tea Club — across <em><span class="kw">print</span>, <span class="kw">social</span>, and <span class="kw">video</span>.</em></h2>
+        <h2 class="overview-tagline">Custom <em><span class="kw">electronics</span></em>, <em><span class="kw">LED hardware</span></em>, and embedded code — translating polyrhythm into pulses of <em><span class="kw">light</span></em>.</h2>
         <p class="overview-meta">
-            <span>2024 – 2025</span><span class="overview-meta-sep">·</span><span>Brand Design</span><span class="overview-meta-sep">·</span><span>Social Media</span><span class="overview-meta-sep">·</span><span>Photoshop</span><span class="overview-meta-sep">·</span><span>Premiere Pro</span><span class="overview-meta-sep">·</span><span>Blender</span><span class="overview-meta-sep">·</span><span>Figma</span><span class="overview-meta-sep">·</span><span>HTML / CSS</span>
+            <span>2025–Present</span><span class="overview-meta-sep">·</span><span>Audiovisual Installation</span><span class="overview-meta-sep">·</span><span>Phil Kline</span><span class="overview-meta-sep">·</span><span>MAX MSP 8</span><span class="overview-meta-sep">·</span><span>Arduino C++</span><span class="overview-meta-sep">·</span><span>Blender</span><span class="overview-meta-sep">·</span><span>FastLED</span>
         </p>
     </div>
-    <!-- right: stats grid -->
     <div class="ov-right">
         <div class="ov-right-header">
-            <span class="ov-right-label">Impact</span>
+            <span class="ov-right-label">Highlights</span>
             <div class="ov-right-rule"></div>
         </div>
         <div class="overview-stats">
-            <div class="stat-item"><span class="stat-val">+600</span><span class="stat-label">Instagram followers gained</span></div>
-            <div class="stat-item"><span class="stat-val">15+</span><span class="stat-label">Event posters shipped</span></div>
-            <div class="stat-item"><span class="stat-val">200+</span><span class="stat-label">Stickers &amp; posters across campus</span></div>
-            <div class="stat-item"><span class="stat-val">10</span><span class="stat-label">Reels &amp; story videos produced</span></div>
-            <div class="stat-item"><span class="stat-val">3+</span><span class="stat-label">Cross-club brand collaborations</span></div>
-            <div class="stat-item"><span class="stat-val">1</span><span class="stat-label">Club website designed &amp; built</span></div>
-            <div class="stat-item"><span class="stat-val">3+</span><span class="stat-label">Partnered bakeries &amp; restaurants</span></div>
+            <div class="stat-item"><span class="stat-val">5</span><span class="stat-label">Independent polyrhythmic voices mapped to LED arrays</span></div>
+            <div class="stat-item"><span class="stat-val">Live</span><span class="stat-label">Real-time audio analysis driving light in milliseconds</span></div>
+            <div class="stat-item"><span class="stat-val">OSC</span><span class="stat-label">Protocol bridging MAX MSP 8 to Arduino microcontrollers</span></div>
+            <div class="stat-item"><span class="stat-val">WS</span><span class="stat-label">2812B individually addressable LED strips per voice</span></div>
+            <div class="stat-item"><span class="stat-val">3D</span><span class="stat-label">Blender spatial modelling previsualized before build</span></div>
+            <div class="stat-item"><span class="stat-val">Phil</span><span class="stat-label">Kline's Unsilent Night — outdoor sound installation tradition</span></div>
         </div>
     </div>
 </div>
 
-<!-- 2 · W25 POSTERS -->
-<div class="panel panel-gallery panel-posters" data-panel="W25 Posters">
-    <div class="gallery-sidebar">
-        <div class="gallery-sidebar-top">
-            <span class="gallery-num">02</span>
-            <h2 class="gallery-title">W25 Event Posters</h2>
-            <div class="gallery-rule"></div>
-            <p class="gallery-desc">Poster-format Instagram posts for Winter 2025, each featuring event timing, campus location, and tea selections.</p>
-        </div>
-        <div class="gallery-sidebar-bottom">
-            <div class="gallery-count">15 works</div>
-            <div class="gallery-scroll-hint"><span>scroll to browse</span><span class="gallery-scroll-hint-arrow">→</span></div>
-        </div>
+<!-- 2 · CONCEPT + LIVE SIM -->
+<div class="panel panel-concept" data-panel="Concept">
+    <div class="concept-left">
+        <div class="concept-eyebrow">02 — Concept</div>
+        <h2 class="concept-heading">Rhythm<br>made<br>visible.</h2>
+        <p class="concept-body">Phil Kline's Unsilent Night layers five independent rhythmic voices — each at a prime ratio to the others — producing a counterpoint that never fully resolves. The piece resists a singular pulse, instead breathing as a collective organism of overlapping cycles.<br><br>This installation gives each voice a physical LED presence. As the music unfolds, light pulses propagate in the same ratios — making visible what is ordinarily only heard.</p>
+
     </div>
-    <div class="gallery-main">
-        <div class="gstrip-wrap"><div class="gstrip">
-            <div class="gitem" data-src="./projects/tea/posters/around_the_world.png"><img src="./projects/tea/posters/around_the_world.png" alt=""><div class="gitem-overlay"><span class="gitem-idx">01</span></div></div>
-            <div class="gitem" data-src="./projects/tea/posters/green_teas_2.jpg"><img src="./projects/tea/posters/green_teas_2.jpg" alt=""><div class="gitem-overlay"><span class="gitem-idx">02</span></div></div>
-            <div class="gitem" data-src="./projects/tea/posters/essential_3.jpg"><img src="./projects/tea/posters/essential_3.jpg" alt=""><div class="gitem-overlay"><span class="gitem-idx">03</span></div></div>
-            <div class="gitem" data-src="./projects/tea/posters/steeps_9.jpg"><img src="./projects/tea/posters/steeps_9.jpg" alt=""><div class="gitem-overlay"><span class="gitem-idx">04</span></div></div>
-            <div class="gitem" data-src="./projects/tea/posters/white_teas.jpg"><img src="./projects/tea/posters/white_teas.jpg" alt=""><div class="gitem-overlay"><span class="gitem-idx">05</span></div></div>
-            <div class="gitem" data-src="./projects/tea/posters/calm.jpg"><img src="./projects/tea/posters/calm.jpg" alt=""><div class="gitem-overlay"><span class="gitem-idx">06</span></div></div>
-            <div class="gitem" data-src="./projects/tea/posters/fruit_3.jpg"><img src="./projects/tea/posters/fruit_3.jpg" alt=""><div class="gitem-overlay"><span class="gitem-idx">07</span></div></div>
-            <div class="gitem" data-src="./projects/tea/posters/meet_3_3.jpg"><img src="./projects/tea/posters/meet_3_3.jpg" alt=""><div class="gitem-overlay"><span class="gitem-idx">08</span></div></div>
-            <div class="gitem" data-src="./projects/tea/posters/first_meet.jpg"><img src="./projects/tea/posters/first_meet.jpg" alt=""><div class="gitem-overlay"><span class="gitem-idx">09</span></div></div>
-            <div class="gitem" data-src="./projects/tea/posters/meet_4.jpg"><img src="./projects/tea/posters/meet_4.jpg" alt=""><div class="gitem-overlay"><span class="gitem-idx">10</span></div></div>
-            <div class="gitem" data-src="./projects/tea/posters/latest-Recovered.jpg"><img src="./projects/tea/posters/latest-Recovered.jpg" alt=""><div class="gitem-overlay"><span class="gitem-idx">11</span></div></div>
-            <div class="gitem" data-src="./projects/tea/posters/lastmeet.jpg"><img src="./projects/tea/posters/lastmeet.jpg" alt=""><div class="gitem-overlay"><span class="gitem-idx">12</span></div></div>
-            <div class="gitem" data-src="./projects/tea/posters/7_3_2025.jpg"><img src="./projects/tea/posters/7_3_2025.jpg" alt=""><div class="gitem-overlay"><span class="gitem-idx">13</span></div></div>
-            <div class="gitem" data-src="./projects/tea/posters/meet_5.jpg"><img src="./projects/tea/posters/meet_5.jpg" alt=""><div class="gitem-overlay"><span class="gitem-idx">14</span></div></div>
-            <div class="gitem" data-src="./projects/tea/posters/FINAL.jpg"><img src="./projects/tea/posters/FINAL.jpg" alt=""><div class="gitem-overlay"><span class="gitem-idx">15</span></div></div>
-        </div></div>
+    <div class="concept-right">
+        <div class="concept-right-header">
+            <span class="concept-right-label">Polyrhythm Simulation — <span style="color:var(--teal)">5 Voices</span></span>
+            <button id="sound-toggle">♪ Sound off</button>
+        </div>
+        <div class="sim-canvas-wrap">
+            <canvas id="sim-canvas"></canvas>
+        </div>
+        <div class="rhythm-canvas-wrap">
+            <canvas id="rhythm-canvas"></canvas>
+        </div>
+        <div class="sim-legend">
+            <span class="sim-legend-label">Voices</span>
+            <span class="sim-legend-item">1:2</span>
+            <span class="sim-legend-sep">·</span>
+            <span class="sim-legend-item">1:3</span>
+            <span class="sim-legend-sep">·</span>
+            <span class="sim-legend-item">1:4</span>
+            <span class="sim-legend-sep">·</span>
+            <span class="sim-legend-item">1:5</span>
+            <span class="sim-legend-sep">·</span>
+            <span class="sim-legend-item">1:7</span>
+        </div>
     </div>
 </div>
 
-<!-- 3 · F24 POSTERS -->
-<div class="panel panel-gallery panel-posters" data-panel="F24 Posters">
-    <div class="gallery-sidebar">
-        <div class="gallery-sidebar-top">
-            <span class="gallery-num">03</span>
-            <h2 class="gallery-title">F24 Event Posters</h2>
-            <div class="gallery-rule"></div>
-            <p class="gallery-desc">Fall 2024 event series, establishing the visual language that carried into the following term.</p>
+<!-- 3 · SYSTEM & PROCESS -->
+<div class="panel panel-system" data-panel="System">
+    <div class="system-left">
+        <div style="display:flex;flex-direction:column;gap:clamp(18px,2.5vh,28px);">
+            <span class="system-num">03</span>
+            <h2 class="system-title">System &amp; Process</h2>
+            <div class="system-rule"></div>
+            <p class="system-desc">Three interconnected systems — audio analysis, LED control, and spatial previsualization — developed through a research-to-hardware pipeline.</p>
         </div>
-        <div class="gallery-sidebar-bottom">
-            <div class="gallery-count">12 works</div>
-            <div class="gallery-scroll-hint"><span>scroll to browse</span><span class="gallery-scroll-hint-arrow">→</span></div>
-        </div>
+
     </div>
-    <div class="gallery-main">
-        <div class="gstrip-wrap"><div class="gstrip">
-            <div class="gitem ar-1-1" data-src="./projects/tea/posters/meet_1_2.jpg"><img src="./projects/tea/posters/meet_1_2.jpg" alt=""><div class="gitem-overlay"><span class="gitem-idx">01</span></div></div>
-            <div class="gitem ar-1-1" data-src="./projects/tea/posters/meet_2.jpg"><img src="./projects/tea/posters/meet_2.jpg" alt=""><div class="gitem-overlay"><span class="gitem-idx">02</span></div></div>
-            <div class="gitem ar-1-1" data-src="./projects/tea/posters/halloween_3.jpg"><img src="./projects/tea/posters/halloween_3.jpg" alt=""><div class="gitem-overlay"><span class="gitem-idx">03</span></div></div>
-            <div class="gitem ar-1-1" data-src="./projects/tea/posters/meet_4_4.jpg"><img src="./projects/tea/posters/meet_4_4.jpg" alt=""><div class="gitem-overlay"><span class="gitem-idx">04</span></div></div>
-            <div class="gitem ar-1-1" data-src="./projects/tea/posters/bbt_3.jpg"><img src="./projects/tea/posters/bbt_3.jpg" alt=""><div class="gitem-overlay"><span class="gitem-idx">05</span></div></div>
-            <div class="gitem ar-1-1" data-src="./projects/tea/posters/meet_5_4.jpg"><img src="./projects/tea/posters/meet_5_4.jpg" alt=""><div class="gitem-overlay"><span class="gitem-idx">06</span></div></div>
-            <div class="gitem ar-1-1" data-src="./projects/tea/posters/collab_bake_2.jpg"><img src="./projects/tea/posters/collab_bake_2.jpg" alt=""><div class="gitem-overlay"><span class="gitem-idx">07</span></div></div>
-            <div class="gitem ar-1-1" data-src="./projects/tea/posters/green_collab_final.jpg"><img src="./projects/tea/posters/green_collab_final.jpg" alt=""><div class="gitem-overlay"><span class="gitem-idx">08</span></div></div>
-            <div class="gitem ar-1-1" data-src="./projects/tea/posters/black_friday.jpg"><img src="./projects/tea/posters/black_friday.jpg" alt=""><div class="gitem-overlay"><span class="gitem-idx">09</span></div></div>
-            <div class="gitem ar-1-1" data-src="./projects/tea/posters/meet_7_3.jpg"><img src="./projects/tea/posters/meet_7_3.jpg" alt=""><div class="gitem-overlay"><span class="gitem-idx">10</span></div></div>
-            <div class="gitem ar-1-1" data-src="./projects/tea/posters/week_2_oolong_14.jpg"><img src="./projects/tea/posters/week_2_oolong_14.jpg" alt=""><div class="gitem-overlay"><span class="gitem-idx">11</span></div></div>
-            <div class="gitem ar-1-1" data-src="./projects/tea/posters/week_1_spices.jpg"><img src="./projects/tea/posters/week_1_spices.jpg" alt=""><div class="gitem-overlay"><span class="gitem-idx">12</span></div></div>
-        </div></div>
+    <div class="system-right">
+        <div class="process-grid">
+                <div class="process-card">
+                    <div class="process-card-num">01</div>
+                    <div class="process-card-title">Compositional Analysis</div>
+                    <div class="process-card-body">Score study and listening sessions to identify the distinct polyrhythmic voices. Each layer is catalogued by tempo, timbre, and spatial relationship — forming the basis of the light mapping schema.</div>
+                    <div class="process-card-tag">Research</div>
+                </div>
+                <div class="process-card">
+                    <div class="process-card-num">02</div>
+                    <div class="process-card-title">MAX MSP Patch</div>
+                    <div class="process-card-body">FFT-based beat detection, rhythm extraction, and multi-channel signal separation. The patch outputs OSC messages encoding rhythmic state for each voice in real time.</div>
+                    <div class="process-card-tag">MAX MSP 8</div>
+                </div>
+                <div class="process-card">
+                    <div class="process-card-num">03</div>
+                    <div class="process-card-title">Blender Spatial Modelling</div>
+                    <div class="process-card-body">3D modelling of the installation space and LED configurations. Animated light rigs simulate hardware behaviour, refining sightlines and light choreography before build.</div>
+                    <div class="process-card-tag">Blender</div>
+                </div>
+                <div class="process-card">
+                    <div class="process-card-num">04</div>
+                    <div class="process-card-title">Arduino Prototyping</div>
+                    <div class="process-card-body">Firmware in C++ using FastLED to receive OSC messages and translate them into per-channel light patterns. Iterative testing for latency, colour accuracy, and synchronization.</div>
+                    <div class="process-card-tag">Arduino C++</div>
+                </div>
+                <div class="process-card">
+                    <div class="process-card-num">05</div>
+                    <div class="process-card-title">Integration &amp; Calibration</div>
+                    <div class="process-card-body">Connecting MAX MSP, Arduino, and LED hardware into a unified pipeline. Calibrating OSC timing, refining rhythm-to-light mappings, and adjusting spatial placement through full-system testing.</div>
+                    <div class="process-card-tag">Full System</div>
+                </div>
+                <div class="process-card">
+                    <div class="process-card-num">06</div>
+                    <div class="process-card-title">Rhythm Mapping</div>
+                    <div class="process-card-body">Each polyrhythmic layer is assigned a distinct spatial zone and colour channel — visual counterpoint that mirrors the musical counterpoint of the composition in physical space.</div>
+                    <div class="process-card-tag">Custom Logic</div>
+                </div>
+        </div>
     </div>
 </div>
 
-<!-- 4 · FLYERS -->
-<div class="panel panel-gallery panel-flyers" data-panel="Flyers">
+<!-- 4 · GALLERY – Documentation -->
+<div class="panel panel-gallery" data-panel="Gallery">
     <div class="gallery-sidebar">
         <div class="gallery-sidebar-top">
             <span class="gallery-num">04</span>
-            <h2 class="gallery-title">Print Flyers</h2>
+            <h2 class="gallery-title">Documentation</h2>
             <div class="gallery-rule"></div>
-            <p class="gallery-desc">Physical print collateral for campus distribution — designed for 8.5×11 and A3 formats.</p>
+            <p class="gallery-desc">Photography and video from the installation — LED arrays, Blender renders, and the live room environment.</p>
         </div>
         <div class="gallery-sidebar-bottom">
-            <div class="gallery-count">7 works</div>
+            <div class="gallery-count">Installation docs</div>
             <div class="gallery-scroll-hint"><span>scroll to browse</span><span class="gallery-scroll-hint-arrow">→</span></div>
         </div>
     </div>
     <div class="gallery-main">
         <div class="gstrip-wrap"><div class="gstrip">
-            <div class="gitem" data-src="./projects/tea/flyers/bbt_flyer_1.jpg"><img src="./projects/tea/flyers/bbt_flyer_1.jpg" alt=""><div class="gitem-overlay"><span class="gitem-idx">01</span></div></div>
-            <div class="gitem" data-src="./projects/tea/flyers/bbt_flyer_2.jpg"><img src="./projects/tea/flyers/bbt_flyer_2.jpg" alt=""><div class="gitem-overlay"><span class="gitem-idx">02</span></div></div>
-            <div class="gitem" data-src="./projects/tea/flyers/essential_flyer_4.jpg"><img src="./projects/tea/flyers/essential_flyer_4.jpg" alt=""><div class="gitem-overlay"><span class="gitem-idx">03</span></div></div>
-            <div class="gitem" data-src="./projects/tea/flyers/green_flyer_2.jpg"><img src="./projects/tea/flyers/green_flyer_2.jpg" alt=""><div class="gitem-overlay"><span class="gitem-idx">04</span></div></div>
-            <div class="gitem" data-src="./projects/tea/flyers/green_collab_flyer_3.jpg"><img src="./projects/tea/flyers/green_collab_flyer_3.jpg" alt=""><div class="gitem-overlay"><span class="gitem-idx">05</span></div></div>
-            <div class="gitem" data-src="./projects/tea/flyers/oolong_flyer_3.jpg"><img src="./projects/tea/flyers/oolong_flyer_3.jpg" alt=""><div class="gitem-overlay"><span class="gitem-idx">06</span></div></div>
-            <div class="gitem" data-src="./projects/tea/flyers/calm_flyer_2.jpg"><img src="./projects/tea/flyers/calm_flyer_2.jpg" alt=""><div class="gitem-overlay"><span class="gitem-idx">07</span></div></div>
+            <div class="gitem ar-4-3" data-src="./projects/illumination/2I2A1732.JPG"><img src="./projects/illumination/2I2A1732.JPG" alt="" onerror="this.closest('.gitem').style.display='none'"><div class="gitem-overlay"><span class="gitem-idx">01</span></div></div>
+            <div class="gitem ar-4-3" data-src="./projects/illumination/IMG_8476.png"><img src="./projects/illumination/IMG_8476.png" alt="" onerror="this.closest('.gitem').style.display='none'"><div class="gitem-overlay"><span class="gitem-idx">02</span></div></div>
+            <div class="gitem ar-4-3" data-src="./projects/illumination/IMG_8477.PNG"><img src="./projects/illumination/IMG_8477.PNG" alt="" onerror="this.closest('.gitem').style.display='none'"><div class="gitem-overlay"><span class="gitem-idx">03</span></div></div>
+            <div class="gitem ar-4-3" data-src="./projects/illumination/IMG_8478_2.jpg"><img src="./projects/illumination/IMG_8478_2.jpg" alt="" onerror="this.closest('.gitem').style.display='none'"><div class="gitem-overlay"><span class="gitem-idx">04</span></div></div>
+            <div class="gitem ar-4-3" data-src="./projects/illumination/Untitled1.png"><img src="./projects/illumination/Untitled1.png" alt="" onerror="this.closest('.gitem').style.display='none'"><div class="gitem-overlay"><span class="gitem-idx">05</span></div></div>
+            <div class="gitem ar-4-3" data-src="./projects/illumination/Untitled3.png"><img src="./projects/illumination/Untitled3.png" alt="" onerror="this.closest('.gitem').style.display='none'"><div class="gitem-overlay"><span class="gitem-idx">06</span></div></div>
+            <div class="gitem ar-4-3" data-src="./projects/illumination/Untitled6.png"><img src="./projects/illumination/Untitled6.png" alt="" onerror="this.closest('.gitem').style.display='none'"><div class="gitem-overlay"><span class="gitem-idx">07</span></div></div>
+            <div class="gitem ar-4-3" data-src="./projects/illumination/Untitled7.png"><img src="./projects/illumination/Untitled7.png" alt="" onerror="this.closest('.gitem').style.display='none'"><div class="gitem-overlay"><span class="gitem-idx">08</span></div></div>
+            <div class="gitem ar-4-3" data-src="./projects/illumination/IMG_9601.JPG"><img src="./projects/illumination/IMG_9601.JPG" alt="" onerror="this.closest('.gitem').style.display='none'"><div class="gitem-overlay"><span class="gitem-idx">09</span></div></div>
+            <div class="gitem ar-4-3" data-src="./projects/illumination/IMG_9609.JPG"><img src="./projects/illumination/IMG_9609.JPG" alt="" onerror="this.closest('.gitem').style.display='none'"><div class="gitem-overlay"><span class="gitem-idx">10</span></div></div>
+            <div class="gitem ar-4-3" data-src="./projects/illumination/IMG_9627.JPG"><img src="./projects/illumination/IMG_9627.JPG" alt="" onerror="this.closest('.gitem').style.display='none'"><div class="gitem-overlay"><span class="gitem-idx">11</span></div></div>
+            <div class="gitem ar-4-3" data-src="./projects/illumination/IMG_9633.JPG"><img src="./projects/illumination/IMG_9633.JPG" alt="" onerror="this.closest('.gitem').style.display='none'"><div class="gitem-overlay"><span class="gitem-idx">12</span></div></div>
         </div></div>
     </div>
 </div>
 
-<!-- 5 · BRAND ASSETS -->
-<div class="panel panel-gallery" data-panel="Brand Assets">
+<!-- 5 · GALLERY – Video -->
+<div class="panel panel-gallery" data-panel="Video">
     <div class="gallery-sidebar">
         <div class="gallery-sidebar-top">
             <span class="gallery-num">05</span>
-            <h2 class="gallery-title">Infographics &amp; Brand Assets</h2>
+            <h2 class="gallery-title">Live Footage</h2>
             <div class="gallery-rule"></div>
-            <p class="gallery-desc">Sticker designs, Spotify artwork, infographics, and promotional brand graphics.</p>
+            <p class="gallery-desc">Captured video from the live installation — LED arrays responding in real time to the polyrhythmic composition.</p>
         </div>
         <div class="gallery-sidebar-bottom">
-            <div class="gallery-count">10 works</div>
+            <div class="gallery-count">Video clips</div>
             <div class="gallery-scroll-hint"><span>scroll to browse</span><span class="gallery-scroll-hint-arrow">→</span></div>
         </div>
     </div>
     <div class="gallery-main">
-        <div class="gstrip-wrap"><div class="gstrip">
-            <div class="gitem ar-1-1" data-src="./projects/tea/socials/meet_execs_F24_1.jpg"><img src="./projects/tea/socials/meet_execs_F24_1.jpg" alt=""><div class="gitem-overlay"><span class="gitem-idx">01</span></div></div>
-            <div class="gitem ar-1-1" data-src="./projects/tea/socials/become_member.jpg"><img src="./projects/tea/socials/become_member.jpg" alt=""><div class="gitem-overlay"><span class="gitem-idx">02</span></div></div>
-            <div class="gitem ar-1-1" data-src="./projects/tea/socials/main.jpg"><img src="./projects/tea/socials/main.jpg" alt=""><div class="gitem-overlay"><span class="gitem-idx">03</span></div></div>
-            <div class="gitem ar-1-1" data-src="./projects/tea/socials/main_link_QR.jpg"><img src="./projects/tea/socials/main_link_QR.jpg" alt=""><div class="gitem-overlay"><span class="gitem-idx">04</span></div></div>
-            <div class="gitem ar-1-1" data-src="./projects/tea/socials/meet_5.png"><img src="./projects/tea/socials/meet_5.png" alt=""><div class="gitem-overlay"><span class="gitem-idx">05</span></div></div>
-            <div class="gitem ar-1-1" data-src="./projects/tea/socials/member_2.png"><img src="./projects/tea/socials/member_2.png" alt=""><div class="gitem-overlay"><span class="gitem-idx">06</span></div></div>
-            <div class="gitem ar-1-1" data-src="./projects/tea/socials/Sticker_1_rim_final_2.jpg"><img src="./projects/tea/socials/Sticker_1_rim_final_2.jpg" alt=""><div class="gitem-overlay"><span class="gitem-idx">07</span></div></div>
-            <div class="gitem ar-1-1" data-src="./projects/tea/socials/sticker_5.png"><img src="./projects/tea/socials/sticker_5.png" alt=""><div class="gitem-overlay"><span class="gitem-idx">08</span></div></div>
-            <div class="gitem ar-1-1" data-src="./projects/tea/socials/sticker_9.png"><img src="./projects/tea/socials/sticker_9.png" alt=""><div class="gitem-overlay"><span class="gitem-idx">09</span></div></div>
-            <div class="gitem ar-1-1" data-src="./projects/tea/socials/Tea_Club_Playlist.jpg"><img src="./projects/tea/socials/Tea_Club_Playlist.jpg" alt=""><div class="gitem-overlay"><span class="gitem-idx">10</span></div></div>
+        <div class="gstrip-wrap"><div class="gstrip" id="video-gallery-strip">
+            <div class="gitem ar-9-16" data-video="./projects/illumination/0222.mp4"><video src="./projects/illumination/0222.mp4" loop muted playsinline></video><div class="gitem-overlay"><span class="gitem-idx">01</span></div></div>
+            <div class="gitem ar-9-16" data-video="./projects/illumination/02221.mp4"><video src="./projects/illumination/02221.mp4" loop muted playsinline></video><div class="gitem-overlay"><span class="gitem-idx">02</span></div></div>
+            <div class="gitem ar-9-16" data-video="./projects/illumination/02222.mp4"><video src="./projects/illumination/02222.mp4" loop muted playsinline></video><div class="gitem-overlay"><span class="gitem-idx">03</span></div></div>
+            <div class="gitem ar-16-10" data-video="./projects/illumination/005928000.mp4"><video src="./projects/illumination/005928000.mp4" loop muted playsinline></video><div class="gitem-overlay"><span class="gitem-idx">04</span></div></div>
+            <div class="gitem ar-16-10" data-video="./projects/illumination/002934000Trim.mp4"><video src="./projects/illumination/002934000Trim.mp4" loop muted playsinline></video><div class="gitem-overlay"><span class="gitem-idx">05</span></div></div>
+            <div class="gitem ar-16-10" data-video="./projects/illumination/004247000.mp4"><video src="./projects/illumination/004247000.mp4" loop muted playsinline></video><div class="gitem-overlay"><span class="gitem-idx">06</span></div></div>
+            <div class="gitem ar-16-10" data-video="./projects/illumination/2I2A1876.MP4"><video src="./projects/illumination/2I2A1876.MP4" loop muted playsinline></video><div class="gitem-overlay"><span class="gitem-idx">07</span></div></div>
+            <div class="gitem ar-16-10" data-video="./projects/illumination/2I2A1729.MP4"><video src="./projects/illumination/2I2A1729.MP4" loop muted playsinline></video><div class="gitem-overlay"><span class="gitem-idx">08</span></div></div>
         </div></div>
     </div>
 </div>
 
-<!-- 6 · REELS -->
-<div class="panel panel-gallery" data-panel="Reels">
-    <div class="gallery-sidebar">
-        <div class="gallery-sidebar-top">
-            <span class="gallery-num">06</span>
-            <h2 class="gallery-title">Reels &amp; Video</h2>
-            <div class="gallery-rule"></div>
-            <p class="gallery-desc">Short-form video for Instagram Reels and stories. Hover to play.</p>
+<!-- 6 · FULL LOOP VIDEO -->
+<div class="panel panel-video" data-panel="Full Loop">
+    <div class="video-left">
+        <div style="display:flex;flex-direction:column;gap:clamp(18px,2.5vh,28px);">
+            <span class="system-num">06</span>
+            <h2 class="system-title">Full Installation Loop</h2>
+            <div class="system-rule"></div>
+            <p class="system-desc">Complete documentation of the full LED light loop — the entire sequence from start to finish.</p>
         </div>
-        <div class="gallery-sidebar-bottom">
-            <div class="gallery-count">6 videos</div>
-            <div class="gallery-scroll-hint"><span>hover to play</span><span class="gallery-scroll-hint-arrow">→</span></div>
-        </div>
+        <div style="font-size:clamp(9px,0.68vw,11px);letter-spacing:2.5px;text-transform:uppercase;color:rgba(0,200,180,0.5);">Full sequence · Polyrhythmic Illumination</div>
     </div>
-    <div class="gallery-main">
-        <div class="gstrip-wrap"><div class="gstrip">
-            <div class="gitem gitem--reel" data-video="./projects/tea/videos/Automatic.mp4"><video src="./projects/tea/videos/Automatic.mp4" loop muted playsinline></video><div class="gitem-overlay"><span class="gitem-idx">01</span></div></div>
-            <div class="gitem gitem--reel" data-video="./projects/tea/videos/reel_2_2.mp4"><video src="./projects/tea/videos/reel_2_2.mp4" loop muted playsinline></video><div class="gitem-overlay"><span class="gitem-idx">02</span></div></div>
-            <div class="gitem gitem--reel" data-video="./projects/tea/videos/reel_1_1.mp4"><video src="./projects/tea/videos/reel_1_1.mp4" loop muted playsinline></video><div class="gitem-overlay"><span class="gitem-idx">03</span></div></div>
-            <div class="gitem gitem--reel" data-video="./projects/tea/videos/reel_3_1.mp4"><video src="./projects/tea/videos/reel_3_1.mp4" loop muted playsinline></video><div class="gitem-overlay"><span class="gitem-idx">04</span></div></div>
-            <div class="gitem gitem--reel" data-video="./projects/tea/videos/reel_3_2.mp4"><video src="./projects/tea/videos/reel_3_2.mp4" loop muted playsinline></video><div class="gitem-overlay"><span class="gitem-idx">05</span></div></div>
-            <div class="gitem gitem--reel" data-video="./projects/tea/videos/tea_bag_trimmed.mp4"><video src="./projects/tea/videos/tea_bag_trimmed.mp4" loop muted playsinline></video><div class="gitem-overlay"><span class="gitem-idx">06</span></div></div>
-        </div></div>
+    <div class="video-main">
+        <div class="video-frame-wrap">
+            <div class="video-frame-header">
+                <span class="video-frame-label">Full Loop — Polyrhythmic Illumination</span>
+                <span class="video-frame-status" id="video-status">▶ Play</span>
+            </div>
+            <video id="showcase-video" controls preload="metadata">
+                <source src="./projects/illumination/Polyrhythmic Illuminations.mp4" type="video/mp4">
+                Your browser does not support the video element.
+            </video>
+        </div>
     </div>
 </div>
 
-<!-- 7 · WEBSITE -->
-<div class="panel panel-gallery" data-panel="Website">
-    <div class="gallery-sidebar">
-        <div class="gallery-sidebar-top">
-            <span class="gallery-num">07</span>
-            <h2 class="gallery-title">Website Design</h2>
-            <div class="gallery-rule"></div>
-            <p class="gallery-desc">Figma designs built in HTML / CSS, in collaboration with club executives.</p>
-        </div>
-        <div class="gallery-sidebar-bottom">
-            <div class="gallery-count">4 screens</div>
-            <div class="gallery-scroll-hint"><span>scroll to browse</span><span class="gallery-scroll-hint-arrow">→</span></div>
-        </div>
-    </div>
-    <div class="gallery-main">
-        <div class="gstrip-wrap"><div class="gstrip gstrip--website">
-            <div class="gitem ar-16-10" data-src="./projects/tea/1.PNG"><img src="./projects/tea/1.PNG" alt=""><div class="gitem-overlay"><span class="gitem-idx">Landing Page</span></div></div>
-            <div class="gitem ar-16-10" data-src="./projects/tea/2.PNG"><img src="./projects/tea/2.PNG" alt=""><div class="gitem-overlay"><span class="gitem-idx">Pricing Tiers</span></div></div>
-            <div class="gitem ar-16-10" data-src="./projects/tea/3.PNG"><img src="./projects/tea/3.PNG" alt=""><div class="gitem-overlay"><span class="gitem-idx">Photo Gallery</span></div></div>
-            <div class="gitem ar-16-10" data-src="./projects/tea/4.PNG"><img src="./projects/tea/4.PNG" alt=""><div class="gitem-overlay"><span class="gitem-idx">Team Section</span></div></div>
-        </div></div>
-    </div>
-</div>
-
-<!-- 8 · LINKS -->
+<!-- 7 · LINKS -->
 <div class="panel panel-links" data-panel="Links">
-    <!-- left: title block -->
     <div class="links-left">
         <div class="links-left-top">
-            <div class="links-label">08 — See the work</div>
-            <h2 class="links-title">See the<br>work live.</h2>
+            <div class="links-label">07 — Resources</div>
+            <h2 class="links-title">See the<br>work.</h2>
         </div>
-        <a href="./testing2.html" class="links-back"><span>←</span> Return to portfolio</a>
+        <a href="./anoaeyto.html" class="links-back"><span>←</span> Return to portfolio</a>
     </div>
-    <!-- right: links -->
     <div class="links-right">
         <div class="links-section">
-            <div class="links-section-label">External Links</div>
+            <div class="links-section-label">Event Pages</div>
             <div class="links-col-links">
-                <a href="https://www.instagram.com/uwtea/" target="_blank" rel="noopener" class="link-btn">
-                    <span class="link-btn-name">Instagram</span><span class="link-btn-arrow">↗</span>
+                <a href="https://luma.com/5pdp7ljk" target="_blank" rel="noopener" class="link-btn">
+                    <span class="link-btn-name">Luma — Phil Kline</span><span class="link-btn-arrow">↗</span>
                 </a>
-                <a href="https://wusa.ca/product/uw-tea-and-culture-club/" target="_blank" rel="noopener" class="link-btn">
-                    <span class="link-btn-name">WUSA Club Directory</span><span class="link-btn-arrow">↗</span>
+                <a href="https://luma.com/2jklit8j?tk=gDow4P" target="_blank" rel="noopener" class="link-btn">
+                    <span class="link-btn-name">Luma — Globe Studios</span><span class="link-btn-arrow">↗</span>
                 </a>
-                <a href="https://tea.imkunal.ca/" target="_blank" rel="noopener" class="link-btn">
-                    <span class="link-btn-name">Club Website</span><span class="link-btn-arrow">↗</span>
-                </a>
-                <a href="https://www.figma.com/proto/qmmRfvGPG8AZ97fc8kJj19/UW-Tea-Club-Brand-and-Website-Development?node-id=0-1&t=UzZKTCZ80NfZgzmJ-1" target="_blank" rel="noopener" class="link-btn">
-                    <span class="link-btn-name">Figma Prototype</span><span class="link-btn-arrow">↗</span>
+                <a href="https://github.com/mpawlega" target="_blank" rel="noopener" class="link-btn">
+                    <span class="link-btn-name">GitHub</span><span class="link-btn-arrow">↗</span>
                 </a>
             </div>
         </div>
         <div class="links-section">
             <div class="links-section-label">Other Projects</div>
             <div class="links-col-projects">
-                <a href="cosmic-interlude.html" class="project-card-link">
+                <a href="cosmic-interlude2.html" class="project-card-link">
                     <span class="proj-eyebrow">Interactive Installation · 2025</span>
-                    <span class="proj-title">Cosmic Interlude of the Nebular Web</span>
+                    <span class="proj-title">Cosmic Interlude</span>
                     <span class="proj-arrow">→</span>
                 </a>
-                <a href="polyrhythmic-illuminations.html" class="project-card-link">
-                    <span class="proj-eyebrow">Audiovisual Installation · 2025</span>
-                    <span class="proj-title">Phil Kline's Unsilent Night: Polyrhythmic Illuminations</span>
+                <a href="tea-club.html" class="project-card-link">
+                    <span class="proj-eyebrow">Brand Development · 2024–2025</span>
+                    <span class="proj-title">University of Waterloo: Tea &amp; Culture Club</span>
                     <span class="proj-arrow">→</span>
                 </a>
             </div>
@@ -895,7 +1088,7 @@ body::before {
 
 </div><!-- /track -->
 
-<!-- Lightboxes -->
+<!-- Lightbox -->
 <div id="lightbox">
     <button class="lb-arrow" id="lb-prev">←</button>
     <div id="lb-img-wrap">
@@ -906,27 +1099,14 @@ body::before {
     <button class="lb-arrow" id="lb-next">→</button>
 </div>
 
-<div id="video-lightbox">
-    <button class="vlb-arrow" id="vlb-prev">←</button>
-    <div id="vlb-wrap">
-        <button id="vlb-close">close</button>
-        <video id="vlb-video" controls playsinline></video>
-        <div id="vlb-counter"><span id="vlb-cur">1</span> / <span id="vlb-tot">1</span></div>
-    </div>
-    <button class="vlb-arrow" id="vlb-next">→</button>
-</div>
-
 <script>
 /* ── CURSOR ── */
 (function(){
     const dot=document.getElementById('cursor-dot'),ring=document.getElementById('cursor-ring');
     let mx=0,my=0,rx=0,ry=0;
-    document.addEventListener('mousemove',e=>{
-        mx=e.clientX; my=e.clientY;
-        dot.style.left=mx+'px'; dot.style.top=my+'px';
-    });
+    document.addEventListener('mousemove',e=>{ mx=e.clientX; my=e.clientY; dot.style.left=mx+'px'; dot.style.top=my+'px'; });
     (function loop(){ rx+=(mx-rx)*0.1; ry+=(my-ry)*0.1; ring.style.left=rx+'px'; ring.style.top=ry+'px'; requestAnimationFrame(loop); })();
-    document.querySelectorAll('a,button,.gitem').forEach(el=>{
+    document.querySelectorAll('a,button,.gitem,.process-card').forEach(el=>{
         el.addEventListener('mouseenter',()=>ring.classList.add('expanded'));
         el.addEventListener('mouseleave',()=>ring.classList.remove('expanded'));
     });
@@ -1009,6 +1189,16 @@ body::before {
             if(delta>0&&t<max-2){e.preventDefault();smoothScrollStrip(strip,delta*2.2);return;}
             if(delta<0&&t>2){e.preventDefault();smoothScrollStrip(strip,delta*2.2);return;}
         }
+        // also handle process strip
+        const psWrap=e.target.closest?.('.system-strip-wrap');
+        const ps=psWrap?.querySelector('.system-strip');
+        if(ps){
+            const delta=Math.abs(e.deltaX)>=Math.abs(e.deltaY)?e.deltaX:e.deltaY;
+            const max=ps.scrollWidth-ps.clientWidth;
+            const s=stripState.get(ps); const t=s?s.target:ps.scrollLeft;
+            if(delta>0&&t<max-2){e.preventDefault();smoothScrollStrip(ps,delta*2.2);return;}
+            if(delta<0&&t>2){e.preventDefault();smoothScrollStrip(ps,delta*2.2);return;}
+        }
         e.preventDefault();
         if(wLock)return; wLock=true; setTimeout(()=>wLock=false,600);
         const delta=Math.abs(e.deltaX)>=Math.abs(e.deltaY)?e.deltaX:e.deltaY;
@@ -1040,6 +1230,28 @@ document.querySelectorAll('.gstrip-wrap').forEach(wrap=>{
     wrap.addEventListener('mousemove',e=>{ if(scrolling)return; const over=e.target.closest('.gitem'); if(over)applyDim(over); });
     wrap.addEventListener('mouseleave',()=>clearDims());
 });
+
+/* ── VIDEO HOVER PLAY (gallery strip) ── */
+(function(){
+    const videoStrip=document.getElementById('video-gallery-strip');
+    if(!videoStrip)return;
+    const items=Array.from(videoStrip.querySelectorAll('.gitem[data-video]'));
+    const videos=items.map(r=>r.querySelector('video'));
+    let autoIdx=0, autoTimer=null, hoveredItem=null;
+    function stopAll(){ videos.forEach(v=>{v.pause();v.currentTime=0;}); }
+    function autoAdvance(){ if(hoveredItem!==null)return; stopAll(); const v=videos[autoIdx]; if(!v)return; v.play().catch(()=>{}); const dur=(v.duration&&isFinite(v.duration))?v.duration*1000:4000; autoIdx=(autoIdx+1)%videos.length; autoTimer=setTimeout(autoAdvance,Math.min(dur,6000)); }
+    function startAuto(){ clearTimeout(autoTimer); autoIdx=0; autoAdvance(); }
+    function stopAuto(){ clearTimeout(autoTimer); autoTimer=null; stopAll(); }
+    items.forEach((item,i)=>{
+        const v=videos[i];
+        item.addEventListener('mouseenter',()=>{ hoveredItem=i; clearTimeout(autoTimer); stopAll(); items.forEach((r,j)=>r.classList.toggle('dimmed',j!==i)); v.play().catch(()=>{}); });
+        item.addEventListener('mouseleave',()=>{ hoveredItem=null; v.pause(); v.currentTime=0; items.forEach(r=>r.classList.remove('dimmed')); autoIdx=(i+1)%videos.length; autoAdvance(); });
+    });
+    const videoPanel=document.querySelector('[data-panel="Video"]');
+    const allPanels=Array.from(document.querySelectorAll('.panel'));
+    window.__videoPanelIdx=allPanels.indexOf(videoPanel);
+    window.__videoStart=startAuto; window.__videoStop=stopAuto;
+})();
 
 /* ── IMAGE LIGHTBOX ── */
 (function(){
@@ -1076,52 +1288,6 @@ document.querySelectorAll('.gstrip-wrap').forEach(wrap=>{
     window.closeLb=close; window.lbStep=step;
 })();
 
-/* ── VIDEO LIGHTBOX ── */
-(function(){
-    const vlb=document.getElementById('video-lightbox');
-    const vid=document.getElementById('vlb-video');
-    const curEl=document.getElementById('vlb-cur'), totEl=document.getElementById('vlb-tot');
-    let items=[], idx=0;
-    function open(el){ const strip=el.closest('.gstrip'); items=strip?Array.from(strip.querySelectorAll('.gitem[data-video]')):[]; idx=items.indexOf(el); totEl.textContent=items.length||1; curEl.textContent=idx+1; vid.src=el.dataset.video||''; vlb.classList.add('open'); window._setLb(true); vid.play().catch(()=>{}); navVis(); }
-    function close(){ vlb.classList.remove('open'); window._setLb(false); vid.pause(); vid.src=''; }
-    function step(dir){ if(!items.length)return; idx=((idx+dir)%items.length+items.length)%items.length; curEl.textContent=idx+1; vid.src=items[idx].dataset.video||''; vid.play().catch(()=>{}); navVis(); }
-    function navVis(){ const v=items.length>1?'block':'none'; document.getElementById('vlb-prev').style.display=v; document.getElementById('vlb-next').style.display=v; }
-    document.querySelectorAll('.gitem[data-video]').forEach(el=>el.addEventListener('click',()=>open(el)));
-    document.getElementById('vlb-prev').addEventListener('click',e=>{e.stopPropagation();step(-1);});
-    document.getElementById('vlb-next').addEventListener('click',e=>{e.stopPropagation();step(1);});
-    document.getElementById('vlb-close').addEventListener('click',e=>{e.stopPropagation();close();});
-    vid.addEventListener('click',e=>e.stopPropagation());
-    vlb.addEventListener('click',e=>{if(e.target===vlb)close();});
-    document.addEventListener('keydown',e=>{ if(!vlb.classList.contains('open'))return; if(e.key==='Escape')close(); if(e.key==='ArrowLeft')step(-1); if(e.key==='ArrowRight')step(1); });
-})();
-
-/* ── VIDEO HOVER PLAY ── */
-(function(){
-    const reelPanel=document.querySelector('[data-panel="Reels"]');
-    if(!reelPanel)return;
-    const reels=Array.from(reelPanel.querySelectorAll('.gitem--reel'));
-    const videos=reels.map(r=>r.querySelector('video'));
-    let autoIdx=0, autoTimer=null, hoveredItem=null;
-    function stopAll(){ videos.forEach(v=>{v.pause();v.currentTime=0;}); }
-    function autoAdvance(){ if(hoveredItem!==null)return; stopAll(); const v=videos[autoIdx]; if(!v)return; v.play().catch(()=>{}); const dur=(v.duration&&isFinite(v.duration))?v.duration*1000:4000; autoIdx=(autoIdx+1)%videos.length; autoTimer=setTimeout(autoAdvance,Math.min(dur,6000)); }
-    function startAuto(){ clearTimeout(autoTimer); autoIdx=0; autoAdvance(); }
-    function stopAuto(){ clearTimeout(autoTimer); autoTimer=null; stopAll(); }
-    reels.forEach((item,i)=>{
-        const v=videos[i];
-        item.addEventListener('mouseenter',()=>{ hoveredItem=i; clearTimeout(autoTimer); stopAll(); reels.forEach((r,j)=>r.classList.toggle('dimmed',j!==i)); v.play().catch(()=>{}); });
-        item.addEventListener('mouseleave',()=>{ hoveredItem=null; v.pause(); v.currentTime=0; reels.forEach(r=>r.classList.remove('dimmed')); autoIdx=(i+1)%videos.length; autoAdvance(); });
-    });
-    window.__reelPanelIdx=Array.from(document.querySelectorAll('.panel')).indexOf(reelPanel);
-    window.__reelStart=startAuto; window.__reelStop=stopAuto;
-})();
-
-/* ── IMAGE ASPECT RATIO FIX ── */
-document.querySelectorAll('.gitem img').forEach(img=>{
-    const item=img.closest('.gitem');
-    function setRatio(){ const w=img.naturalWidth,h=img.naturalHeight; if(w&&h)item.style.aspectRatio=`${w}/${h}`; }
-    if(img.complete&&img.naturalWidth)setRatio(); else img.addEventListener('load',setRatio);
-});
-
 /* ── OVERVIEW / LINKS CYCLER ── */
 (function(){
     function makeCycler(panelEl,selector){
@@ -1136,8 +1302,10 @@ document.querySelectorAll('.gitem img').forEach(img=>{
     }
     const overviewPanel=document.querySelector('.panel-overview');
     const linksPanel=document.querySelector('.panel-links');
+    const systemPanel=document.querySelector('.panel-system');
     const cStats=overviewPanel?makeCycler(overviewPanel,'.stat-item'):null;
     const cLinks=linksPanel?makeCycler(linksPanel,'.link-btn, .project-card-link'):null;
+    const cProcess=systemPanel?makeCycler(systemPanel,'.process-card'):null;
 
     const metaSpans=overviewPanel?Array.from(overviewPanel.querySelectorAll('.overview-meta span:not(.overview-meta-sep)')):[];
     let metaRunning=false, metaTO=null, metaIdx=0;
@@ -1146,13 +1314,16 @@ document.querySelectorAll('.gitem img').forEach(img=>{
 
     const meta=overviewPanel?.querySelector('.overview-meta');
     const stats=overviewPanel?.querySelector('.overview-stats');
+    const allPanels=Array.from(document.querySelectorAll('.panel'));
+    const ovIdx=overviewPanel?allPanels.indexOf(overviewPanel):-1;
+    const lkIdx=linksPanel?allPanels.indexOf(linksPanel):-1;
+
     function onPanelChange(idx){
-        const panels=Array.from(document.querySelectorAll('.panel'));
-        const ovIdx=panels.indexOf(overviewPanel);
-        const lkIdx=panels.indexOf(linksPanel);
         if(cStats){ if(idx===ovIdx)cStats.start(); else cStats.stop(); }
         if(idx===ovIdx){ metaStart(); } else{ metaStop(); }
         if(cLinks){ if(idx===lkIdx)cLinks.start(); else cLinks.stop(); }
+        const sysIdx=systemPanel?allPanels.indexOf(systemPanel):-1;
+        if(cProcess){ if(idx===sysIdx)cProcess.start(); else cProcess.stop(); }
         if(idx===ovIdx){
             if(meta){ setTimeout(()=>meta.classList.add('visible'),80); }
             if(stats){ setTimeout(()=>stats.classList.add('visible'),160); }
@@ -1160,14 +1331,32 @@ document.querySelectorAll('.gitem img').forEach(img=>{
             if(meta){ meta.classList.remove('visible'); void meta.offsetWidth; }
             if(stats){ stats.classList.remove('visible'); void stats.offsetWidth; }
         }
-        if(window.__reelStart){
-            if(typeof window.__reelPanelIdx!=='undefined'&&idx===window.__reelPanelIdx) window.__reelStart();
-            else if(window.__reelStop) window.__reelStop();
+        if(window.__videoStart){
+            if(typeof window.__videoPanelIdx!=='undefined'&&idx===window.__videoPanelIdx) window.__videoStart();
+            else if(window.__videoStop) window.__videoStop();
         }
     }
     window._onPanelChange=onPanelChange;
     onPanelChange(0);
 })();
+
+/* ── VIDEO STATUS ── */
+(function(){
+    const vid=document.getElementById('showcase-video');
+    const statusEl=document.getElementById('video-status');
+    if(!vid||!statusEl)return;
+    vid.addEventListener('loadedmetadata',()=>{ if(!vid.dataset.seeked){ vid.dataset.seeked='true'; vid.currentTime=vid.duration/2; } });
+    vid.addEventListener('play',()=>statusEl.textContent='▶ Playing');
+    vid.addEventListener('pause',()=>statusEl.textContent='▶ Play');
+    vid.addEventListener('ended',()=>statusEl.textContent='▶ Play');
+})();
+
+/* ── IMAGE ASPECT RATIO FIX ── */
+document.querySelectorAll('.gitem img').forEach(img=>{
+    const item=img.closest('.gitem');
+    function setRatio(){ const w=img.naturalWidth,h=img.naturalHeight; if(w&&h)item.style.aspectRatio=`${w}/${h}`; }
+    if(img.complete&&img.naturalWidth)setRatio(); else img.addEventListener('load',setRatio);
+});
 
 /* ── LOGO SWEEP ── */
 (function(){
@@ -1191,6 +1380,166 @@ document.querySelectorAll('.gitem img').forEach(img=>{
         else{ ch[ch.length-1].classList.remove('cyan'); clearInterval(t); a=false; setTimeout(run,7000); }
     },460); }
     setTimeout(run,2200);
+})();
+
+/* ── POLYRHYTHM SIMULATION (original build, Courier Prime fonts) ── */
+(function(){
+    // SHARED TIMING + VOICE DEFINITIONS — original colours (all single teal)
+    const SHARED = {
+        t0: performance.now(), BAR: 16.0, VISIBLE_BARS: 2,
+        voices: [
+            {div:2, color:[0,200,180], alpha:1.0, row:1/10, note:523.25},
+            {div:3, color:[0,200,180], alpha:1.0, row:3/10, note:659.25},
+            {div:4, color:[0,200,180], alpha:1.0, row:5/10, note:783.99},
+            {div:5, color:[0,200,180], alpha:1.0, row:7/10, note:987.77},
+            {div:7, color:[0,200,180], alpha:1.0, row:9/10, note:1174.66},
+        ]
+    };
+
+    // ── SIM STRIP ──
+    (function(){
+        const canvas=document.getElementById('sim-canvas');
+        const ctx=canvas.getContext('2d');
+        const dpr=window.devicePixelRatio||1;
+        function resize(){
+            const rect=canvas.parentElement.getBoundingClientRect();
+            canvas.width=rect.width*dpr; canvas.height=rect.height*dpr;
+            canvas.style.width=rect.width+'px'; canvas.style.height=rect.height+'px';
+            ctx.setTransform(dpr,0,0,dpr,0,0);
+        }
+        resize();
+        window.addEventListener('resize',()=>{ctx.setTransform(1,0,0,1,0,0);resize();});
+        const LED=120;
+        function draw(now){
+            const t=(now-SHARED.t0)/1000;
+            const W=parseFloat(canvas.style.width),H=parseFloat(canvas.style.height);
+            ctx.clearRect(0,0,W,H); ctx.fillStyle='#000'; ctx.fillRect(0,0,W,H);
+            const SIM_LABEL_W=32,trackStart=SIM_LABEL_W;
+            SHARED.voices.forEach(v=>{
+                const y=H*v.row,[r,g,b]=v.color;
+                const period=SHARED.BAR/v.div,raw=(t/period)%1;
+                const tri=raw<0.5?raw*2:(1-raw)*2,ballPos=tri;
+                const leftProx=Math.exp(-ballPos*ballPos/(2*0.04*0.04));
+                const rightProx=Math.exp(-(1-ballPos)*(1-ballPos)/(2*0.04*0.04));
+                const burstMult=1+Math.max(leftProx,rightProx)*1.5;
+                const burstH=18,trackW_sim=W-trackStart;
+                for(let i=0;i<LED;i++){
+                    const x=trackStart+(i+.5)*(trackW_sim/LED);
+                    const ledNorm=i/(LED-1),dist=Math.abs(ledNorm-ballPos);
+                    const pulse=Math.exp(-(dist*dist)/(2*0.007*0.007))*v.alpha;
+                    if(pulse<.008) continue;
+                    const glowW=(trackW_sim/LED)*.55*22*burstMult;
+                    const grd=ctx.createLinearGradient(x-glowW/2,y,x+glowW/2,y);
+                    grd.addColorStop(0,`rgba(${r},${g},${b},0)`);
+                    grd.addColorStop(0.35,`rgba(${r},${g},${b},${pulse*.2})`);
+                    grd.addColorStop(0.5,`rgba(${r},${g},${b},${pulse*.32})`);
+                    grd.addColorStop(0.65,`rgba(${r},${g},${b},${pulse*.2})`);
+                    grd.addColorStop(1,`rgba(${r},${g},${b},0)`);
+                    ctx.fillStyle=grd; ctx.fillRect(x-glowW/2,y-burstH/2,glowW,burstH);
+                }
+                ctx.strokeStyle=`rgba(${r},${g},${b},.04)`; ctx.lineWidth=0.5;
+                ctx.beginPath(); ctx.moveTo(trackStart,y); ctx.lineTo(W,y); ctx.stroke();
+                const rowBand=H/SHARED.voices.length,rowIndex=SHARED.voices.indexOf(v);
+                ctx.fillStyle=`rgba(${r},${g},${b},.45)`;
+                ctx.font='8px "Courier Prime",monospace'; ctx.textAlign='center'; ctx.textBaseline='middle';
+                ctx.fillText(`1:${v.div}`,SIM_LABEL_W/2,rowIndex*rowBand+rowBand/2);
+                ctx.textAlign='left'; ctx.textBaseline='alphabetic';
+            });
+            requestAnimationFrame(draw);
+        }
+        requestAnimationFrame(draw);
+    })();
+
+    // ── RHYTHM VISUALIZER + AUDIO ──
+    (function(){
+        const canvas=document.getElementById('rhythm-canvas');
+        const ctx=canvas.getContext('2d');
+        const dpr=window.devicePixelRatio||1;
+        let audioCtx=null, soundOn=false;
+        function initAudio(){if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();}
+        function playXylophone(freq){
+            if(!audioCtx||!soundOn)return;
+            const now=audioCtx.currentTime;
+            [1,2.756].forEach((mult,i)=>{
+                const osc=audioCtx.createOscillator(),gain=audioCtx.createGain();
+                osc.type='sine'; osc.frequency.value=freq*mult;
+                const vol=i===0?0.09:0.025;
+                gain.gain.setValueAtTime(0,now);
+                gain.gain.linearRampToValueAtTime(vol,now+0.03);
+                gain.gain.exponentialRampToValueAtTime(vol*0.3,now+0.25);
+                gain.gain.exponentialRampToValueAtTime(0.0001,now+1.6);
+                osc.connect(gain); gain.connect(audioCtx.destination);
+                osc.start(now); osc.stop(now+1.7);
+            });
+        }
+        document.getElementById('sound-toggle').addEventListener('click',function(){
+            initAudio();
+            if(audioCtx&&audioCtx.state==='suspended')audioCtx.resume();
+            soundOn=!soundOn;
+            this.textContent=soundOn?'\u266a Sound on':'\u266a Sound off';
+            this.classList.toggle('active',soundOn);
+        });
+        function resize(){
+            const w=canvas.parentElement.clientWidth,h=180;
+            canvas.width=w*dpr; canvas.height=h*dpr;
+            canvas.style.width=w+'px'; canvas.style.height=h+'px';
+            ctx.setTransform(dpr,0,0,dpr,0,0);
+        }
+        resize(); window.addEventListener('resize',()=>{ctx.setTransform(1,0,0,1,0,0);resize();});
+        const LABEL_W=32,lastBounce=SHARED.voices.map(()=>-1);
+        function draw(now){
+            const t=(now-SHARED.t0)/1000;
+            const W=parseFloat(canvas.style.width),H=parseFloat(canvas.style.height);
+            const rowH=H/SHARED.voices.length,trackW=W-LABEL_W;
+            ctx.clearRect(0,0,W,H); ctx.fillStyle='#000'; ctx.fillRect(0,0,W,H);
+            SHARED.voices.forEach((v,vi)=>{
+                const y0=vi*rowH,cellH=rowH*.68,cellY=y0+(rowH-cellH)/2,[r,g,b]=v.color;
+                const totalCells=v.div*SHARED.VISIBLE_BARS,cellW=trackW/totalCells;
+                const globalBeat=t/SHARED.BAR*v.div,halfBeat=Math.floor(globalBeat*2);
+                if(halfBeat!==lastBounce[vi]){lastBounce[vi]=halfBeat;playXylophone(v.note);}
+                for(let ci=0;ci<totalCells;ci++){
+                    const x=LABEL_W+ci*cellW;
+                    const age=globalBeat-(Math.floor(globalBeat)-totalCells+1+ci);
+                    const frac=Math.max(0,Math.min(1,1-age));
+                    const bright=Math.pow(frac,1.3)*v.alpha;
+                    const hitAmt=Math.pow(Math.max(0,(frac-0.75)/0.25),2);
+                    const fillAlpha=bright*.28+.04+hitAmt*(1.0-bright*.28-.04);
+                    ctx.fillStyle=`rgba(${r},${g},${b},${fillAlpha})`; ctx.fillRect(x+1,cellY,cellW-2,cellH);
+                    if(hitAmt>0.1){
+                        const grd=ctx.createLinearGradient(LABEL_W,0,W,0);
+                        grd.addColorStop(0,`rgba(${r},${g},${b},0)`);
+                        grd.addColorStop(Math.max(0,(x-LABEL_W-cellW*3)/trackW),`rgba(${r},${g},${b},0)`);
+                        grd.addColorStop(Math.max(0,(x-LABEL_W)/trackW),`rgba(${r},${g},${b},${hitAmt*0.18})`);
+                        grd.addColorStop((x-LABEL_W+cellW/2)/trackW,`rgba(${r},${g},${b},${hitAmt*0.38})`);
+                        grd.addColorStop(Math.min(1,(x-LABEL_W+cellW)/trackW),`rgba(${r},${g},${b},${hitAmt*0.18})`);
+                        grd.addColorStop(Math.min(1,(x-LABEL_W+cellW*3)/trackW),`rgba(${r},${g},${b},0)`);
+                        grd.addColorStop(1,`rgba(${r},${g},${b},0)`);
+                        ctx.fillStyle=grd; ctx.fillRect(LABEL_W,cellY,trackW,cellH);
+                    }
+                    if(frac<0.75&&bright>.25){ctx.fillStyle=`rgba(${r},${g},${b},${bright})`;ctx.fillRect(x+1,cellY,1.5,cellH);}
+                    ctx.strokeStyle=`rgba(${r},${g},${b},${0.08+hitAmt*0.42})`; ctx.lineWidth=0.5;
+                    ctx.strokeRect(x+.5,cellY+.5,cellW-1,cellH-1);
+                }
+                const period=SHARED.BAR/v.div,rawPh=(t/period)%1;
+                const triPh=rawPh<0.5?rawPh*2:(1-rawPh)*2,phX=LABEL_W+trackW*triPh;
+                ctx.strokeStyle=`rgba(${r},${g},${b},.35)`; ctx.lineWidth=0.5;
+                ctx.beginPath(); ctx.moveTo(phX,y0); ctx.lineTo(phX,y0+rowH); ctx.stroke();
+                ctx.fillStyle=`rgba(${r},${g},${b},.45)`;
+                ctx.font='8px "Courier Prime",monospace'; ctx.textAlign='center'; ctx.textBaseline='middle';
+                ctx.fillText(`1:${v.div}`,LABEL_W/2,y0+rowH/2);
+                ctx.textAlign='left'; ctx.textBaseline='alphabetic';
+                if(vi<SHARED.voices.length-1){
+                    ctx.strokeStyle=`rgba(${r},${g},${b},0.06)`; ctx.lineWidth=0.5;
+                    ctx.beginPath(); ctx.moveTo(0,y0+rowH); ctx.lineTo(W,y0+rowH); ctx.stroke();
+                }
+            });
+            const [cr,cg,cb]=SHARED.voices[0].color;
+            ctx.strokeStyle=`rgba(${cr},${cg},${cb},0.08)`; ctx.lineWidth=0.5;
+            ctx.beginPath(); ctx.moveTo(LABEL_W,0); ctx.lineTo(LABEL_W,H); ctx.stroke();
+            requestAnimationFrame(draw);
+        }
+        requestAnimationFrame(draw);
+    })();
 })();
 </script>
 </body>
