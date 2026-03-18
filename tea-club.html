@@ -1,681 +1,595 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>University of Waterloo Tea Club — anoaeyto</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,300;0,400;1,300;1,400&family=Courier+Prime:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
-    <style>
-*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; user-select:none; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UW Tea &amp; Culture Club — anoaeyto</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,300;0,400;1,300;1,400&family=Courier+Prime:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
+<style>
+
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;user-select:none;}
 
 :root {
     --teal:      #00c8b4;
-    --teal-line: rgba(0,200,180,0.18);
-    --teal-dim:  rgba(0,200,180,0.07);
+    --teal-dark: #009d8e;
+    --teal-deep: #012e2a;
     --cream:     #ddd8cc;
-    --bg:        #000;
-    --rule:      rgba(255,255,255,0.07);
-    --muted:     rgba(221,216,204,0.5);
+    --ink:       #0e0c0a;
+    --orange:    #dc501e;
 }
 
-html, body {
-    width: 100%; height: 100%;
-    background: var(--bg);
-    overflow: hidden;
-    cursor: none;
-    font-family: 'Courier Prime', monospace;
-    color: var(--cream);
+html,body { width:100%; height:100%; background:#000; overflow:hidden; cursor:none; font-family:'Courier Prime',monospace; color:var(--cream); }
+a,button { cursor:none; }
+
+/* ── teal grid — exact copy from main site ── */
+html::before {
+    content:''; position:fixed; inset:0; z-index:99989; pointer-events:none; contain:strict;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='6' height='6'%3E%3Crect width='6' height='6' fill='none'/%3E%3Crect x='.5' y='.5' width='5' height='5' fill='none' stroke='rgba(0%2C200%2C180%2C0.07)' stroke-width='.4'/%3E%3Crect x='1.5' y='1.5' width='3' height='3' fill='rgba(0%2C200%2C180%2C0.018)'/%3E%3C/svg%3E");
+    background-size:6px 6px;
 }
 
-/* ── GRID BACKGROUND (from file 2) ── */
-body::before {
-    content: ''; position: fixed; inset: 0; z-index: 99990; pointer-events: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='6' height='6'%3E%3Crect width='6' height='6' fill='none'/%3E%3Crect x='0.5' y='0.5' width='5' height='5' fill='none' stroke='rgba(0%2C200%2C180%2C0.07)' stroke-width='0.4'/%3E%3Crect x='1.5' y='1.5' width='3' height='3' fill='rgba(0%2C200%2C180%2C0.018)'/%3E%3C/svg%3E");
-    background-size: 6px 6px;
-}
+/* ── cursor — exact copy from main site ── */
+#cursor-dot  { position:fixed; width:6px; height:6px; background:var(--teal); border-radius:50%; pointer-events:none; z-index:999999; top:0; left:0; will-change:transform; transition:background 0.18s ease; }
+#cursor-ring { position:fixed; width:24px; height:24px; border:1.5px solid rgba(0,200,180,0.6); border-radius:50%; pointer-events:none; z-index:999998; top:0; left:0; will-change:transform; transition:width 0.18s ease,height 0.18s ease,border-color 0.18s ease; }
+#cursor-ring.expanded { width:36px; height:36px; border-color:rgba(0,200,180,1); }
 
-/* ── CURSOR ── */
-#cursor-dot {
-    position: fixed; width: 5px; height: 5px; background: var(--teal);
-    border-radius: 50%; pointer-events: none; z-index: 99999;
-    transform: translate(-50%,-50%);
-}
-#cursor-ring {
-    position: fixed; width: 22px; height: 22px;
-    border: 1px solid rgba(0,200,180,0.45); border-radius: 50%;
-    pointer-events: none; z-index: 99998; transform: translate(-50%,-50%);
-    transition: width 0.18s, height 0.18s, border-color 0.18s;
-}
-#cursor-ring.expanded { width: 36px; height: 36px; border-color: rgba(0,200,180,0.85); }
-
-/* ── HUD ── */
-.hud-tr {
-    position: fixed; top: 22px; right: 24px;
-    font-size: 10px; letter-spacing: 1.5px; line-height: 1.7;
-    color: var(--teal); opacity: 0.7; z-index: 9999; pointer-events: none; text-align: right;
-}
-.hud-bl {
-    position: fixed; bottom: 22px; left: 24px;
-    font-size: 10px; letter-spacing: 1.5px;
-    color: var(--teal); opacity: 0.7; z-index: 9999; pointer-events: none;
-}
-
-/* ── CORNER BRACKETS ── */
-.brackets { position: fixed; inset: 0; pointer-events: none; z-index: 9001; }
-.bracket { position: absolute; width: 28px; height: 28px; }
-.bracket.tl { top: 14px; left: 14px;   border-top: 1px solid var(--teal-line); border-left: 1px solid var(--teal-line); }
-.bracket.tr { top: 14px; right: 14px;  border-top: 1px solid var(--teal-line); border-right: 1px solid var(--teal-line); }
-.bracket.bl { bottom: 14px; left: 14px;  border-bottom: 1px solid var(--teal-line); border-left: 1px solid var(--teal-line); }
-.bracket.br { bottom: 14px; right: 14px; border-bottom: 1px solid var(--teal-line); border-right: 1px solid var(--teal-line); }
-
-/* ── SECTION NAV (from file 3) ── */
-.section-nav {
-    position: fixed; right: 32px; top: 50%; transform: translateY(-50%);
-    display: flex; flex-direction: column; gap: 14px; z-index: 9000; pointer-events: all;
-}
-.section-nav a {
-    text-decoration: none; color: rgba(0,200,180,0.35);
-    font-size: 10px; letter-spacing: 2px;
-    transition: color 0.3s, opacity 0.3s;
-    font-family: 'Courier Prime', monospace;
-}
-.section-nav a:hover, .section-nav a.active { color: var(--teal); }
-
-/* ── TOP BAR ── */
+/* ── nav — same as main site ── */
 .top-bar {
-    position: fixed; top: 0; left: 0; right: 0; z-index: 9000;
-    padding: clamp(18px,2.2vh,28px) clamp(24px,3vw,52px);
-    pointer-events: none;
+    position:fixed; top:0; left:0; right:0; z-index:8000;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:clamp(24px,2.8vw,40px) clamp(48px,5vw,80px);
+    background:linear-gradient(180deg,rgba(0,0,0,0.50) 0%,rgba(0,0,0,0.15) 60%,transparent 100%);
+    pointer-events:none;
 }
 .back-link {
-    display: inline-flex; align-items: center; gap: 8px;
-    font-size: clamp(9px,0.75vw,12px); letter-spacing: 3px; text-transform: uppercase;
-    color: rgba(221,216,204,0.55); text-decoration: none;
-    transition: color 0.25s; pointer-events: all;
+    font-family:'Courier Prime',monospace; font-size:clamp(10px,0.72vw,12px);
+    letter-spacing:3px; text-transform:uppercase; color:rgba(255,255,255,0.72);
+    text-decoration:none; transition:color 0.25s ease;
+    position:relative; display:inline-flex; align-items:center; gap:8px;
+    padding:12px 6px; margin:-12px -6px; pointer-events:all;
 }
-.back-link::before { content: '←'; color: var(--teal); opacity: 0.8; }
-.back-link:hover { color: #fff; }
+.back-link::after { content:''; position:absolute; bottom:9px; left:6px; width:0; height:1px; background:var(--teal); transition:width 0.3s ease; }
+.back-link:hover { color:#fff; }
+.back-link:hover::after { width:calc(100% - 12px); }
+.back-link .arr { color:var(--teal); }
+.nav-logo { font-family:'Courier Prime',monospace; font-size:clamp(10px,0.72vw,12px); letter-spacing:3px; color:rgba(255,255,255,0.72); text-transform:uppercase; pointer-events:all; }
+.nav-logo span { display:inline-block; transition:color 0.15s; }
+.nav-logo span.cyan { color:var(--teal); }
 
-/* ── PROGRESS BAR ── */
-.progress-bar-wrap {
-    position: fixed; bottom: 0; left: 0; right: 0; z-index: 9000;
-    height: 1px; background: rgba(255,255,255,0.05);
-}
-.progress-bar-fill {
-    height: 100%; background: var(--teal); width: 0%;
-    transition: width 0.12s ease; opacity: 0.5;
-}
+/* ── progress bar ── */
+.prog-wrap { position:fixed; top:0; left:0; height:3px; width:0%; z-index:99999; background:var(--teal); transition:width 0.1s linear,opacity 0.4s ease; pointer-events:none; opacity:0; }
+.prog-wrap.visible { opacity:1; }
 
-/* ── PANEL DOTS ── */
-.panel-dots {
-    position: fixed; bottom: 22px; left: 50%; transform: translateX(-50%);
-    display: flex; gap: 8px; z-index: 9000; pointer-events: all;
-}
-.panel-dot {
-    width: 4px; height: 4px; border-radius: 50%;
-    background: rgba(221,216,204,0.2); transition: all 0.3s; cursor: none;
-}
-.panel-dot.active { background: var(--teal); width: 18px; border-radius: 2px; }
+/* ── panel navigation — numbered dots ── */
+.dots { position:fixed; bottom:clamp(16px,2vh,24px); left:50%; transform:translateX(-50%); display:flex; gap:0; z-index:9000; pointer-events:all; }
+.dot { position:relative; display:flex; flex-direction:column; align-items:center; padding:3px 6px; cursor:none; gap:1px; }
+.dot-num { font-family:'Courier Prime',monospace; font-size:clamp(8px,0.62vw,10px); letter-spacing:2px; color:rgba(255,255,255,0.2); transition:color .2s; line-height:1; }
+.dot.active .dot-num { color:var(--teal); }
+.dot:hover .dot-num { color:rgba(255,255,255,0.55); }
+.dot-label { font-family:'Courier Prime',monospace; font-size:clamp(6px,0.5vw,8px); letter-spacing:2px; text-transform:uppercase; color:var(--teal); white-space:nowrap; opacity:0; pointer-events:none; transition:opacity .2s; order:-1; margin-bottom:1px; }
+.dot:hover .dot-label { opacity:1; }
+.dot.active .dot-label { opacity:0.65; }
+.dot::after { content:''; display:block; width:0; height:1px; background:var(--teal); transition:width .25s cubic-bezier(0.22,1,0.36,1); margin-top:2px; }
+.dot.active::after { width:100%; }
 
-/* ── NAV ARROWS ── */
-.nav-arrow {
-    position: fixed; top: 50%; transform: translateY(-50%);
-    z-index: 9000; pointer-events: all;
-    background: none; border: none; cursor: none;
-    color: rgba(0,200,180,0.3); font-size: 20px;
-    padding: 16px 10px;
-    transition: color 0.2s, opacity 0.2s;
-    font-family: 'Courier Prime', monospace;
-    letter-spacing: 1px;
-    display: flex; flex-direction: column; align-items: center; gap: 6px;
-}
-.nav-arrow:hover, .nav-arrow.active-press { color: var(--teal); }
-.nav-arrow.active-press { color: var(--teal); opacity: 1; }
-.nav-arrow span { font-size: 9px; letter-spacing: 2px; text-transform: uppercase; }
-#arrow-left  { left: 10px; }
-#arrow-right { right: 10px; }
-.nav-arrow.disabled { opacity: 0.12; pointer-events: none; }
+/* ── side arrows ── */
+.arrow { position:fixed; top:50%; transform:translateY(-50%); z-index:9000; pointer-events:all; background:none; border:none; cursor:none; color:rgba(255,255,255,0.25); font-size:18px; padding:32px 24px; transition:color 0.2s; font-family:'Courier Prime',monospace; }
+.arrow:hover { color:rgba(255,255,255,0.6); }
+#arrow-l { left:0; } #arrow-r { right:0; }
+.arrow.off { opacity:0; pointer-events:none; }
 
-/* ── SCROLL TRACK ── */
-.scroll-track {
-    display: flex;
-    height: 100vh;
-    will-change: transform;
-    transition: transform 0.72s cubic-bezier(0.77,0,0.18,1);
-}
+/* ── HUD corners — same style as main site ── */
+.hud-tl { position:absolute; top:clamp(72px,9vh,100px); left:clamp(32px,4vw,56px); z-index:10; display:flex; flex-direction:column; gap:4px; pointer-events:none; }
+.hud-tr { position:absolute; top:clamp(72px,9vh,100px); right:clamp(32px,4vw,56px); z-index:10; display:flex; flex-direction:column; align-items:flex-end; gap:4px; pointer-events:none; }
+.hud-item { font-family:'Courier Prime',monospace; font-size:clamp(7px,0.55vw,9px); letter-spacing:2.5px; text-transform:uppercase; color:rgba(255,255,255,0.22); display:flex; align-items:center; gap:8px; }
+.hud-item strong { color:var(--teal); font-weight:400; opacity:0.8; }
+.hud-item.active { color:rgba(255,255,255,0.72); }
 
-/* ── BASE PANEL ── */
-.panel {
-    width: 100vw;
-    height: 100vh;
-    flex-shrink: 0;
-    position: relative;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-}
+/* ── track ── */
+.track { display:flex; height:100vh; will-change:transform; pointer-events:none; }
+.panel { pointer-events:all; }
+.panel { width:100vw; height:100vh; flex-shrink:0; position:relative; display:flex; flex-direction:column; overflow:clip; }
 
-/* ─────────────────────────────────────────────
+/* ═══════════════════════════════════════════
    PANEL 0 · HERO
-───────────────────────────────────────────── */
-.panel-hero { justify-content: flex-end; }
-.panel-hero img {
-    position: absolute; inset: 0;
-    width: 100%; height: 100%; object-fit: cover; object-position: center 30%;
-    filter: brightness(0.48) saturate(0.85);
-    transition: filter 0.8s;
-}
-.panel-hero:hover img { filter: brightness(0.58) saturate(0.95); }
-.hero-overlay {
-    position: absolute; inset: 0;
-    background: linear-gradient(180deg,
-        rgba(0,0,0,0.2) 0%, transparent 35%,
-        rgba(0,0,0,0.6) 62%, rgba(0,0,0,0.94) 88%, #000 100%);
-}
-.hero-content {
-    position: relative; z-index: 2;
-    padding: 0 clamp(28px,5vw,80px) clamp(40px,5vh,64px);
-}
-.hero-eyebrow {
-    font-size: clamp(9px,0.7vw,11px); letter-spacing: 5px; text-transform: uppercase;
-    color: var(--teal); opacity: 0.85; margin-bottom: 14px;
-}
-.hero-title {
-    font-family: 'Cormorant', Georgia, serif; font-weight: 300;
-    font-size: clamp(52px,9vw,136px); letter-spacing: -2px; line-height: 0.88;
-    color: #fff; margin-bottom: 32px;
-}
-.hero-hint {
-    display: flex; align-items: center; gap: 14px;
-    font-size: 10px; letter-spacing: 3px; text-transform: uppercase;
-    color: rgba(221,216,204,0.3);
-}
-.hint-line { width: 36px; height: 1px; background: rgba(0,200,180,0.35); }
-.hint-arrow { color: var(--teal); opacity: 0.5; animation: nudge 2s ease-in-out infinite; }
-@keyframes nudge { 0%,100%{transform:translateX(0)} 50%{transform:translateX(6px)} }
+   Exact same treatment as main site hero.
+   Full bleed photo, bottom-left text, HUD corners,
+   scroll indicator right, scanline, noise.
+═══════════════════════════════════════════ */
+.p-hero { background:#000; }
 
-/* ─────────────────────────────────────────────
-   PANEL 1 · ABOUT
-───────────────────────────────────────────── */
-.panel-about {
-    background: #000;
-    justify-content: center;
-    padding: clamp(70px,9vh,100px) clamp(28px,6vw,100px) clamp(30px,4vh,50px);
+.p-hero::before {
+    content:''; position:absolute; inset:0; z-index:2; pointer-events:none;
+    background:linear-gradient(180deg,rgba(0,0,0,0.55) 0%,rgba(0,0,0,0.05) 30%,transparent 55%),
+               linear-gradient(0deg,rgba(0,0,0,0.9) 0%,rgba(0,0,0,0.5) 18%,transparent 48%),
+               linear-gradient(90deg,rgba(0,0,0,0.5) 0%,transparent 40%);
 }
-.about-grid {
-    display: grid; grid-template-columns: 1fr 1fr;
-    gap: clamp(40px,6vw,100px); height: 100%;
-    align-items: center;
+.p-hero::after {
+    content:''; position:absolute; inset:0; z-index:0; pointer-events:none;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+    background-size:200px 200px; opacity:0.35; mix-blend-mode:overlay;
 }
-.about-label {
-    font-size: 9px; letter-spacing: 4px; text-transform: uppercase;
-    color: rgba(0,200,180,0.45); margin-bottom: 16px;
-}
-.about-tagline {
-    font-family: 'Cormorant', Georgia, serif; font-weight: 300;
-    font-size: clamp(20px,2.4vw,38px); line-height: 1.25; color: #fff;
-    margin-bottom: 18px;
-}
-.about-tagline em { font-style: italic; color: rgba(0,200,180,0.85); }
-.about-body {
-    font-family: 'Cormorant', Georgia, serif;
-    font-size: clamp(14px,1.05vw,17px); line-height: 1.75; color: var(--muted);
-}
-.meta-table {
-    display: flex; flex-direction: column;
-    border: 1px solid rgba(0,200,180,0.18);
-    height: fit-content;
-}
-.meta-row {
-    padding: clamp(12px,1.5vh,18px) clamp(16px,1.8vw,24px);
-    border-bottom: 1px solid rgba(0,200,180,0.1);
-    background: rgba(0,200,180,0.05);
-    transition: background 0.3s;
-    display: flex; flex-direction: column; gap: 5px;
-}
-.meta-row:last-child { border-bottom: none; }
-.meta-row:hover { background: rgba(0,200,180,0.12); }
-.meta-label {
-    font-size: 8px; letter-spacing: 3px; text-transform: uppercase;
-    color: rgba(0,200,180,0.6);
-}
-.meta-value {
-    font-family: 'Cormorant', Georgia, serif;
-    font-size: clamp(12px,0.9vw,15px); color: var(--cream); line-height: 1.5;
-}
-.meta-tag {
-    font-family: 'Courier Prime', monospace;
-    font-size: 9px; letter-spacing: 1.5px; text-transform: uppercase;
-    color: rgba(0,200,180,0.85);
-}
-.meta-tag::after { content: '  ·  '; color: rgba(0,200,180,0.25); }
-.meta-tag:last-child::after { content: ''; }
+.hero-img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:center 30%; filter:brightness(0.72) saturate(1.05); transition:filter 0.9s cubic-bezier(0.22,1,0.36,1); z-index:1; }
+.p-hero:hover .hero-img { filter:brightness(0.82) saturate(1.1); }
+.hero-scanline { position:absolute; bottom:0; left:0; right:0; z-index:9; height:1px; background:linear-gradient(90deg,transparent,rgba(0,200,180,0.6) 15%,rgba(0,200,180,0.25) 50%,rgba(0,200,180,0.6) 85%,transparent); }
 
-/* ─────────────────────────────────────────────
-   PANEL 2 · WHAT I DID
-───────────────────────────────────────────── */
-.panel-roles {
-    background: #000;
-    flex-direction: row;
-}
-.roles-sidebar {
-    width: clamp(180px,20vw,280px); flex-shrink: 0;
-    border-right: 1px solid var(--rule);
-    display: flex; flex-direction: column; justify-content: flex-end;
-    padding: clamp(28px,4vw,52px);
-    background: rgba(0,200,180,0.02);
-}
-.roles-num {
-    font-family: 'Cormorant', Georgia, serif; font-weight: 300;
-    font-size: clamp(70px,11vw,160px); line-height: 0.8; letter-spacing: -6px;
-    color: rgba(0,200,180,0.05); display: block; margin-bottom: 14px;
-}
-.roles-sidebar h2 {
-    font-family: 'Cormorant', Georgia, serif; font-weight: 300;
-    font-size: clamp(20px,2.2vw,34px); color: #fff; margin-bottom: 10px;
-}
-.roles-sidebar p {
-    font-family: 'Cormorant', Georgia, serif;
-    font-size: clamp(12px,0.9vw,15px); line-height: 1.7; color: var(--muted);
-}
-.roles-grid {
-    flex: 1;
-    display: grid; grid-template-columns: repeat(3,1fr); grid-template-rows: repeat(2,1fr);
-    gap: 1px; background: var(--rule);
-}
-.role-item {
-    background: rgba(0,200,180,0.04);
-    padding: clamp(16px,2vh,28px) clamp(16px,1.8vw,24px);
-    display: flex; flex-direction: column; justify-content: flex-start; gap: 8px;
-    transition: background 0.3s;
-}
-.role-item:hover { background: rgba(0,200,180,0.1); }
-.role-item h3 {
-    font-family: 'Cormorant', Georgia, serif; font-weight: 400;
-    font-size: clamp(15px,1.25vw,22px); color: #fff; margin-bottom: 4px;
-}
-.role-item h3::before {
-    content: ''; display: block; width: 14px; height: 1px;
-    background: var(--teal); opacity: 0.45; margin-bottom: 10px;
-}
-.role-item p {
-    font-family: 'Cormorant', Georgia, serif;
-    font-size: clamp(12px,0.95vw,16px); line-height: 1.75; color: var(--muted);
-}
+/* text block — bottom left, same as main site .hero-text */
+.hero-text { position:absolute; z-index:10; bottom:clamp(88px,13vh,148px); left:clamp(32px,4vw,56px); display:flex; flex-direction:column; align-items:flex-start; }
+.hero-sub { display:inline-flex; align-items:center; gap:16px; font-family:'Courier Prime',monospace; font-size:clamp(10px,0.8vw,13px); letter-spacing:5px; text-transform:uppercase; color:rgba(255,255,255,0.55); margin-bottom:16px; animation:riseIn 0.7s 0.3s ease both; }
+.hero-sub::before { content:''; width:24px; height:1px; background:var(--teal); opacity:0.9; flex-shrink:0; }
+.hero-h1 { font-family:'Cormorant',Georgia,serif; font-style:italic; font-weight:300; font-size:clamp(72px,11vw,172px); letter-spacing:-0.03em; text-transform:capitalize; color:#fff; line-height:0.92; animation:riseIn 1.1s 0.5s ease both; }
+.hero-hint { margin-top:clamp(20px,2.8vh,32px); display:inline-flex; align-items:center; gap:14px; font-family:'Courier Prime',monospace; font-size:clamp(9px,0.7vw,11px); letter-spacing:3px; text-transform:uppercase; color:rgba(255,255,255,0.40); animation:riseIn 0.7s 1.0s ease both; }
+.hero-hint-line { width:28px; height:1px; background:rgba(0,200,180,0.6); flex-shrink:0; display:inline-block; }
+.hint-arr { color:var(--teal); }
 
-/* ─────────────────────────────────────────────
+/* scroll indicator — right side, same as main site */
+.scroll-ind { position:absolute; right:clamp(18px,2.2vw,32px); bottom:clamp(48px,8vh,80px); z-index:12; display:flex; flex-direction:column; align-items:center; gap:32px; animation:riseIn 0.6s 2s ease both; }
+.scroll-ind span { display:block; font-family:'Courier Prime',monospace; font-size:clamp(8px,0.6vw,10px); letter-spacing:5px; text-transform:uppercase; color:rgba(255,255,255,0.22); white-space:nowrap; transform:rotate(90deg); transform-origin:center; margin-bottom:-4px; }
+.scroll-line { width:1px; height:clamp(36px,5vh,60px); background:rgba(0,200,180,0.25); position:relative; overflow:hidden; }
+.scroll-line::after { content:''; position:absolute; top:-100%; left:0; width:100%; height:100%; background:linear-gradient(to bottom,transparent,var(--teal),transparent); animation:scrollDrop 2.2s cubic-bezier(0.4,0,0.2,1) infinite; }
+
+@keyframes riseIn { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:translateY(0)} }
+@keyframes nudge { 0%,100%{transform:translateX(0)} 50%{transform:translateX(7px)} }
+@keyframes scrollDrop { 0%{top:-100%;opacity:1}100%{top:200%;opacity:0.2} }
+.track:not([data-cur="0"]) .scroll-line::after { animation-play-state:paused; }
+@keyframes pixelFloat { 0%{opacity:0;transform:translateY(0) scale(1)}6%{opacity:1}80%{opacity:0.4}100%{opacity:0;transform:translateY(-140px) scale(0.5)} }
+
+/* ═══════════════════════════════════════════
+   PANEL 1 · OVERVIEW
+   Mimics the main site project row language:
+   large italic number, title, teal accent.
+   Left: project number huge + tagline.
+   Right: key facts as a table + 4 stats
+   styled exactly like .abt-label-item.
+═══════════════════════════════════════════ */
+.p-ov { flex-direction:row !important; border-top:1px solid rgba(255,255,255,0.08); }
+
+.ov-l {
+    flex:0 0 55%;
+    display:flex; flex-direction:column; justify-content:flex-end;
+    padding:clamp(96px,12vh,140px) clamp(40px,4.5vw,72px) clamp(80px,11vh,120px) clamp(56px,7vw,120px);
+    position:relative; overflow:hidden;
+    border-right:1px solid rgba(0,200,180,0.10);
+}
+/* big ghost number — same as project-row-img-index */
+.ov-ghost-num {
+    position:absolute; top:50%; left:clamp(56px,7vw,120px);
+    transform:translateY(-55%);
+    font-family:'Cormorant',Georgia,serif; font-weight:300; font-style:italic;
+    font-size:clamp(200px,30vw,420px); line-height:1; letter-spacing:-0.03em;
+    color:rgba(255,255,255,0.04); mix-blend-mode:difference;
+    pointer-events:none; white-space:nowrap;
+}
+.ov-eyebrow { font-family:'Courier Prime',monospace; font-size:clamp(8px,0.65vw,11px); letter-spacing:4px; text-transform:uppercase; color:var(--teal); opacity:0.8; margin-bottom:clamp(14px,2vh,22px); display:flex; align-items:center; gap:12px; }
+.ov-eyebrow::before { content:''; width:24px; height:1px; background:var(--teal); opacity:1; flex-shrink:0; }
+.ov-tagline { font-family:'Cormorant',Georgia,serif; font-weight:300; font-style:italic; font-size:clamp(28px,3.8vw,60px); line-height:1.18; letter-spacing:-0.02em; color:#fff; position:relative; z-index:1; opacity:0; transform:translateY(28px); transition:opacity 1.0s cubic-bezier(0.22,1,0.36,1), transform 1.0s cubic-bezier(0.22,1,0.36,1); }
+.ov-tagline.revealed { opacity:1; transform:translateY(0); }
+.ov-tagline .kw { color:var(--teal); font-style:italic; }
+
+.ov-r {
+    flex:1;
+    display:flex; flex-direction:column; justify-content:center;
+    padding:clamp(80px,10vh,120px) clamp(48px,5.5vw,80px) clamp(64px,8vh,96px) clamp(48px,5.5vw,80px);
+    gap:0;
+    background:rgba(210,245,240,0.06);
+    backdrop-filter:blur(12px) brightness(0.65) saturate(1.1);
+    -webkit-backdrop-filter:blur(12px) brightness(0.65) saturate(1.1);
+    border-left:1px solid rgba(180,240,230,0.35);
+    position:relative; z-index:1;
+}
+.ov-r::before { content:''; position:absolute; inset:0; background:rgba(200,240,235,0.12); pointer-events:none; z-index:0; }
+.ov-r > * { position:relative; z-index:1; }
+
+/* facts — same visual language as .abt-label-item on main site */
+.ov-section-label { font-family:'Courier Prime',monospace; font-size:clamp(8px,0.62vw,10px); letter-spacing:4px; text-transform:uppercase; color:rgba(255,255,255,0.85); margin-bottom:clamp(8px,1.2vh,14px); }
+.ov-facts { display:flex; flex-direction:column; margin-bottom:clamp(28px,4vh,48px); border-top:1px solid rgba(0,200,180,0.10); }
+.ov-fact-key { font-family:'Courier Prime',monospace; font-size:clamp(9px,0.72vw,12px); letter-spacing:4px; text-transform:uppercase; color:var(--teal); opacity:1; flex-shrink:0; width:clamp(56px,6vw,80px); transition:color 0.3s,opacity 0.3s; }
+.ov-fact-val { font-family:'Cormorant',Georgia,serif; font-style:italic; font-weight:300; font-size:clamp(20px,1.9vw,30px); color:#fff; letter-spacing:-0.01em; transition:color 0.3s; }
+
+/* stats — styled like project row numbers */
+
+/* cream cycling — matches homepage abt-label-item */
+.ov-fact { display:flex; align-items:center; gap:clamp(20px,2.5vw,36px); padding:clamp(14px,1.8vh,22px) clamp(16px,1.8vw,24px); border-bottom:1px solid rgba(0,200,180,0.10); cursor:default; position:relative; transition:background 0.35s ease; }
+.ov-fact.cream-active,
+.ov-fact:hover { background:var(--cream); }
+.ov-fact.cream-active .ov-fact-key,
+.ov-fact:hover .ov-fact-key { color:var(--teal-dark); opacity:1; }
+.ov-fact.cream-active .ov-fact-val,
+.ov-fact:hover .ov-fact-val { color:var(--ink); transform:translateX(0); }
+
+.ov-stat { transition:background 0.35s ease; }
+.ov-stat.cream-active,
+.ov-stat:hover { background:var(--cream); }
+.ov-stat.cream-active .ov-stat-n,
+.ov-stat:hover .ov-stat-n { color:var(--ink) !important; }
+.ov-stat.cream-active .ov-stat-l,
+.ov-stat:hover .ov-stat-l { color:var(--ink) !important; transform:translateX(0); }
+
+.ov-stats-label { font-family:'Courier Prime',monospace; font-size:clamp(8px,0.62vw,10px); letter-spacing:4px; text-transform:uppercase; color:rgba(255,255,255,0.85); margin-bottom:clamp(12px,1.8vh,20px); }
+.ov-stats { display:flex; flex-direction:column; }
+.ov-stat { display:flex; align-items:center; gap:clamp(18px,2.2vw,30px); padding:clamp(10px,1.4vh,18px) clamp(16px,1.8vw,24px); border-bottom:1px solid rgba(255,255,255,0.05); cursor:default; position:relative; overflow:hidden; }
+.ov-stat:first-child { border-top:1px solid rgba(255,255,255,0.05); }
+
+
+
+.ov-stat-n { font-family:'Cormorant',Georgia,serif; font-weight:300; font-style:italic; font-size:clamp(32px,4vw,60px); line-height:1; letter-spacing:-0.04em; color:var(--teal); flex-shrink:0; min-width:clamp(72px,9vw,128px); transition:color 0.3s; }
+.ov-stat-l { font-family:'Courier Prime',monospace; font-size:clamp(10px,0.78vw,13px); letter-spacing:2px; text-transform:uppercase; color:rgba(255,255,255,0.90); transition:color 0.3s; }
+
+/* ═══════════════════════════════════════════
    GALLERY PANELS
-───────────────────────────────────────────── */
-.panel-gallery {
-    width: 100vw;
-    background: #000;
-    flex-direction: column;
-    flex-shrink: 0;
-    overflow: hidden;
+   Sidebar: same border + spacing language as
+   main site .projects-col-header.
+   Images: same hover as .project-row-img.
+   Orange border on hover — exactly like main site.
+═══════════════════════════════════════════ */
+.p-gal { flex-direction:row !important; background:#050505; border-top:1px solid rgba(255,255,255,0.08); position:relative; overflow:hidden; isolation:isolate; }
+.gal-bg-blur { position:absolute; inset:0; z-index:0; pointer-events:none; overflow:hidden; background:radial-gradient(ellipse 70% 60% at 75% 35%, rgba(0,80,60,0.7) 0%, transparent 60%), radial-gradient(ellipse 50% 50% at 20% 65%, rgba(60,10,40,0.8) 0%, transparent 55%), radial-gradient(ellipse 80% 80% at 50% 50%, rgba(5,10,20,1) 40%, rgba(5,10,20,1) 100%); }
+.gal-bg-blur img { position:absolute; inset:-60px; width:calc(100% + 120px); height:calc(100% + 120px); object-fit:cover; object-position:center 40%; filter:blur(28px) brightness(0.70) saturate(1.4); display:block; mix-blend-mode:screen; }
+.gal-bg-blur::after { content:''; position:absolute; inset:0; background:linear-gradient(180deg,rgba(0,0,0,0.4) 0%,rgba(0,0,0,0.05) 25%,rgba(0,0,0,0.05) 75%,rgba(0,0,0,0.5) 100%); }
+
+/* word-by-word reveal — copied from main site */
+.word-reveal-word { display:inline-block; overflow:hidden; vertical-align:bottom; padding-bottom:0.06em; margin-bottom:-0.06em; }
+.word-reveal-inner { display:inline-block; opacity:0; transform:translateY(18px); transition:transform 0.65s cubic-bezier(0.22,1,0.36,1), opacity 0.5s ease; }
+.word-reveal-word.revealed .word-reveal-inner { opacity:1; transform:translateY(0); }
+.reveal-fade { opacity:0; transform:translateY(14px); transition:opacity 0.7s cubic-bezier(0.22,1,0.36,1), transform 0.7s cubic-bezier(0.22,1,0.36,1); }
+.reveal-fade.revealed { opacity:1; transform:translateY(0); }
+
+
+
+.gal-side {
+    flex:0 0 clamp(200px,20vw,300px);
+    display:flex; flex-direction:column; justify-content:space-between;
+    padding:clamp(80px,10vh,120px) clamp(24px,2.5vw,40px) clamp(48px,6vh,72px) clamp(32px,4vw,56px);
+    border-right:1px solid rgba(180,240,230,0.35);
+    position:relative; z-index:1; flex-shrink:0;
+    background:rgba(210,245,240,0.06);
+    backdrop-filter:blur(12px) brightness(0.65) saturate(1.1);
+    -webkit-backdrop-filter:blur(12px) brightness(0.65) saturate(1.1);
 }
 
-/* Gallery header - tight vertical alignment */
-.gallery-head {
-    padding: clamp(50px,7vh,72px) clamp(28px,5vw,80px) clamp(8px,1vh,14px);
-    display: flex; align-items: center; gap: 16px; flex-shrink: 0;
-}
-.gallery-num {
-    font-size: 10px; letter-spacing: 2px; color: rgba(0,200,180,0.4);
-    flex-shrink: 0; line-height: 1;
-    /* vertically centered with h2 by align-items:center on parent */
-}
-.gallery-head h2 {
-    font-family: 'Cormorant', Georgia, serif; font-weight: 300;
-    font-size: clamp(22px,2.8vw,46px); letter-spacing: 0.5px; color: #fff;
-    flex-shrink: 0; line-height: 1;
-}
-.gallery-rule {
-    flex: 1; height: 1px;
-    background: linear-gradient(90deg, var(--teal-line), transparent);
-    /* vertically centered by align-items:center on parent */
-}
-.gallery-desc {
-    font-family: 'Cormorant', Georgia, serif;
-    font-size: clamp(12px,0.95vw,15px); line-height: 1.7; color: var(--muted);
-    max-width: 500px; flex-shrink: 0;
-    padding: 0 clamp(28px,5vw,80px) clamp(10px,1.2vh,16px);
-}
+/* gal-side blur — matches panel-bg-blur on ov-r exactly */
+.gal-side-blur { position:absolute; inset:0; z-index:0; pointer-events:none; overflow:hidden; }
+.gal-side-blur img { position:absolute; inset:-20px; width:calc(100% + 40px); height:calc(100% + 40px); object-fit:cover; object-position:center 40%; filter:blur(20px) brightness(0.70) saturate(0.90); display:block; }
+.gal-side-blur::after { content:''; position:absolute; inset:0; background:linear-gradient(180deg,rgba(0,0,0,0.35) 0%,rgba(0,0,0,0.05) 30%,rgba(0,0,0,0.05) 70%,rgba(0,0,0,0.40) 100%); }
 
-/* Horizontal strip of images */
-.gstrip {
-    display: flex; gap: 2px; flex: 1; overflow-x: auto; overflow-y: hidden;
-    padding: 0 clamp(28px,5vw,80px) clamp(16px,2vh,26px);
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-    /* allow internal horizontal scroll without triggering panel nav */
-    touch-action: pan-x;
-}
-.gstrip::-webkit-scrollbar { display: none; }
+.gal-num { font-family:'Courier Prime',monospace; font-size:clamp(8px,0.65vw,11px); letter-spacing:4px; text-transform:uppercase; color:var(--teal); opacity:0.75; margin-bottom:clamp(12px,1.8vh,20px); }
+.gal-title { font-family:'Cormorant',Georgia,serif; font-weight:300; font-style:italic; font-size:clamp(22px,2.4vw,40px); letter-spacing:-0.02em; color:#fff; line-height:1.05; margin-bottom:clamp(14px,2vh,22px); }
+.gal-rule { width:100%; height:1px; background:rgba(0,200,180,0.22); margin-bottom:clamp(14px,2vh,22px); }
+.gal-desc { font-family:'Courier Prime',monospace; font-size:clamp(11px,0.82vw,13px); letter-spacing:0.3px; line-height:1.65; color:rgba(255,255,255,0.88); }
+.gal-bottom { display:flex; flex-direction:column; gap:8px; }
+.gal-count { font-family:'Courier Prime',monospace; font-size:clamp(8px,0.65vw,11px); letter-spacing:3px; text-transform:uppercase; color:rgba(0,200,180,0.65); }
+.gal-hint { font-family:'Courier Prime',monospace; display:flex; align-items:center; gap:8px; font-size:clamp(8px,0.65vw,11px); letter-spacing:2.5px; text-transform:uppercase; color:rgba(255,255,255,0.38); }
+.gal-arr { color:var(--teal); }
+.gal-side::before { content:''; position:absolute; inset:0; background:rgba(200,240,235,0.12); pointer-events:none; z-index:0; }
+.gal-side > * { position:relative; z-index:1; }
 
-.gitem {
-    position: relative; overflow: hidden; flex-shrink: 0;
-    background: #050a09;
-    height: 100%;
-}
-.gitem img, .gitem video {
-    width: 100%; height: 100%; object-fit: cover; display: block;
-    filter: brightness(0.68) saturate(0.85);
-    transition: filter 0.4s;
-    /* NO transform/scale on hover */
-}
-.gitem:hover img, .gitem:hover video {
-    filter: brightness(0.95) saturate(1.05);
-}
-.gitem.dimmed img, .gitem.dimmed video {
-    filter: brightness(0.22) saturate(0.4);
-}
-.gitem-overlay {
-    position: absolute; inset: 0;
-    background: linear-gradient(180deg, transparent 55%, rgba(0,0,0,0.65) 100%);
-    opacity: 0; transition: opacity 0.3s;
-    display: flex; align-items: flex-end; padding: 10px 12px;
-}
-.gitem:hover .gitem-overlay { opacity: 1; }
-.gitem-idx { font-size: 9px; letter-spacing: 3px; color: var(--teal); opacity: 0.75; }
+.gal-main { flex:1; min-width:0; min-height:0; display:flex; flex-direction:column; padding:clamp(56px,7vh,88px) 0 clamp(48px,6vh,72px) 0; overflow:hidden; position:relative; z-index:1; }
+.gal-main::before { display:none; }
+.gstrip-wrap { position:relative; z-index:1; }
+.gstrip-wrap { flex:1; min-height:0; height:100%; overflow:hidden; display:flex; padding:0 clamp(24px,3vw,48px); align-items:stretch; }
+.gstrip { display:flex; gap:2px; flex:1; height:100%; min-height:0; overflow-x:auto; overflow-y:hidden; scrollbar-width:none; touch-action:pan-x; align-items:stretch; }
+.gstrip::-webkit-scrollbar { display:none; }
 
-/* Aspect ratio helpers */
-.ar-2-3  { aspect-ratio: 2/3; }
-.ar-1-1  { aspect-ratio: 1/1; }
-.ar-9-16 { aspect-ratio: 9/16; }
-.ar-16-9 { aspect-ratio: 16/9; }
-.ar-16-10{ aspect-ratio: 16/10; }
+/* gitem — same hover as main site .project-row-img */
+.gitem { position:relative; overflow:hidden; flex-shrink:0; background:transparent; height:100%; min-height:0; }
+.gitem::before { content:''; position:absolute; inset:0; z-index:2; background:rgba(0,0,0,0.0); transition:background 0.5s ease; pointer-events:none; }
+.gitem::after { content:''; position:absolute; inset:0; z-index:3; box-shadow:inset 0 0 0 0px transparent; pointer-events:none; transition:box-shadow 0.3s ease; }
+.gitem:hover::before { background:rgba(0,0,0,0.0); }
+.gitem:hover::after { box-shadow:inset 0 0 0 2px var(--orange); }
+.gitem img,.gitem video { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:block; background:transparent; filter:brightness(1.0) saturate(1.0); transform:scale(1.0); transition:filter 0.7s cubic-bezier(0.22,1,0.36,1),transform 0.9s cubic-bezier(0.22,1,0.36,1),opacity 0.5s; }
+.gitem:hover img,.gitem:hover video { transform:scale(1.03); filter:brightness(1.0) saturate(1.0); }
+.gitem--reel { aspect-ratio:9/16; height:100% !important; width:auto !important; }
+.gitem--reel video { object-fit:fill; }
+.gitem--reel:not(:first-child) video { transform:scaleX(3) scaleY(1.8); transform-origin:center; }
+.gitem.dimmed img,.gitem.dimmed video { filter:brightness(0.12) saturate(0.15); opacity:0.85; }
+.gitem.dimmed::before { background:rgba(0,0,0,0.65); }
+/* index — mix-blend-mode:difference same as main site */
+.gitem-overlay { position:absolute; inset:0; z-index:4; display:flex; align-items:flex-end; padding:clamp(8px,1vh,14px) clamp(10px,1vw,16px); background:none; opacity:0; transition:opacity 0.4s; }
+.gitem:hover .gitem-overlay { opacity:1; }
+.gitem-idx { font-family:'Cormorant',Georgia,serif; font-style:italic; font-weight:300; font-size:clamp(22px,2vw,36px); color:rgba(255,255,255,0.82); mix-blend-mode:difference; letter-spacing:-0.02em; transform:translateY(4px); transition:transform 0.35s cubic-bezier(0.22,1,0.36,1); }
+.gitem:hover .gitem-idx { transform:translateY(0); }
 
-/* Slightly reduced vertical image size */
-.gstrip { max-height: calc(100vh - 155px); }
+.ar-1-1   { aspect-ratio:1; }
+.ar-16-10 { aspect-ratio:16/10; }
+.ar-4-5   { aspect-ratio:4/5; align-self:stretch; }
 
-/* ─────────────────────────────────────────────
-   PANEL · LINKS
-───────────────────────────────────────────── */
-.panel-links {
-    background: #000; justify-content: center;
-    padding: clamp(28px,5vw,80px);
-}
-.links-wrap { display: flex; flex-direction: column; }
-.links-label {
-    font-size: 9px; letter-spacing: 4px; text-transform: uppercase;
-    color: rgba(0,200,180,0.4); margin-bottom: 20px;
-}
-.links-title {
-    font-family: 'Cormorant', Georgia, serif; font-weight: 300;
-    font-size: clamp(32px,5vw,72px); color: #fff; line-height: 0.92;
-    letter-spacing: -1px; margin-bottom: clamp(28px,4vh,48px);
-}
-.link-row {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: clamp(12px,1.5vh,18px) 0;
-    border-top: 1px solid var(--rule); text-decoration: none;
-    max-width: 520px;
-    transition: border-color 0.3s;
-}
-.link-row:last-child { border-bottom: 1px solid var(--rule); }
-.link-row:hover { border-top-color: rgba(0,200,180,0.3); }
-.link-name {
-    font-family: 'Cormorant', Georgia, serif; font-weight: 300;
-    font-size: clamp(16px,1.8vw,26px); color: rgba(221,216,204,0.55);
-    transition: color 0.3s;
-}
-.link-row:hover .link-name { color: #fff; }
-.link-arrow {
-    font-size: 14px; color: var(--teal);
-    opacity: 0; transition: opacity 0.3s, transform 0.3s;
-}
-.link-row:hover .link-arrow { opacity: 1; transform: translateX(4px); }
-.footer-copy {
-    position: absolute; bottom: 22px; right: clamp(24px,3vw,52px);
-    font-size: 10px; letter-spacing: 2px; color: rgba(255,255,255,0.2);
-}
-.footer-copy span { display: inline-block; transition: color 0.15s; }
-.footer-copy span.cyan { color: var(--teal); }
+/* ═══════════════════════════════════════════
+   LINKS PANEL
+   Same visual language as main site CTA section:
+   large italic Cormorant, Courier Prime labels,
+   teal accents, teal hover underline on links.
+═══════════════════════════════════════════ */
+.p-links { flex-direction:row !important; border-top:1px solid rgba(255,255,255,0.08); }
 
-/* ── LIGHTBOX ── */
-#lightbox {
-    position: fixed; inset: 0; z-index: 100000;
-    background: rgba(0,0,0,0.96);
-    display: flex; align-items: center; justify-content: center;
-    opacity: 0; pointer-events: none; transition: opacity 0.3s;
+.links-l {
+    flex:0 0 46%;
+    display:flex; flex-direction:column; justify-content:space-between;
+    padding:clamp(96px,12vh,140px) clamp(40px,4.5vw,72px) clamp(64px,9vh,100px) clamp(56px,7vw,120px);
+    border-right:1px solid rgba(0,200,180,0.10);
 }
-#lightbox.open { opacity: 1; pointer-events: all; }
-#lightbox-img {
-    max-width: 88vw; max-height: 88vh; object-fit: contain;
-    opacity: 0; transition: opacity 0.35s;
-    border: 1px solid rgba(0,200,180,0.1);
+.links-eyebrow { font-family:'Courier Prime',monospace; font-size:clamp(8px,0.65vw,11px); letter-spacing:5px; text-transform:uppercase; color:var(--teal); opacity:0.75; display:flex; align-items:center; gap:12px; margin-bottom:clamp(16px,2.2vh,24px); }
+.links-eyebrow::before { content:''; width:24px; height:1px; background:var(--teal); opacity:0.8; flex-shrink:0; }
+.links-title { font-family:'Cormorant',Georgia,serif; font-weight:300; font-style:italic; font-size:clamp(48px,7.5vw,120px); color:#fff; line-height:0.92; letter-spacing:-0.03em; }
+.links-back { display:inline-flex; align-items:center; gap:10px; font-family:'Courier Prime',monospace; font-size:clamp(10px,0.72vw,12px); letter-spacing:3px; text-transform:uppercase; color:rgba(255,255,255,0.55); text-decoration:none; transition:color 0.25s; position:relative; padding:12px 6px; margin:-12px -6px; }
+.links-back::after { content:''; position:absolute; bottom:9px; left:6px; width:0; height:1px; background:var(--teal); transition:width 0.3s ease; }
+.links-back:hover { color:#fff; }
+.links-back:hover::after { width:calc(100% - 12px); }
+.links-back .arr { color:var(--teal); }
+
+.links-r {
+    flex:1; display:flex; flex-direction:column; justify-content:center;
+    padding:clamp(80px,10vh,120px) clamp(48px,5.5vw,80px) clamp(64px,8vh,96px) clamp(48px,5.5vw,80px);
+    gap:clamp(36px,5vh,56px);
+    background:rgba(210,245,240,0.06);
+    backdrop-filter:blur(12px) brightness(0.65) saturate(1.1);
+    -webkit-backdrop-filter:blur(12px) brightness(0.65) saturate(1.1);
+    border-left:1px solid rgba(180,240,230,0.35);
+    position:relative; z-index:1;
 }
-#lightbox.open #lightbox-img { opacity: 1; }
-#lightbox-img.fading { opacity: 0 !important; }
-#lb-close {
-    position: fixed; top: 22px; right: 24px;
-    font-family: 'Courier Prime', monospace; font-size: 10px;
-    letter-spacing: 3px; text-transform: uppercase;
-    color: var(--teal); opacity: 0.6; background: none; border: none;
-    transition: opacity 0.2s; cursor: none;
+.links-r::before { content:''; position:absolute; inset:0; background:rgba(200,240,235,0.12); pointer-events:none; z-index:0; }
+.links-r > * { position:relative; z-index:1; }
+.links-group-label { font-family:'Courier Prime',monospace; font-size:clamp(8px,0.62vw,10px); letter-spacing:4px; text-transform:uppercase; color:rgba(255,255,255,0.75); margin-bottom:clamp(8px,1.2vh,14px); }
+.link-rows { display:flex; flex-direction:column; }
+.link-row.cream-active::before { transform:scaleX(1); }
+.link-row.cream-active { border-color:var(--cream); }
+.link-row.cream-active .link-row-label { color:var(--teal-dark); }
+.link-row.cream-active .link-row-name { color:var(--ink); transform:translateX(5px); }
+.link-row.cream-active .link-row-arr { color:var(--ink); }
+/* link rows — same as main site .nav a underline pattern */
+/* link rows — match homepage .cta-link-row exactly */
+.link-row { display:flex; align-items:center; justify-content:space-between; padding:clamp(16px,2.2vh,28px) clamp(24px,3vw,48px); border-bottom:1px solid rgba(255,255,255,0.08); text-decoration:none; position:relative; overflow:hidden; cursor:none; transition:border-color 0.25s; }
+.link-row:first-child { border-top:1px solid rgba(0,200,180,0.10); }
+.link-row::before { content:''; position:absolute; inset:0; background:var(--cream); transform:scaleX(0); transform-origin:left; transition:transform 0.48s cubic-bezier(0.22,1,0.36,1); z-index:0; }
+.link-row:hover::before { transform:scaleX(1); }
+.link-row:hover { border-color:var(--cream); }
+.link-row-label { font-family:'Courier Prime',monospace; font-size:clamp(8px,0.62vw,10px); letter-spacing:4px; text-transform:uppercase; color:var(--teal); position:relative; z-index:1; flex-shrink:0; min-width:clamp(60px,8vw,120px); transition:color 0.25s; }
+.link-row:hover .link-row-label { color:var(--teal-dark); }
+.link-row-name { font-family:'Cormorant',Georgia,serif; font-weight:300; font-size:clamp(18px,1.8vw,32px); color:#fff; transition:color 0.3s,transform 0.38s cubic-bezier(0.22,1,0.36,1); letter-spacing:-0.01em; position:relative; z-index:1; flex:1; }
+.link-row:hover .link-row-name { color:var(--ink); transform:translateX(5px); }
+.link-row-arr { font-size:11px; color:var(--teal); transition:color 0.25s,transform 0.3s cubic-bezier(0.22,1,0.36,1); position:relative; z-index:1; }
+.link-row:hover .link-row-arr { color:var(--ink); transform:translate(4px,-2px); }
+/* project rows */
+.proj-row { display:flex; flex-direction:column; gap:3px; padding:clamp(12px,1.6vh,18px) clamp(12px,1.5vw,20px); border-bottom:1px solid rgba(255,255,255,0.06); text-decoration:none; transition:border-color 0.25s,background 0.3s; position:relative; overflow:hidden; }
+.proj-row:first-child { border-top:1px solid rgba(255,255,255,0.06); }
+.proj-row::before { content:''; position:absolute; inset:0; background:var(--cream); transform:scaleX(0); transform-origin:left; transition:transform 0.45s cubic-bezier(0.22,1,0.36,1); z-index:0; }
+.proj-row:hover::before { transform:scaleX(1); }
+.proj-row.cream-active::before { transform:scaleX(1); }
+.proj-row.cream-active { border-color:var(--cream); }
+.proj-row.cream-active .proj-type { opacity:1; color:rgba(0,0,0,0.5); }
+.proj-row.cream-active .proj-name { color:#000; transform:translateX(5px); }
+.proj-row:hover { border-color:var(--cream); }
+.proj-type { font-family:'Courier Prime',monospace; font-size:clamp(8px,0.62vw,10px); letter-spacing:3px; text-transform:uppercase; color:var(--teal); opacity:0.65; transition:opacity 0.25s,color 0.25s; position:relative; z-index:1; }
+.proj-row:hover .proj-type { opacity:1; color:rgba(0,0,0,0.5); }
+.proj-name { font-family:'Cormorant',Georgia,serif; font-weight:300; font-size:clamp(15px,1.3vw,20px); color:rgba(255,255,255,0.75); letter-spacing:-0.01em; transition:color 0.25s,transform 0.3s cubic-bezier(0.22,1,0.36,1); position:relative; z-index:1; }
+.proj-row:hover .proj-name { color:#000; transform:translateX(5px); }
+
+.copy { position:absolute; bottom:clamp(20px,2.5vh,32px); right:clamp(32px,4vw,56px); font-family:'Courier Prime',monospace; font-size:clamp(8px,0.6vw,10px); letter-spacing:2px; color:rgba(255,255,255,0.18); z-index:2; }
+.copy span { display:inline-block; transition:color 0.15s; }
+.copy span.cyan { color:var(--teal); }
+
+/* ── glass blur background for overview + links ── */
+.p-ov, .p-links { position:relative; }
+.panel-bg-blur {
+    position:absolute; inset:0; z-index:0; pointer-events:none;
+    overflow:hidden;
 }
-#lb-close:hover { opacity: 1; }
-.lb-arrow {
-    position: absolute; top: 50%; transform: translateY(-50%);
-    background: none; border: none; font-size: 22px;
-    color: rgba(0,200,180,0.3); transition: color 0.2s; padding: 14px; cursor: none;
+.panel-bg-blur img {
+    position:absolute; inset:-20px;
+    width:calc(100% + 40px); height:calc(100% + 40px);
+    object-fit:cover; object-position:center 30%;
+    filter:blur(20px) brightness(0.45) saturate(0.65);
 }
-.lb-arrow:hover { color: var(--teal); }
-#lb-prev { left: 20px; } #lb-next { right: 20px; }
-#lb-counter {
-    position: absolute; bottom: 24px; left: 50%; transform: translateX(-50%);
-    font-size: 9px; letter-spacing: 3px; color: rgba(0,200,180,0.4);
-    font-family: 'Courier Prime', monospace;
+.panel-bg-blur::after {
+    content:''; position:absolute; inset:0;
+    background:radial-gradient(ellipse 80% 60% at 30% 50%, rgba(0,0,0,0.0) 0%, rgba(0,0,0,0.55) 100%),linear-gradient(180deg,rgba(0,0,0,0.55) 0%,rgba(0,0,0,0.1) 30%,rgba(0,0,0,0.0) 60%,rgba(0,0,0,0.65) 100%);
 }
-    </style>
+.p-ov .ov-l, .p-ov .ov-r,
+.p-links .links-l, .p-links .links-r { position:relative; z-index:1; }
+.pixel-particles { display:none; }
+.pixel { display:none; }
+
+/* ── LIGHTBOXES ── */
+#lightbox { position:fixed; inset:0; z-index:100000; background:rgba(0,0,0,0.96); display:flex; align-items:center; justify-content:center; opacity:0; pointer-events:none; transition:opacity 0.3s; }
+#lightbox.open { opacity:1; pointer-events:all; }
+#lb-img-wrap { position:relative; display:inline-flex; flex-direction:column; align-items:flex-end; }
+#lightbox-img { max-width:88vw; max-height:82vh; object-fit:contain; opacity:0; transition:opacity 0.35s; display:block; cursor:none; }
+#lightbox.open #lightbox-img { opacity:1; }
+#lb-close { font-family:'Courier Prime',monospace; font-size:9px; letter-spacing:3px; text-transform:uppercase; color:rgba(255,255,255,0.35); background:none; border:none; padding:6px 0 6px 12px; cursor:none; transition:color 0.2s; }
+#lb-close:hover { color:#fff; }
+.lb-arrow { position:absolute; top:50%; transform:translateY(-50%); background:none; border:none; font-size:20px; color:rgba(255,255,255,0.22); transition:color 0.2s; padding:16px; cursor:none; }
+.lb-arrow:hover { color:#fff; }
+#lb-prev{left:16px;}#lb-next{right:16px;}
+#lb-counter { font-family:'Courier Prime',monospace; font-size:9px; letter-spacing:3px; color:rgba(255,255,255,0.22); text-align:center; padding:6px 0 0; align-self:center; }
+#video-lightbox { position:fixed; inset:0; z-index:100001; background:rgba(0,0,0,0.97); display:flex; align-items:center; justify-content:center; opacity:0; pointer-events:none; transition:opacity 0.3s; }
+#video-lightbox.open { opacity:1; pointer-events:all; }
+#vlb-wrap { position:relative; display:flex; flex-direction:column; align-items:flex-end; }
+#vlb-video { max-width:min(88vw,calc(82vh*9/16)); max-height:82vh; display:block; cursor:none; }
+#vlb-close { font-family:'Courier Prime',monospace; font-size:9px; letter-spacing:3px; text-transform:uppercase; color:rgba(255,255,255,0.35); background:none; border:none; padding:6px 0 6px 12px; cursor:none; transition:color 0.2s; margin-bottom:6px; }
+#vlb-close:hover { color:#fff; }
+.vlb-arrow { position:fixed; top:50%; transform:translateY(-50%); background:none; border:none; font-size:20px; color:rgba(255,255,255,0.22); transition:color 0.2s; padding:14px; cursor:none; }
+.vlb-arrow:hover { color:#fff; }
+#vlb-prev{left:16px;}#vlb-next{right:16px;}
+#vlb-counter { font-family:'Courier Prime',monospace; font-size:9px; letter-spacing:3px; color:rgba(255,255,255,0.22); text-align:center; padding:6px 0 0; align-self:center; }
+
+</style>
 </head>
 <body>
-
 <div id="cursor-dot"></div>
 <div id="cursor-ring"></div>
-<div class="hud-tr">v2.0.2<br>STATUS: <span style="color:var(--teal)">ONLINE</span></div>
-<div class="hud-bl">X: <span id="coord-x">0000</span>&nbsp; Y: <span id="coord-y">0000</span></div>
 
-<!-- Corner brackets -->
-<div class="brackets">
-    <div class="bracket tl"></div><div class="bracket tr"></div>
-    <div class="bracket bl"></div><div class="bracket br"></div>
+<div class="top-bar">
+    <a href="./testing2.html" class="back-link"><span class="arr">&#8592;</span> Portfolio</a>
+    <div class="nav-logo" id="nav-logo" style="margin-left:auto;">ANOAEYTO</div>
 </div>
+<div class="prog-wrap" id="prog"></div>
+<div class="dots" id="dots"></div>
+<button class="arrow off" id="arrow-l">&#8592;</button>
+<button class="arrow" id="arrow-r">&#8594;</button>
 
-<!-- Section Nav -->
-<nav class="section-nav" id="section-nav">
-    <a href="#" data-idx="0">00</a>
-    <a href="#" data-idx="1">01</a>
-    <a href="#" data-idx="2">02</a>
-    <a href="#" data-idx="3">03</a>
-    <a href="#" data-idx="4">04</a>
-    <a href="#" data-idx="5">05</a>
-    <a href="#" data-idx="6">06</a>
-    <a href="#" data-idx="7">07</a>
-    <a href="#" data-idx="8">08</a>
-    <a href="#" data-idx="9">09</a>
-</nav>
+<div class="track" id="track">
 
-<div class="top-bar"><a href="./testing2.html" class="back-link">Back to portfolio</a></div>
-<div class="progress-bar-wrap"><div class="progress-bar-fill" id="progress"></div></div>
-<div class="panel-dots" id="panel-dots"></div>
-
-<!-- Nav arrows -->
-<button class="nav-arrow disabled" id="arrow-left">
-    <span style="font-size:18px;">←</span>
-</button>
-<button class="nav-arrow" id="arrow-right">
-    <span style="font-size:18px;">→</span>
-</button>
-
-<!-- ══════════════════════════════════════════
-     SCROLL TRACK
-═════════════════════════════════════════════ -->
-<div class="scroll-track" id="track">
-
-<!-- 0 · HERO ──────────────────────────────── -->
-<div class="panel panel-hero" data-panel="Intro">
-    <img src="./projects/tea/posters/poster.jpg" alt="" onerror="this.src='./projects/poster.jpg'">
-    <div class="hero-overlay"></div>
-    <div class="hero-content">
-        <div class="hero-eyebrow">Brand Development &amp; Digital Design</div>
-        <h1 class="hero-title">Tea and<br>Culture Club</h1>
-        <div class="hero-hint">
-            <div class="hint-line"></div>
-            <span>Scroll or use arrow keys</span>
-            <span class="hint-arrow">→</span>
-        </div>
+<!-- 00 · HERO ─────────────────────── -->
+<div class="panel p-hero" data-panel="Intro">
+    <img class="hero-img" src="./projects/tea/posters/poster.jpg" alt="" onerror="this.src='./projects/poster.jpg'">
+    <div class="hero-scanline"></div>
+    <!-- teal pixel particles — same as main site -->
+    <div class="pixel-particles" id="hero-particles"></div>
+    <!-- HUD top-left -->
+    <div class="hud-tl">
+        <div class="hud-item active"><strong>Project</strong> Tea &amp; Culture Club</div>
+        <div class="hud-item"><strong>Type</strong> Brand Development</div>
+        <div class="hud-item"><strong>Year</strong> 2024 &#8211; 2025</div>
+    </div>
+    <!-- HUD top-right -->
+    <div class="hud-tr">
+        <div class="hud-item"><strong>Tools</strong> Photoshop</div>
+        <div class="hud-item"><strong></strong> Premiere Pro &#183; Figma</div>
+        <div class="hud-item"><strong></strong> Blender &#183; HTML/CSS</div>
+    </div>
+    <!-- text -->
+    <div class="hero-text">
+        <div class="hero-sub">Brand Development &amp; Digital Design</div>
+        <h1 class="hero-h1">Tea and<br>Culture Club</h1>
+        <div class="hero-hint"><span class="hero-hint-line"></span>Scroll or arrow keys <span class="hint-arr">&#8594;</span></div>
+    </div>
+    <!-- scroll indicator -->
+    <div class="scroll-ind">
+        <span>Scroll</span>
+        <div class="scroll-line"></div>
     </div>
 </div>
 
-<!-- 1 · ABOUT ─────────────────────────────── -->
-<div class="panel panel-about" data-panel="About">
-    <div class="about-grid">
-        <div class="about-left">
-            <div class="about-label">01 — Overview</div>
-            <h2 class="about-tagline">A year building the visual identity for UW's Tea Club — across <em>print, social, and video.</em></h2>
-            <p class="about-body">I grew the community by 600+ followers, designing event posters, stickers, and weekly content while collaborating with other campus clubs to create a distinctive, recognisable brand presence.</p>
+<!-- 01 · OVERVIEW ─────────────────────── -->
+<div class="panel p-ov" data-panel="Overview">
+    <div class="panel-bg-blur"><img src="./projects/tea/posters/poster.jpg" alt="" onerror="this.src='./projects/poster.jpg'"></div>
+    <div class="ov-l">
+        <div class="ov-ghost-num">01</div>
+        <div class="ov-eyebrow">01 &#8212; Overview</div>
+        <h2 class="ov-tagline reveal-target" id="ov-tagline">A year building the visual identity for UW&#39;s Tea Club &#8212; across <span class="kw">print</span>, <span class="kw">social</span>, and <span class="kw">video</span>.</h2>
+    </div>
+    <div class="ov-r">
+        <div class="ov-section-label">Details</div>
+        <div class="ov-facts">
+            <div class="ov-fact"><span class="ov-fact-key">Year</span><span class="ov-fact-val">2024 &#8211; 2025</span></div>
+            <div class="ov-fact"><span class="ov-fact-key">Role</span><span class="ov-fact-val">Brand, Social, &amp; Web Design</span></div>
+            <div class="ov-fact"><span class="ov-fact-key">Tools</span><span class="ov-fact-val">Photoshop &#183; Premiere &#183; Figma &#183; Blender &#183; HTML/CSS</span></div>
         </div>
-        <div class="meta-table">
-            <div class="meta-row">
-                <div class="meta-label">Category</div>
-                <div class="meta-value"><span class="meta-tag">Brand Design</span><span class="meta-tag">Social Media</span></div>
-            </div>
-            <div class="meta-row">
-                <div class="meta-label">Timeline</div>
-                <div class="meta-value">2024 – 2025</div>
-            </div>
-            <div class="meta-row">
-                <div class="meta-label">Status</div>
-                <div class="meta-value">Completed</div>
-            </div>
-            <div class="meta-row">
-                <div class="meta-label">Scope</div>
-                <div class="meta-value"><span class="meta-tag">Brand Strategy</span><span class="meta-tag">Social Growth</span><span class="meta-tag">Print</span><span class="meta-tag">Video</span><span class="meta-tag">Community</span></div>
-            </div>
-            <div class="meta-row">
-                <div class="meta-label">Tools</div>
-                <div class="meta-value"><span class="meta-tag">Photoshop</span><span class="meta-tag">Premiere Pro</span><span class="meta-tag">Blender</span><span class="meta-tag">Figma</span><span class="meta-tag">HTML / CSS</span></div>
-            </div>
+        <div class="ov-stats-label">Impact</div>
+        <div class="ov-stats">
+            <div class="ov-stat"><span class="ov-stat-n">+600</span><span class="ov-stat-l">Instagram followers gained</span></div>
+            <div class="ov-stat"><span class="ov-stat-n">200+</span><span class="ov-stat-l">Stickers &amp; posters on campus</span></div>
+            <div class="ov-stat"><span class="ov-stat-n">15+</span><span class="ov-stat-l">Event posters shipped</span></div>
+            <div class="ov-stat"><span class="ov-stat-n">10</span><span class="ov-stat-l">Reels &amp; videos produced</span></div>
         </div>
     </div>
 </div>
 
-<!-- 2 · WHAT I DID ───────────────────────── -->
-<div class="panel panel-roles" data-panel="Roles">
-    <div class="roles-sidebar">
-        <span class="roles-num">02</span>
-        <h2>What I Did</h2>
-        <p>Six areas of work across the full brand lifecycle — from social content to physical print collateral.</p>
-    </div>
-    <div class="roles-grid">
-        <div class="role-item">
-            <h3>Weekly Content &amp; Growth</h3>
-            <p>Managed weekly Instagram posts. Grew follower count by 600+ using Blender 3D assets and custom colour gradients.</p>
+<!-- 02 · W25 POSTERS ─────────────────── -->
+<div class="panel p-gal" data-panel="W25 Posters">
+    <div class="gal-bg-blur"><img src="./projects/tea/posters/poster.jpg" alt="" onerror="this.src='./projects/tea/posters/poster.jpg'"></div>
+    <div class="gal-side">
+    <div class="gal-side-blur"><img src="./projects/tea/posters/poster.jpg" alt="" onerror="this.src='./projects/tea/posters/poster.jpg'"></div>
+        <div>
+            <div class="gal-num">02</div>
+            <h2 class="gal-title">W25 Event Posters</h2>
+            <div class="gal-rule"></div>
+            <p class="gal-desc">Winter 2025 Instagram posts &#8212; event timing, campus location, tea selections.</p>
         </div>
-        <div class="role-item">
-            <h3>Cross-Club Events</h3>
-            <p>Partnered with Cheese Club and DJ Club for joint events. Curated collaborative playlists to extend the brand beyond visual design.</p>
-        </div>
-        <div class="role-item">
-            <h3>Reels &amp; Video</h3>
-            <p>Produced and edited short-form video for Instagram Reels and stories, shot and cut in-house using Adobe Premiere Pro.</p>
-        </div>
-        <div class="role-item">
-            <h3>Posters &amp; Stickers</h3>
-            <p>Designed 100–200 copies of event posters and pixel art stickers. So well-received other club booths inquired about the design.</p>
-        </div>
-        <div class="role-item">
-            <h3>Visual Identity</h3>
-            <p>Evolved the brand visual language over a year, experimenting with styles and palettes refined on community feedback.</p>
-        </div>
-        <div class="role-item">
-            <h3>Website Assets</h3>
-            <p>Designed website components in Figma and collaborated with executives to bring them to life in HTML / CSS.</p>
+        <div class="gal-bottom">
+            <span class="gal-count">15 works</span>
+            <span class="gal-hint">scroll to browse <span class="gal-arr">&#8594;</span></span>
         </div>
     </div>
+    <div class="gal-main"><div class="gstrip-wrap"><div class="gstrip">
+        <div class="gitem ar-4-5" data-src="./projects/tea/posters/around_the_world.png"><img src="./projects/tea/posters/around_the_world.png" alt=""><div class="gitem-overlay"><span class="gitem-idx">01</span></div></div>
+        <div class="gitem ar-4-5" data-src="./projects/tea/posters/green_teas_2.jpg"><img src="./projects/tea/posters/green_teas_2.jpg" alt=""><div class="gitem-overlay"><span class="gitem-idx">02</span></div></div>
+        <div class="gitem ar-4-5" data-src="./projects/tea/posters/essential_3.jpg"><img src="./projects/tea/posters/essential_3.jpg" alt=""><div class="gitem-overlay"><span class="gitem-idx">03</span></div></div>
+        <div class="gitem ar-4-5" data-src="./projects/tea/posters/steeps_9.jpg"><img src="./projects/tea/posters/steeps_9.jpg" alt=""><div class="gitem-overlay"><span class="gitem-idx">04</span></div></div>
+        <div class="gitem ar-4-5" data-src="./projects/tea/posters/white_teas.jpg"><img src="./projects/tea/posters/white_teas.jpg" alt=""><div class="gitem-overlay"><span class="gitem-idx">05</span></div></div>
+        <div class="gitem ar-4-5" data-src="./projects/tea/posters/calm.jpg"><img src="./projects/tea/posters/calm.jpg" alt=""><div class="gitem-overlay"><span class="gitem-idx">06</span></div></div>
+        <div class="gitem ar-4-5" data-src="./projects/tea/posters/fruit_3.jpg"><img src="./projects/tea/posters/fruit_3.jpg" alt=""><div class="gitem-overlay"><span class="gitem-idx">07</span></div></div>
+        <div class="gitem ar-4-5" data-src="./projects/tea/posters/meet_3_3.jpg"><img src="./projects/tea/posters/meet_3_3.jpg" alt=""><div class="gitem-overlay"><span class="gitem-idx">08</span></div></div>
+        <div class="gitem ar-4-5" data-src="./projects/tea/posters/first_meet.jpg"><img src="./projects/tea/posters/first_meet.jpg" alt=""><div class="gitem-overlay"><span class="gitem-idx">09</span></div></div>
+        <div class="gitem ar-4-5" data-src="./projects/tea/posters/meet_4.jpg"><img src="./projects/tea/posters/meet_4.jpg" alt=""><div class="gitem-overlay"><span class="gitem-idx">10</span></div></div>
+        <div class="gitem ar-4-5" data-src="./projects/tea/posters/latest-Recovered.jpg"><img src="./projects/tea/posters/latest-Recovered.jpg" alt=""><div class="gitem-overlay"><span class="gitem-idx">11</span></div></div>
+        <div class="gitem ar-4-5" data-src="./projects/tea/posters/lastmeet.jpg"><img src="./projects/tea/posters/lastmeet.jpg" alt=""><div class="gitem-overlay"><span class="gitem-idx">12</span></div></div>
+        <div class="gitem ar-4-5" data-src="./projects/tea/posters/7_3_2025.jpg"><img src="./projects/tea/posters/7_3_2025.jpg" alt=""><div class="gitem-overlay"><span class="gitem-idx">13</span></div></div>
+        <div class="gitem ar-4-5" data-src="./projects/tea/posters/meet_5.jpg"><img src="./projects/tea/posters/meet_5.jpg" alt=""><div class="gitem-overlay"><span class="gitem-idx">14</span></div></div>
+        <div class="gitem ar-4-5" data-src="./projects/tea/posters/FINAL.jpg"><img src="./projects/tea/posters/FINAL.jpg" alt=""><div class="gitem-overlay"><span class="gitem-idx">15</span></div></div>
+    </div></div></div>
 </div>
 
-<!-- 3 · W25 POSTERS ─────────────────────── -->
-<div class="panel panel-gallery" data-panel="W25 Posters">
-    <div class="gallery-head">
-        <span class="gallery-num">03</span>
-        <h2>W25 Event Posters</h2>
-        <div class="gallery-rule"></div>
+<!-- 03 · F24 POSTERS ─────────────────── -->
+<div class="panel p-gal" data-panel="F24 Posters">
+    <div class="gal-bg-blur"><img src="./projects/tea/posters/F24/meet_1_3.jpg" alt="" onerror="this.src='./projects/tea/posters/poster.jpg'"></div>
+    <div class="gal-side">
+    <div class="gal-side-blur"><img src="./projects/tea/posters/F24/meet_1_3.jpg" alt="" onerror="this.src='./projects/tea/posters/poster.jpg'"></div>
+        <div>
+            <div class="gal-num">03</div>
+            <h2 class="gal-title">F24 Event Posters</h2>
+            <div class="gal-rule"></div>
+            <p class="gal-desc">Fall 2024 &#8212; earlier in the club&#39;s visual identity evolution.</p>
+        </div>
+        <div class="gal-bottom">
+            <span class="gal-count">5 works</span>
+            <span class="gal-hint">scroll to browse <span class="gal-arr">&#8594;</span></span>
+        </div>
     </div>
-    <div class="gallery-desc">Poster-format Instagram posts for Winter 2025, each featuring event timing, campus location, and tea selections.</div>
-    <div class="gstrip" id="strip-posters">
-        <div class="gitem ar-2-3" data-src="./projects/tea/posters/around_the_world.png"><img src="./projects/tea/posters/around_the_world.png" alt=""><div class="gitem-overlay"><span class="gitem-idx">01</span></div></div>
-        <div class="gitem ar-2-3" data-src="./projects/tea/posters/green_teas_2.jpg"><img src="./projects/tea/posters/green_teas_2.jpg" alt=""><div class="gitem-overlay"><span class="gitem-idx">02</span></div></div>
-        <div class="gitem ar-2-3" data-src="./projects/tea/posters/essential_3.jpg"><img src="./projects/tea/posters/essential_3.jpg" alt=""><div class="gitem-overlay"><span class="gitem-idx">03</span></div></div>
-        <div class="gitem ar-2-3" data-src="./projects/tea/posters/steeps_9.jpg"><img src="./projects/tea/posters/steeps_9.jpg" alt=""><div class="gitem-overlay"><span class="gitem-idx">04</span></div></div>
-        <div class="gitem ar-2-3" data-src="./projects/tea/posters/white_teas.jpg"><img src="./projects/tea/posters/white_teas.jpg" alt=""><div class="gitem-overlay"><span class="gitem-idx">05</span></div></div>
-        <div class="gitem ar-2-3" data-src="./projects/tea/posters/calm.jpg"><img src="./projects/tea/posters/calm.jpg" alt=""><div class="gitem-overlay"><span class="gitem-idx">06</span></div></div>
-        <div class="gitem ar-2-3" data-src="./projects/tea/posters/fruit_3.jpg"><img src="./projects/tea/posters/fruit_3.jpg" alt=""><div class="gitem-overlay"><span class="gitem-idx">07</span></div></div>
-        <div class="gitem ar-2-3" data-src="./projects/tea/posters/meet_3_3.jpg"><img src="./projects/tea/posters/meet_3_3.jpg" alt=""><div class="gitem-overlay"><span class="gitem-idx">08</span></div></div>
-        <div class="gitem ar-2-3" data-src="./projects/tea/posters/first_meet.jpg"><img src="./projects/tea/posters/first_meet.jpg" alt=""><div class="gitem-overlay"><span class="gitem-idx">09</span></div></div>
-        <div class="gitem ar-2-3" data-src="./projects/tea/posters/meet_4.jpg"><img src="./projects/tea/posters/meet_4.jpg" alt=""><div class="gitem-overlay"><span class="gitem-idx">10</span></div></div>
-        <div class="gitem ar-2-3" data-src="./projects/tea/posters/latest-Recovered.jpg"><img src="./projects/tea/posters/latest-Recovered.jpg" alt=""><div class="gitem-overlay"><span class="gitem-idx">11</span></div></div>
-        <div class="gitem ar-2-3" data-src="./projects/tea/posters/lastmeet.jpg"><img src="./projects/tea/posters/lastmeet.jpg" alt=""><div class="gitem-overlay"><span class="gitem-idx">12</span></div></div>
-        <div class="gitem ar-2-3" data-src="./projects/tea/posters/7_3_2025.jpg"><img src="./projects/tea/posters/7_3_2025.jpg" alt=""><div class="gitem-overlay"><span class="gitem-idx">13</span></div></div>
-        <div class="gitem ar-2-3" data-src="./projects/tea/posters/meet_5.jpg"><img src="./projects/tea/posters/meet_5.jpg" alt=""><div class="gitem-overlay"><span class="gitem-idx">14</span></div></div>
-        <div class="gitem ar-2-3" data-src="./projects/tea/posters/FINAL.jpg"><img src="./projects/tea/posters/FINAL.jpg" alt=""><div class="gitem-overlay"><span class="gitem-idx">15</span></div></div>
-    </div>
+    <div class="gal-main"><div class="gstrip-wrap"><div class="gstrip">
+        <div class="gitem ar-4-5" data-src="./projects/tea/posters/F24/meet_1_3.jpg"><img src="./projects/tea/posters/F24/meet_1_3.jpg" alt=""><div class="gitem-overlay"><span class="gitem-idx">01</span></div></div>
+        <div class="gitem ar-4-5" data-src="./projects/tea/posters/F24/meet_2_3.jpg"><img src="./projects/tea/posters/F24/meet_2_3.jpg" alt=""><div class="gitem-overlay"><span class="gitem-idx">02</span></div></div>
+        <div class="gitem ar-4-5" data-src="./projects/tea/posters/F24/infographic_2.jpg"><img src="./projects/tea/posters/F24/infographic_2.jpg" alt=""><div class="gitem-overlay"><span class="gitem-idx">03</span></div></div>
+        <div class="gitem ar-4-5" data-src="./projects/tea/posters/F24/colab_1.jpg"><img src="./projects/tea/posters/F24/colab_1.jpg" alt=""><div class="gitem-overlay"><span class="gitem-idx">04</span></div></div>
+        <div class="gitem ar-4-5" data-src="./projects/tea/posters/F24/oolong_poster_2.jpg"><img src="./projects/tea/posters/F24/oolong_poster_2.jpg" alt=""><div class="gitem-overlay"><span class="gitem-idx">05</span></div></div>
+    </div></div></div>
 </div>
 
-<!-- 4 · FLYERS ──────────────────────────── -->
-<div class="panel panel-gallery" data-panel="Flyers">
-    <div class="gallery-head">
-        <span class="gallery-num">04</span>
-        <h2>Flyers</h2>
-        <div class="gallery-rule"></div>
+<!-- 04 · FLYERS ─────────────────────── -->
+<div class="panel p-gal" data-panel="Flyers">
+    <div class="gal-bg-blur"><img src="./projects/tea/flyers/meet_3_flyer_3.jpg" alt="" onerror="this.src='./projects/tea/posters/poster.jpg'"></div>
+    <div class="gal-side">
+    <div class="gal-side-blur"><img src="./projects/tea/flyers/meet_3_flyer_3.jpg" alt="" onerror="this.src='./projects/tea/posters/poster.jpg'"></div>
+        <div>
+            <div class="gal-num">04</div>
+            <h2 class="gal-title">Physical Flyers</h2>
+            <div class="gal-rule"></div>
+            <p class="gal-desc">Print-ready flyers distributed across UW campus buildings and notice boards.</p>
+        </div>
+        <div class="gal-bottom">
+            <span class="gal-count">7 works</span>
+            <span class="gal-hint">scroll to browse <span class="gal-arr">&#8594;</span></span>
+        </div>
     </div>
-    <div class="gallery-desc">Full-page flyer designs for event promotion and campus-wide distribution.</div>
-    <div class="gstrip">
-        <div class="gitem ar-2-3" data-src="./projects/tea/posters/poster_9.jpg"><img src="./projects/tea/posters/poster_9.jpg" alt=""><div class="gitem-overlay"><span class="gitem-idx">01</span></div></div>
-        <div class="gitem ar-2-3" data-src="./projects/tea/posters/poster_8.jpg"><img src="./projects/tea/posters/poster_8.jpg" alt=""><div class="gitem-overlay"><span class="gitem-idx">02</span></div></div>
-        <div class="gitem ar-2-3" data-src="./projects/tea/posters/poster_6.jpg"><img src="./projects/tea/posters/poster_6.jpg" alt=""><div class="gitem-overlay"><span class="gitem-idx">03</span></div></div>
-        <div class="gitem ar-2-3" data-src="./projects/tea/posters/poster_1_final.jpg"><img src="./projects/tea/posters/poster_1_final.jpg" alt=""><div class="gitem-overlay"><span class="gitem-idx">04</span></div></div>
-        <div class="gitem ar-2-3" data-src="./projects/tea/posters/poster_new.jpg"><img src="./projects/tea/posters/poster_new.jpg" alt=""><div class="gitem-overlay"><span class="gitem-idx">05</span></div></div>
-        <div class="gitem ar-2-3" data-src="./projects/tea/posters/Story_Post_QR_11.jpg"><img src="./projects/tea/posters/Story_Post_QR_11.jpg" alt=""><div class="gitem-overlay"><span class="gitem-idx">06</span></div></div>
-    </div>
+    <div class="gal-main"><div class="gstrip-wrap"><div class="gstrip">
+        <div class="gitem ar-4-5" data-src="./projects/tea/flyers/meet_3_flyer_3.jpg"><img src="./projects/tea/flyers/meet_3_flyer_3.jpg" alt=""><div class="gitem-overlay"><span class="gitem-idx">01</span></div></div>
+        <div class="gitem ar-4-5" data-src="./projects/tea/flyers/meet_4_flyer_2.jpg"><img src="./projects/tea/flyers/meet_4_flyer_2.jpg" alt=""><div class="gitem-overlay"><span class="gitem-idx">02</span></div></div>
+        <div class="gitem ar-4-5" data-src="./projects/tea/flyers/white_teas_flyer_2.jpg"><img src="./projects/tea/flyers/white_teas_flyer_2.jpg" alt=""><div class="gitem-overlay"><span class="gitem-idx">03</span></div></div>
+        <div class="gitem ar-4-5" data-src="./projects/tea/flyers/meet_5_flyer_2.jpg"><img src="./projects/tea/flyers/meet_5_flyer_2.jpg" alt=""><div class="gitem-overlay"><span class="gitem-idx">04</span></div></div>
+        <div class="gitem ar-4-5" data-src="./projects/tea/flyers/green_collab_flyer_3.jpg"><img src="./projects/tea/flyers/green_collab_flyer_3.jpg" alt=""><div class="gitem-overlay"><span class="gitem-idx">05</span></div></div>
+        <div class="gitem ar-4-5" data-src="./projects/tea/flyers/oolong_flyer_3.jpg"><img src="./projects/tea/flyers/oolong_flyer_3.jpg" alt=""><div class="gitem-overlay"><span class="gitem-idx">06</span></div></div>
+        <div class="gitem ar-4-5" data-src="./projects/tea/flyers/calm_flyer_2.jpg"><img src="./projects/tea/flyers/calm_flyer_2.jpg" alt=""><div class="gitem-overlay"><span class="gitem-idx">07</span></div></div>
+    </div></div></div>
 </div>
 
-<!-- 5 · F24 POSTS ───────────────────────── -->
-<div class="panel panel-gallery" data-panel="F24 Posts">
-    <div class="gallery-head">
-        <span class="gallery-num">05</span>
-        <h2>F24 Event Posts</h2>
-        <div class="gallery-rule"></div>
+<!-- 05 · BRAND ─────────────────────── -->
+<div class="panel p-gal" data-panel="Brand">
+    <div class="gal-bg-blur"><img src="./projects/tea/socials/main.jpg" alt="" onerror="this.src='./projects/tea/posters/poster.jpg'"></div>
+    <div class="gal-side">
+    <div class="gal-side-blur"><img src="./projects/tea/socials/main.jpg" alt="" onerror="this.src='./projects/tea/posters/poster.jpg'"></div>
+        <div>
+            <div class="gal-num">05</div>
+            <h2 class="gal-title">Brand Assets</h2>
+            <div class="gal-rule"></div>
+            <p class="gal-desc">Sticker designs, Spotify artwork, infographics, and promotional brand graphics.</p>
+        </div>
+        <div class="gal-bottom">
+            <span class="gal-count">10 works</span>
+            <span class="gal-hint">scroll to browse <span class="gal-arr">&#8594;</span></span>
+        </div>
     </div>
-    <div class="gallery-desc">Square-format Instagram posts for Fall 2024 weekly sessions.</div>
-    <div class="gstrip">
-        <div class="gitem ar-1-1" data-src="./projects/tea/posters/Week_2_Green_Teas_4.jpg"><img src="./projects/tea/posters/Week_2_Green_Teas_4.jpg" alt=""><div class="gitem-overlay"><span class="gitem-idx">01</span></div></div>
-        <div class="gitem ar-1-1" data-src="./projects/tea/posters/Week_3.jpg"><img src="./projects/tea/posters/Week_3.jpg" alt=""><div class="gitem-overlay"><span class="gitem-idx">02</span></div></div>
-        <div class="gitem ar-1-1" data-src="./projects/tea/posters/Week_4_2.jpg"><img src="./projects/tea/posters/Week_4_2.jpg" alt=""><div class="gitem-overlay"><span class="gitem-idx">03</span></div></div>
-        <div class="gitem ar-1-1" data-src="./projects/tea/posters/Week_8_2.jpg"><img src="./projects/tea/posters/Week_8_2.jpg" alt=""><div class="gitem-overlay"><span class="gitem-idx">04</span></div></div>
-        <div class="gitem ar-1-1" data-src="./projects/tea/posters/become_member-Recovered-Recovered.jpg"><img src="./projects/tea/posters/become_member-Recovered-Recovered.jpg" alt=""><div class="gitem-overlay"><span class="gitem-idx">05</span></div></div>
-        <div class="gitem ar-1-1" data-src="./projects/tea/posters/december.jpg"><img src="./projects/tea/posters/december.jpg" alt=""><div class="gitem-overlay"><span class="gitem-idx">06</span></div></div>
-        <div class="gitem ar-1-1" data-src="./projects/tea/posters/Week_5_10.jpg"><img src="./projects/tea/posters/Week_5_10.jpg" alt=""><div class="gitem-overlay"><span class="gitem-idx">07</span></div></div>
-        <div class="gitem ar-1-1" data-src="./projects/tea/posters/end_of_term.jpg"><img src="./projects/tea/posters/end_of_term.jpg" alt=""><div class="gitem-overlay"><span class="gitem-idx">08</span></div></div>
-        <div class="gitem ar-1-1" data-src="./projects/tea/posters/dominos.jpg"><img src="./projects/tea/posters/dominos.jpg" alt=""><div class="gitem-overlay"><span class="gitem-idx">09</span></div></div>
-        <div class="gitem ar-1-1" data-src="./projects/tea/posters/week_cheese_tea.jpg"><img src="./projects/tea/posters/week_cheese_tea.jpg" alt=""><div class="gitem-overlay"><span class="gitem-idx">10</span></div></div>
-        <div class="gitem ar-1-1" data-src="./projects/tea/posters/week_2_oolong_14.jpg"><img src="./projects/tea/posters/week_2_oolong_14.jpg" alt=""><div class="gitem-overlay"><span class="gitem-idx">11</span></div></div>
-        <div class="gitem ar-1-1" data-src="./projects/tea/posters/week_1_spices.jpg"><img src="./projects/tea/posters/week_1_spices.jpg" alt=""><div class="gitem-overlay"><span class="gitem-idx">12</span></div></div>
-    </div>
-</div>
-
-<!-- 6 · BRAND ASSETS ────────────────────── -->
-<div class="panel panel-gallery" data-panel="Brand Assets">
-    <div class="gallery-head">
-        <span class="gallery-num">06</span>
-        <h2>Infographics &amp; Brand Assets</h2>
-        <div class="gallery-rule"></div>
-    </div>
-    <div class="gallery-desc">Sticker designs, Spotify artwork, infographics, and promotional brand graphics.</div>
-    <div class="gstrip">
+    <div class="gal-main"><div class="gstrip-wrap"><div class="gstrip">
         <div class="gitem ar-1-1" data-src="./projects/tea/socials/meet_execs_F24_1.jpg"><img src="./projects/tea/socials/meet_execs_F24_1.jpg" alt=""><div class="gitem-overlay"><span class="gitem-idx">01</span></div></div>
         <div class="gitem ar-1-1" data-src="./projects/tea/socials/become_member.jpg"><img src="./projects/tea/socials/become_member.jpg" alt=""><div class="gitem-overlay"><span class="gitem-idx">02</span></div></div>
         <div class="gitem ar-1-1" data-src="./projects/tea/socials/main.jpg"><img src="./projects/tea/socials/main.jpg" alt=""><div class="gitem-overlay"><span class="gitem-idx">03</span></div></div>
@@ -686,279 +600,446 @@ body::before {
         <div class="gitem ar-1-1" data-src="./projects/tea/socials/sticker_5.png"><img src="./projects/tea/socials/sticker_5.png" alt=""><div class="gitem-overlay"><span class="gitem-idx">08</span></div></div>
         <div class="gitem ar-1-1" data-src="./projects/tea/socials/sticker_9.png"><img src="./projects/tea/socials/sticker_9.png" alt=""><div class="gitem-overlay"><span class="gitem-idx">09</span></div></div>
         <div class="gitem ar-1-1" data-src="./projects/tea/socials/Tea_Club_Playlist.jpg"><img src="./projects/tea/socials/Tea_Club_Playlist.jpg" alt=""><div class="gitem-overlay"><span class="gitem-idx">10</span></div></div>
-    </div>
+    </div></div></div>
 </div>
 
-<!-- 7 · REELS ───────────────────────────── -->
-<div class="panel panel-gallery" data-panel="Reels">
-    <div class="gallery-head">
-        <span class="gallery-num">07</span>
-        <h2>Reels &amp; Video</h2>
-        <div class="gallery-rule"></div>
+<!-- 06 · REELS ─────────────────────── -->
+<div class="panel p-gal" data-panel="Reels">
+    <div class="gal-bg-blur"><img src="./projects/tea/posters/poster.jpg" alt="" onerror="this.src='./projects/tea/posters/poster.jpg'"></div>
+    <div class="gal-side">
+    <div class="gal-side-blur"><img src="./projects/tea/posters/poster.jpg" alt="" onerror="this.src='./projects/tea/posters/poster.jpg'"></div>
+        <div>
+            <div class="gal-num">06</div>
+            <h2 class="gal-title">Reels &amp; Video</h2>
+            <div class="gal-rule"></div>
+            <p class="gal-desc">Short-form video for Instagram Reels and stories. Hover to play.</p>
+        </div>
+        <div class="gal-bottom">
+            <span class="gal-count">6 videos</span>
+            <span class="gal-hint">hover to play <span class="gal-arr">&#8594;</span></span>
+        </div>
     </div>
-    <div class="gallery-desc">Short-form video for Instagram Reels and stories. Hover to play.</div>
-    <div class="gstrip">
-        <div class="gitem ar-9-16"><video src="./projects/tea/videos/Automatic.mp4" loop muted playsinline onmouseenter="this.play()" onmouseleave="this.pause();this.currentTime=0;"></video><div class="gitem-overlay"><span class="gitem-idx">01</span></div></div>
-        <div class="gitem ar-9-16"><video src="./projects/tea/videos/reel_3_2.mp4" loop muted playsinline onmouseenter="this.play()" onmouseleave="this.pause();this.currentTime=0;"></video><div class="gitem-overlay"><span class="gitem-idx">02</span></div></div>
-        <div class="gitem ar-9-16"><video src="./projects/tea/videos/reel_1_1.mp4" loop muted playsinline onmouseenter="this.play()" onmouseleave="this.pause();this.currentTime=0;"></video><div class="gitem-overlay"><span class="gitem-idx">03</span></div></div>
-        <div class="gitem ar-9-16"><video src="./projects/tea/videos/reminder_4.mp4" loop muted playsinline onmouseenter="this.play()" onmouseleave="this.pause();this.currentTime=0;"></video><div class="gitem-overlay"><span class="gitem-idx">04</span></div></div>
-        <div class="gitem ar-9-16"><video src="./projects/tea/videos/reminder_7.mp4" loop muted playsinline onmouseenter="this.play()" onmouseleave="this.pause();this.currentTime=0;"></video><div class="gitem-overlay"><span class="gitem-idx">05</span></div></div>
-        <div class="gitem ar-9-16"><video src="./projects/tea/videos/tea_bag_trimmed.mp4" loop muted playsinline onmouseenter="this.play()" onmouseleave="this.pause();this.currentTime=0;"></video><div class="gitem-overlay"><span class="gitem-idx">06</span></div></div>
-    </div>
+    <div class="gal-main"><div class="gstrip-wrap"><div class="gstrip">
+        <div class="gitem gitem--reel" data-video="./projects/tea/videos/Automatic.mp4"><video src="./projects/tea/videos/Automatic.mp4" loop muted playsinline preload="metadata"></video><div class="gitem-overlay"><span class="gitem-idx">01</span></div></div>
+        <div class="gitem gitem--reel" data-video="./projects/tea/videos/reel_2_2.mp4"><video src="./projects/tea/videos/reel_2_2.mp4" loop muted playsinline preload="metadata"></video><div class="gitem-overlay"><span class="gitem-idx">02</span></div></div>
+        <div class="gitem gitem--reel" data-video="./projects/tea/videos/reel_1_1.mp4"><video src="./projects/tea/videos/reel_1_1.mp4" loop muted playsinline preload="metadata"></video><div class="gitem-overlay"><span class="gitem-idx">03</span></div></div>
+        <div class="gitem gitem--reel" data-video="./projects/tea/videos/reel_3_1.mp4"><video src="./projects/tea/videos/reel_3_1.mp4" loop muted playsinline preload="metadata"></video><div class="gitem-overlay"><span class="gitem-idx">04</span></div></div>
+        <div class="gitem gitem--reel" data-video="./projects/tea/videos/reel_3_2.mp4"><video src="./projects/tea/videos/reel_3_2.mp4" loop muted playsinline preload="metadata"></video><div class="gitem-overlay"><span class="gitem-idx">05</span></div></div>
+        <div class="gitem gitem--reel" data-video="./projects/tea/videos/tea_bag_trimmed.mp4"><video src="./projects/tea/videos/tea_bag_trimmed.mp4" loop muted playsinline preload="metadata"></video><div class="gitem-overlay"><span class="gitem-idx">06</span></div></div>
+    </div></div></div>
 </div>
 
-<!-- 8 · WEBSITE ─────────────────────────── -->
-<div class="panel panel-gallery" data-panel="Website">
-    <div class="gallery-head">
-        <span class="gallery-num">08</span>
-        <h2>Website Design</h2>
-        <div class="gallery-rule"></div>
+<!-- 07 · WEBSITE ─────────────────────── -->
+<div class="panel p-gal" data-panel="Website">
+    <div class="gal-bg-blur"><img src="./projects/tea/1.PNG" alt="" onerror="this.src='./projects/tea/posters/poster.jpg'"></div>
+    <div class="gal-side">
+    <div class="gal-side-blur"><img src="./projects/tea/1.PNG" alt="" onerror="this.src='./projects/tea/posters/poster.jpg'"></div>
+        <div>
+            <div class="gal-num">07</div>
+            <h2 class="gal-title">Website Design</h2>
+            <div class="gal-rule"></div>
+            <p class="gal-desc">Figma designs built in HTML / CSS, in collaboration with club executives.</p>
+        </div>
+        <div class="gal-bottom">
+            <span class="gal-count">4 screens</span>
+            <span class="gal-hint">scroll to browse <span class="gal-arr">&#8594;</span></span>
+        </div>
     </div>
-    <div class="gallery-desc">Figma designs built in HTML / CSS, in collaboration with club executives.</div>
-    <div class="gstrip">
+    <div class="gal-main"><div class="gstrip-wrap"><div class="gstrip">
         <div class="gitem ar-16-10" data-src="./projects/tea/1.PNG"><img src="./projects/tea/1.PNG" alt=""><div class="gitem-overlay"><span class="gitem-idx">Landing Page</span></div></div>
         <div class="gitem ar-16-10" data-src="./projects/tea/2.PNG"><img src="./projects/tea/2.PNG" alt=""><div class="gitem-overlay"><span class="gitem-idx">Pricing Tiers</span></div></div>
         <div class="gitem ar-16-10" data-src="./projects/tea/3.PNG"><img src="./projects/tea/3.PNG" alt=""><div class="gitem-overlay"><span class="gitem-idx">Photo Gallery</span></div></div>
         <div class="gitem ar-16-10" data-src="./projects/tea/4.PNG"><img src="./projects/tea/4.PNG" alt=""><div class="gitem-overlay"><span class="gitem-idx">Team Section</span></div></div>
-    </div>
+    </div></div></div>
 </div>
 
-<!-- 9 · LINKS ───────────────────────────── -->
-<div class="panel panel-links" data-panel="Links">
-    <div class="links-wrap">
-        <div class="links-label">09 — Links</div>
-        <h2 class="links-title">See the<br>work live.</h2>
+<!-- 08 · LINKS ─────────────────────── -->
+<div class="panel p-links" data-panel="Links">
+    <div class="panel-bg-blur"><img src="./projects/tea/posters/poster.jpg" alt="" onerror="this.src='./projects/poster.jpg'"></div>
+    <div class="links-l">
         <div>
-            <a href="https://www.instagram.com/uwtea/" target="_blank" class="link-row"><span class="link-name">Instagram</span><span class="link-arrow">↗</span></a>
-            <a href="https://wusa.ca/product/uw-tea-and-culture-club/" target="_blank" class="link-row"><span class="link-name">WUSA Club Directory</span><span class="link-arrow">↗</span></a>
-            <a href="https://tea.imkunal.ca/" target="_blank" class="link-row"><span class="link-name">Club Website</span><span class="link-arrow">↗</span></a>
-            <a href="https://www.figma.com/proto/qmmRfvGPG8AZ97fc8kJj19/UW-Tea-Club-Brand-and-Website-Development?node-id=0-1&t=UzZKTCZ80NfZgzmJ-1" target="_blank" class="link-row"><span class="link-name">Figma Prototype</span><span class="link-arrow">↗</span></a>
-            <a href="testing2.html" class="link-row"><span class="link-name">← Return to Projects</span><span class="link-arrow"></span></a>
+            <div class="links-eyebrow">08 &#8212; See the work</div>
+            <h2 class="links-title">See the<br>work live.</h2>
+        </div>
+        <a href="./testing2.html" class="links-back"><span class="arr">&#8592;</span> Return to portfolio</a>
+    </div>
+    <div class="links-r">
+        <div>
+            <div class="links-group-label">External Links</div>
+            <div class="link-rows">
+                <a href="https://www.instagram.com/uwtea/" target="_blank" rel="noopener" class="link-row"><span class="link-row-label">Instagram</span><span class="link-row-name">@uwteaclub</span><span class="link-row-arr">&#8599;</span></a>
+                <a href="https://wusa.ca/product/uw-tea-and-culture-club/" target="_blank" rel="noopener" class="link-row"><span class="link-row-label">WUSA</span><span class="link-row-name">Club Directory</span><span class="link-row-arr">&#8599;</span></a>
+                <a href="https://tea.imkunal.ca/" target="_blank" rel="noopener" class="link-row"><span class="link-row-label">Website</span><span class="link-row-name">tea.imkunal.ca</span><span class="link-row-arr">&#8599;</span></a>
+                <a href="https://www.figma.com/proto/qmmRfvGPG8AZ97fc8kJj19/UW-Tea-Club-Brand-and-Website-Development?node-id=0-1" target="_blank" rel="noopener" class="link-row"><span class="link-row-label">Figma</span><span class="link-row-name">Interactive Prototype</span><span class="link-row-arr">&#8599;</span></a>
+            </div>
+        </div>
+        <div>
+            <div class="links-group-label">Other Projects</div>
+            <div class="link-rows">
+                <a href="cosmic-interlude.html" class="proj-row"><span class="proj-type">Interactive Installation &#183; 2025</span><span class="proj-name">Cosmic Interlude of the Nebular Web</span></a>
+                <a href="polyrhythmic-illuminations.html" class="proj-row"><span class="proj-type">Audiovisual Installation &#183; 2025</span><span class="proj-name">Phil Kline&#39;s Unsilent Night: Polyrhythmic Illuminations</span></a>
+            </div>
         </div>
     </div>
-    <div class="footer-copy" id="copyright-text">© 2026 anoaeyto</div>
+    <div class="copy" id="copy-text">&#169; 2026 anoaeyto</div>
 </div>
 
 </div><!-- /track -->
 
-<!-- LIGHTBOX -->
-<div id="lightbox">
-    <img id="lightbox-img" src="" alt="">
-    <button class="lb-arrow" id="lb-prev">←</button>
-    <button class="lb-arrow" id="lb-next">→</button>
-    <div id="lb-counter"><span id="lb-cur">1</span> / <span id="lb-tot">1</span></div>
-    <button id="lb-close">close ×</button>
-</div>
+<!-- LIGHTBOXES -->
+<div id="lightbox"><button class="lb-arrow" id="lb-prev">&#8592;</button><div id="lb-img-wrap"><button id="lb-close">close</button><img id="lightbox-img" src="" alt=""><div id="lb-counter"><span id="lb-cur">1</span> / <span id="lb-tot">1</span></div></div><button class="lb-arrow" id="lb-next">&#8594;</button></div>
+<div id="video-lightbox"><button class="vlb-arrow" id="vlb-prev">&#8592;</button><div id="vlb-wrap"><button id="vlb-close">close</button><video id="vlb-video" controls playsinline></video><div id="vlb-counter"><span id="vlb-cur">1</span> / <span id="vlb-tot">1</span></div></div><button class="vlb-arrow" id="vlb-next">&#8594;</button></div>
 
 <script>
 /* ── CURSOR ── */
 (function(){
     const dot=document.getElementById('cursor-dot'),ring=document.getElementById('cursor-ring');
-    let mx=0,my=0,rx=0,ry=0;
-    document.addEventListener('mousemove',e=>{
-        mx=e.clientX;my=e.clientY;
-        dot.style.left=mx+'px';dot.style.top=my+'px';
-        document.getElementById('coord-x').textContent=String(mx).padStart(4,'0');
-        document.getElementById('coord-y').textContent=String(my).padStart(4,'0');
-    });
-    (function loop(){rx+=(mx-rx)*0.1;ry+=(my-ry)*0.1;ring.style.left=rx+'px';ring.style.top=ry+'px';requestAnimationFrame(loop);})();
-    document.querySelectorAll('a,button,.gitem,.meta-row,.role-item,.link-row,.section-nav a').forEach(el=>{
+    let mx=window.innerWidth/2,my=window.innerHeight+100,rx=window.innerWidth/2,ry=window.innerHeight+100;
+    document.addEventListener('mousemove',e=>{ mx=e.clientX; my=e.clientY; dot.style.transform=`translate(calc(${mx}px - 50%),calc(${my}px - 50%))`; });
+    (function loop(){ rx+=(mx-rx)*0.1; ry+=(my-ry)*0.1; ring.style.transform=`translate(calc(${rx}px - 50%),calc(${ry}px - 50%))`; requestAnimationFrame(loop); })();
+    document.querySelectorAll('a,button,.gitem').forEach(el=>{
         el.addEventListener('mouseenter',()=>ring.classList.add('expanded'));
         el.addEventListener('mouseleave',()=>ring.classList.remove('expanded'));
     });
 })();
 
-/* ── HORIZONTAL ENGINE ── */
+/* ── ENGINE ── */
 (function(){
     const track=document.getElementById('track');
     const panels=Array.from(track.children);
-    const dotsEl=document.getElementById('panel-dots');
-    const progress=document.getElementById('progress');
-    const navLinks=document.querySelectorAll('.section-nav a');
-    const arrowLeft=document.getElementById('arrow-left');
-    const arrowRight=document.getElementById('arrow-right');
-    let cur=0, lbOpen=false;
+    const dotsEl=document.getElementById('dots');
+    const prog=document.getElementById('prog');
+    const arL=document.getElementById('arrow-l'),arR=document.getElementById('arrow-r');
+    let cur=0,lbOpen=false;
 
-    // Build dots
-    panels.forEach((_,i)=>{
-        const d=document.createElement('div');
-        d.className='panel-dot'+(i===0?' active':'');
-        d.addEventListener('click',()=>goTo(i));
+    panels.forEach((p,i)=>{
+        const d=document.createElement('div'); d.className='dot'+(i===0?' active':'');
+        const lbl=document.createElement('span'); lbl.className='dot-label'; lbl.textContent=p.dataset.panel||'';
+        const num=document.createElement('span'); num.className='dot-num'; num.textContent=String(i).padStart(2,'0');
+        d.appendChild(lbl); d.appendChild(num);
+        d.addEventListener('click',()=>goTo(i,true));
         dotsEl.appendChild(d);
     });
-    const dots=dotsEl.querySelectorAll('.panel-dot');
+    const dots=dotsEl.querySelectorAll('.dot');
 
-    function offsetOf(i){
-        let x=0;
-        for(let j=0;j<i;j++) x+=panels[j].getBoundingClientRect().width||window.innerWidth;
-        return x;
-    }
+    function upd(){arL.classList.toggle('off',cur===0);arR.classList.toggle('off',cur===panels.length-1);}
+    function clrDim(){document.querySelectorAll('.gitem.dimmed').forEach(e=>e.classList.remove('dimmed'));}
 
-    function updateArrows(){
-        arrowLeft.classList.toggle('disabled', cur===0);
-        arrowRight.classList.toggle('disabled', cur===panels.length-1);
-    }
-
-    function updateSectionNav(i){
-        navLinks.forEach((a,j)=>{
-            a.classList.toggle('active', j===i);
-        });
-    }
-
-    function goTo(i){
-        if(lbOpen)return;
+    let busy=false;
+    function goTo(i,slide){
+        if(lbOpen)return; clrDim();
         i=Math.max(0,Math.min(panels.length-1,i));
+        if(i===cur&&slide)return;
+        if(slide){if(busy)return;busy=true;setTimeout(()=>busy=false,750);}
         cur=i;
-        const px=offsetOf(i);
-        track.style.transform=`translateX(${-px}px)`;
+        track.dataset.cur=i;
+        const pct=Math.min(100,(i/(panels.length-1))*100);
+        prog.style.width=pct+'%';
+        prog.classList.toggle('visible',i>0);
         dots.forEach((d,j)=>d.classList.toggle('active',j===i));
-        const total=offsetOf(panels.length);
-        const pct=(px/Math.max(1,total-window.innerWidth))*100;
-        progress.style.width=Math.min(100,pct)+'%';
-        updateArrows();
-        updateSectionNav(i);
+        upd();
+        if(window._pch)window._pch(i);
+        const tx=`translateX(${-i*innerWidth}px)`;
+        if(!slide){ track.style.transition='none'; track.style.transform=tx; return; }
+        requestAnimationFrame(()=>{
+            track.style.transition='transform 0.68s cubic-bezier(0.4,0,0.2,1)';
+            requestAnimationFrame(()=>{
+                track.style.transform=tx;
+                setTimeout(()=>track.style.transition='',700);
+            });
+        });
     }
 
-    // Arrow button clicks with flash highlight
-    arrowLeft.addEventListener('click',()=>{
-        arrowLeft.classList.add('active-press');
-        setTimeout(()=>arrowLeft.classList.remove('active-press'),300);
-        goTo(cur-1);
-    });
-    arrowRight.addEventListener('click',()=>{
-        arrowRight.classList.add('active-press');
-        setTimeout(()=>arrowRight.classList.remove('active-press'),300);
-        goTo(cur+1);
-    });
+    arL.addEventListener('click',()=>goTo(cur-1,true));
+    arR.addEventListener('click',()=>goTo(cur+1,true));
 
-    // Section nav clicks
-    navLinks.forEach((a,i)=>{
-        a.addEventListener('click',e=>{
-            e.preventDefault();
-            goTo(i);
-        });
-    });
+    /* strip scroll with momentum accumulation */
+    const ss=new Map();
+    function scrollStrip(s,d){
+        if(!ss.has(s))ss.set(s,{t:s.scrollLeft,r:null});
+        const st=ss.get(s);
+        st.t=Math.max(0,Math.min(s.scrollWidth-s.clientWidth,st.t+d));
+        if(st.r)return;
+        function tick(){const df=st.t-s.scrollLeft;if(Math.abs(df)<.5){s.scrollLeft=st.t;st.r=null;return;}s.scrollLeft+=df*0.14;st.r=requestAnimationFrame(tick);}
+        st.r=requestAnimationFrame(tick);
+    }
 
-    // Wheel — only navigate if the gstrip isn't scrollable / at edge
-    let wLock=false;
+    function curStrip(){const p=panels[cur];return p?p.querySelector('.gstrip'):null;}
+    let wl=false, accum=0, accumT=null;
     window.addEventListener('wheel',e=>{
-        if(lbOpen)return;
-
-        // Check if cursor is over a gstrip with scrollable content
-        const target = e.target;
-        const strip = target.closest ? target.closest('.gstrip') : null;
-        if(strip){
-            const atLeft  = strip.scrollLeft <= 0;
-            const atRight = strip.scrollLeft >= (strip.scrollWidth - strip.clientWidth - 2);
-            // If scrolling horizontally inside strip, let it scroll
-            if(Math.abs(e.deltaX) > Math.abs(e.deltaY)){
-                // horizontal scroll inside strip — don't navigate panels
-                return;
+        if(lbOpen){e.preventDefault();return;}
+        const d=Math.abs(e.deltaX)>=Math.abs(e.deltaY)?e.deltaX:e.deltaY;
+        const s=curStrip();
+        if(s){
+            const mx=s.scrollWidth-s.clientWidth;
+            if(mx>2){
+                const st=ss.get(s);const t=st?st.t:s.scrollLeft;
+                if(d>0&&t<mx-2){e.preventDefault();scrollStrip(s,d*2.2);accum=0;return;}
+                if(d<0&&t>2){e.preventDefault();scrollStrip(s,d*2.2);accum=0;return;}
             }
-            // Vertical wheel: navigate panels only at strip edges
-            if(e.deltaY > 0 && !atRight) return;
-            if(e.deltaY < 0 && !atLeft) return;
         }
-
         e.preventDefault();
-        if(wLock)return; wLock=true; setTimeout(()=>wLock=false,600);
-        goTo(cur+(e.deltaY>0||e.deltaX>0?1:-1));
+        accum+=d;
+        clearTimeout(accumT);
+        accumT=setTimeout(()=>accum=0,220);
+        if(Math.abs(accum)>=80){
+            if(wl)return;
+            wl=true;accum=0;clearTimeout(accumT);
+            setTimeout(()=>wl=false,750);
+            goTo(cur+(d>0?1:-1),true);
+        }
     },{passive:false});
 
-    // Keys
     document.addEventListener('keydown',e=>{
-        if(lbOpen){
-            if(e.key==='Escape')closeLb();
-            if(e.key==='ArrowLeft')lbStep(-1);
-            if(e.key==='ArrowRight')lbStep(1);
-            return;
-        }
-        if(e.key==='ArrowRight'||e.key==='ArrowDown'){
-            arrowRight.classList.add('active-press');
-            setTimeout(()=>arrowRight.classList.remove('active-press'),300);
-            goTo(cur+1);
-        }
-        if(e.key==='ArrowLeft'||e.key==='ArrowUp'){
-            arrowLeft.classList.add('active-press');
-            setTimeout(()=>arrowLeft.classList.remove('active-press'),300);
-            goTo(cur-1);
-        }
+        if(lbOpen){if(e.key==='Escape')window.closeLb&&closeLb();if(e.key==='ArrowLeft')window.lbStep&&lbStep(-1);if(e.key==='ArrowRight')window.lbStep&&lbStep(1);return;}
+        if(e.key==='ArrowRight'||e.key==='ArrowDown')goTo(cur+1,true);
+        if(e.key==='ArrowLeft'||e.key==='ArrowUp')goTo(cur-1,true);
     });
 
-    // Touch
     let tx=null;
-    window.addEventListener('touchstart',e=>{tx=e.touches[0].clientX;});
-    window.addEventListener('touchend',e=>{
-        if(tx===null)return;
-        const dx=tx-e.changedTouches[0].clientX;
-        if(Math.abs(dx)>40)goTo(cur+(dx>0?1:-1));
-        tx=null;
-    });
+    window.addEventListener('touchstart',e=>{tx=e.touches[0].clientX;},{passive:true});
+    window.addEventListener('touchend',e=>{if(tx===null)return;const dx=tx-e.changedTouches[0].clientX;if(Math.abs(dx)>40)goTo(cur+(dx>0?1:-1),true);tx=null;});
 
     window._setLb=v=>{lbOpen=v;};
-    goTo(0);
-    updateArrows();
+    goTo(0);upd();
 })();
 
-/* ── GALLERY HOVER DIM (dim siblings, no scale) ── */
-document.querySelectorAll('.gstrip').forEach(strip=>{
-    const items=strip.querySelectorAll('.gitem');
+/* ── HOVER DIM ── */
+document.querySelectorAll('.gstrip-wrap').forEach(w=>{
+    const s=w.querySelector('.gstrip');if(!s)return;
+    const items=Array.from(s.querySelectorAll('.gitem'));
+    let sc=false,st=null,entered=null;
+    function clr(){entered=null;items.forEach(i=>i.classList.remove('dimmed'));}
+    // Lock out hover for 600ms after any scroll activity
+    s.addEventListener('scroll',()=>{sc=true;clr();clearTimeout(st);st=setTimeout(()=>{sc=false;},600);},{passive:true});
+    w.addEventListener('mouseleave',clr);
     items.forEach(item=>{
-        item.addEventListener('mouseenter',()=>items.forEach(s=>{if(s!==item)s.classList.add('dimmed');}));
-        item.addEventListener('mouseleave',()=>items.forEach(s=>s.classList.remove('dimmed')));
+        item.addEventListener('mouseenter',()=>{
+            if(sc)return; // ignore hover during/after scroll
+            entered=item;
+            items.forEach(i=>i.classList.toggle('dimmed',i!==item));
+        });
+        item.addEventListener('mouseleave',()=>{
+            // only clear if leaving to outside strip, not to another item
+            // Use a tiny delay so entering sibling can claim it first
+            setTimeout(()=>{if(entered===item){clr();}},30);
+        });
     });
 });
 
-/* ── LIGHTBOX ── */
+/* ── IMAGE LIGHTBOX ── */
 (function(){
     const lb=document.getElementById('lightbox');
-    const img=document.getElementById('lightbox-img');
-    const cur=document.getElementById('lb-cur');
-    const tot=document.getElementById('lb-tot');
+    const wrap=document.getElementById('lb-img-wrap');
+    const cEl=document.getElementById('lb-cur'),tEl=document.getElementById('lb-tot');
     let items=[],idx=0,busy=false;
-
-    function open(el){
-        const strip=el.closest('.gstrip');
-        items=strip?Array.from(strip.querySelectorAll('.gitem[data-src]')):[];
-        idx=items.indexOf(el);
-        tot.textContent=items.length||1; cur.textContent=idx+1;
-        img.style.opacity='0'; img.src=el.dataset.src||'';
-        lb.classList.add('open'); window._setLb(true);
-        const show=()=>{img.style.transition='opacity 0.35s';img.style.opacity='1';};
-        img.complete&&img.naturalWidth?show():(img.onload=show,img.onerror=show);
-        navVis();
-    }
-    function close(){lb.classList.remove('open');window._setLb(false);setTimeout(()=>{img.src='';img.style.opacity='0';img.style.transition='';},300);}
-    function step(dir){
-        if(busy||!items.length)return; busy=true;
-        img.classList.add('fading');
-        setTimeout(()=>{
-            idx=((idx+dir)%items.length+items.length)%items.length;
-            img.src=items[idx].dataset.src||''; cur.textContent=idx+1;
-            const show=()=>{img.classList.remove('fading');setTimeout(()=>busy=false,250);};
-            img.complete&&img.naturalWidth?setTimeout(show,0):(img.onload=show,img.onerror=show);
-            navVis();
-        },180);
-    }
-    function navVis(){
-        document.getElementById('lb-prev').style.display=items.length>1?'block':'none';
-        document.getElementById('lb-next').style.display=items.length>1?'block':'none';
-    }
-    window.closeLb=close; window.lbStep=step;
+    const iA=document.createElement('img'),iB=document.createElement('img');
+    iA.style.cssText='max-width:88vw;max-height:82vh;object-fit:contain;display:block;cursor:none;opacity:1;transition:opacity .35s;';
+    iB.style.cssText='max-width:88vw;max-height:82vh;object-fit:contain;display:block;cursor:none;opacity:0;transition:opacity .35s;position:absolute;top:0;left:0;width:100%;height:100%;';
+    const st=document.createElement('div');st.style.cssText='position:relative;display:flex;align-items:center;justify-content:center;';
+    st.appendChild(iA);st.appendChild(iB);
+    document.getElementById('lightbox-img').replaceWith(st);
+    let aI=iA,nI=iB;
+    function sz(w,h){const s=Math.min(1,innerWidth*.88/w,innerHeight*.82/h);st.style.width=Math.round(w*s)+'px';st.style.height=Math.round(h*s)+'px';}
+    function ld(img,src,cb){img.onload=img.onerror=()=>{img.onload=img.onerror=null;cb&&cb();};img.src=src;if(img.complete&&img.naturalWidth){img.onload=img.onerror=null;cb&&cb();}}
+    function show(src,ins){if(ins){aI.src=src;aI.style.opacity='1';nI.style.opacity='0';if(aI.complete&&aI.naturalWidth)sz(aI.naturalWidth,aI.naturalHeight);else aI.onload=()=>sz(aI.naturalWidth,aI.naturalHeight);return;}nI.style.transition='none';nI.style.opacity='0';ld(nI,src,()=>{sz(nI.naturalWidth,nI.naturalHeight);void nI.offsetWidth;nI.style.transition='opacity .35s';nI.style.opacity='1';aI.style.opacity='0';setTimeout(()=>{[aI,nI]=[nI,aI];nI.style.transition='none';nI.style.opacity='0';busy=false;},360);})}
+    function nv(){const v=items.length>1?'block':'none';document.getElementById('lb-prev').style.display=v;document.getElementById('lb-next').style.display=v;}
+    function open(el){const s=el.closest('.gstrip');items=s?Array.from(s.querySelectorAll('.gitem[data-src]')):[];idx=items.indexOf(el);tEl.textContent=items.length||1;cEl.textContent=idx+1;lb.classList.add('open');window._setLb(true);aI.style.opacity='0';show(el.dataset.src||'',true);aI.style.opacity='1';nv();}
+    function close(){lb.classList.remove('open');window._setLb(false);setTimeout(()=>{aI.src='';nI.src='';},300);}
+    function step(d){if(busy||!items.length)return;busy=true;idx=((idx+d)%items.length+items.length)%items.length;cEl.textContent=idx+1;show(items[idx].dataset.src||'');nv();}
     document.querySelectorAll('.gitem[data-src]').forEach(el=>el.addEventListener('click',()=>open(el)));
     document.getElementById('lb-prev').addEventListener('click',e=>{e.stopPropagation();step(-1);});
     document.getElementById('lb-next').addEventListener('click',e=>{e.stopPropagation();step(1);});
-    document.getElementById('lb-close').addEventListener('click',close);
+    document.getElementById('lb-close').addEventListener('click',e=>{e.stopPropagation();close();});
+    st.addEventListener('click',e=>e.stopPropagation());
     lb.addEventListener('click',e=>{if(e.target===lb)close();});
+    lb.addEventListener('wheel',e=>{e.preventDefault();e.stopImmediatePropagation();if(busy)return;const d=Math.abs(e.deltaX)>=Math.abs(e.deltaY)?e.deltaX:e.deltaY;if(d>30)step(1);else if(d<-30)step(-1);},{passive:false,capture:true});
+    window.closeLb=close;window.lbStep=step;
 })();
 
-/* ── FOOTER ANIMATION ── */
+/* ── VIDEO LIGHTBOX ── */
 (function(){
-    const el=document.getElementById('copyright-text'); if(!el)return;
+    const vlb=document.getElementById('video-lightbox');
+    const vid=document.getElementById('vlb-video');
+    const cEl=document.getElementById('vlb-cur'),tEl=document.getElementById('vlb-tot');
+    let items=[],idx=0;
+    function nv(){const v=items.length>1?'block':'none';document.getElementById('vlb-prev').style.display=v;document.getElementById('vlb-next').style.display=v;}
+    function open(el){const s=el.closest('.gstrip');items=s?Array.from(s.querySelectorAll('.gitem[data-video]')):[];idx=items.indexOf(el);tEl.textContent=items.length||1;cEl.textContent=idx+1;vid.src=el.dataset.video||'';vlb.classList.add('open');window._setLb(true);vid.play().catch(()=>{});nv();}
+    function close(){vlb.classList.remove('open');window._setLb(false);vid.pause();vid.src='';}
+    function step(d){if(!items.length)return;idx=((idx+d)%items.length+items.length)%items.length;cEl.textContent=idx+1;vid.src=items[idx].dataset.video||'';vid.play().catch(()=>{});nv();}
+    document.querySelectorAll('.gitem[data-video]').forEach(el=>el.addEventListener('click',()=>open(el)));
+    document.getElementById('vlb-prev').addEventListener('click',e=>{e.stopPropagation();step(-1);});
+    document.getElementById('vlb-next').addEventListener('click',e=>{e.stopPropagation();step(1);});
+    document.getElementById('vlb-close').addEventListener('click',e=>{e.stopPropagation();close();});
+    vid.addEventListener('click',e=>e.stopPropagation());
+    vlb.addEventListener('click',e=>{if(e.target===vlb)close();});
+    document.addEventListener('keydown',e=>{if(!vlb.classList.contains('open'))return;if(e.key==='Escape')close();if(e.key==='ArrowLeft')step(-1);if(e.key==='ArrowRight')step(1);});
+})();
+
+/* ── REEL AUTO-PLAY ── */
+(function(){
+    const rp=document.querySelector('[data-panel="Reels"]');if(!rp)return;
+    const reels=Array.from(rp.querySelectorAll('.gitem--reel'));
+    const vids=reels.map(r=>r.querySelector('video'));
+    let ai=0,at=null,hi=null;
+    function stopAll(){vids.forEach(v=>{v.pause();});}
+    function adv(){if(hi!==null)return;stopAll();const v=vids[ai];if(!v)return;v.play().catch(()=>{});const d=(v.duration&&isFinite(v.duration))?v.duration*1000:4000;ai=(ai+1)%vids.length;at=setTimeout(adv,Math.min(d,6000));}
+    reels.forEach((r,i)=>{const v=vids[i];r.addEventListener('mouseenter',()=>{hi=i;clearTimeout(at);stopAll();reels.forEach((x,j)=>x.classList.toggle('dimmed',j!==i));v.play().catch(()=>{});});r.addEventListener('mouseleave',()=>{hi=null;v.pause();reels.forEach(x=>x.classList.remove('dimmed'));ai=(i+1)%vids.length;adv();});});
+    const ri=Array.from(document.querySelectorAll('.panel')).indexOf(rp);
+    window._pch=i=>{if(i===ri)adv();else{clearTimeout(at);at=null;stopAll();}};
+    window._pch(0);
+})();
+
+
+
+
+
+
+
+
+
+
+/* ── WORD REVEAL (matches main site pattern exactly) ── */
+(function(){
+    function wordReveal(el, baseDelay) {
+        if (!el) return;
+        const tmp = document.createElement('div');
+        tmp.innerHTML = el.innerHTML;
+        el.innerHTML = '';
+        Array.from(tmp.childNodes).forEach(node => {
+            if (node.nodeType === 3) {
+                node.textContent.split(/(\s+)/).forEach(chunk => {
+                    if (/^\s+$/.test(chunk)) {
+                        el.appendChild(document.createTextNode(chunk));
+                    } else if (chunk) {
+                        const wrap = document.createElement('span');
+                        wrap.className = 'word-reveal-word';
+                        const inner = document.createElement('span');
+                        inner.className = 'word-reveal-inner';
+                        inner.textContent = chunk;
+                        wrap.appendChild(inner);
+                        el.appendChild(wrap);
+                    }
+                });
+            } else if (node.nodeType === 1) {
+                const wrap = document.createElement('span');
+                wrap.className = 'word-reveal-word';
+                const inner = document.createElement('span');
+                inner.className = 'word-reveal-inner';
+                inner.appendChild(node.cloneNode(true));
+                wrap.appendChild(inner);
+                el.appendChild(wrap);
+            }
+        });
+        const words = el.querySelectorAll('.word-reveal-inner');
+        words.forEach((w, i) => { w.style.transitionDelay = (baseDelay + i * 0.06) + 's'; });
+        return words;
+    }
+
+    // Tagline: rise up as one block
+    const tagline = document.getElementById('ov-tagline');
+
+    // Prepare fade items — eyebrow only, cycle handles facts/stats
+    const fadeEls = document.querySelectorAll('.ov-eyebrow');
+    fadeEls.forEach((el, i) => {
+        el.classList.add('reveal-fade');
+        el.style.transitionDelay = (0.15 + i * 0.10) + 's';
+    });
+
+    function trigger() {
+        if(tagline) setTimeout(()=>tagline.classList.add('revealed'), 60);
+        fadeEls.forEach(el => el.classList.add('revealed'));
+    }
+
+    // Hook into panel change
+    const origPch = window._pch;
+    window._pch = function(idx) {
+        if (origPch) origPch(idx);
+        if (idx === 1) setTimeout(trigger, 60);
+    };
+})();
+
+
+/* ── CREAM CYCLING — single sequence through all rows (Year→Role→Tools→+600→...) ── */
+(function(){
+    // Combine facts and stats into one ordered list
+    const allItems = [
+        ...Array.from(document.querySelectorAll('.ov-fact')),
+        ...Array.from(document.querySelectorAll('.ov-stat'))
+    ];
+    if(!allItems.length) return;
+    const HOLD=2000, GAP=350;
+    let idx=0, tid=null, paused=false, running=false;
+
+    function next(){
+        if(paused||!running) return;
+        allItems.forEach(it=>it.classList.remove('cream-active'));
+        allItems[idx].classList.add('cream-active');
+        idx=(idx+1)%allItems.length;
+        tid=setTimeout(next, HOLD+GAP);
+    }
+
+    allItems.forEach(it=>{
+        it.addEventListener('mouseenter',()=>{
+            paused=true; clearTimeout(tid);
+            allItems.forEach(o=>o.classList.remove('cream-active'));
+        });
+        it.addEventListener('mouseleave',()=>{
+            paused=false;
+            if(running) tid=setTimeout(next,600);
+        });
+    });
+
+    function start(){ if(running)return; running=true; idx=0; tid=setTimeout(next,500); }
+    function stop(){ running=false; clearTimeout(tid); allItems.forEach(it=>it.classList.remove('cream-active')); }
+
+    const origPch=window._pch;
+    window._pch=function(i){ if(origPch)origPch(i); if(i===1)start(); else stop(); };
+})();
+
+
+/* ── CREAM CYCLING on links panel — single sequence through all rows ── */
+(function(){
+    const allItems = [
+        ...Array.from(document.querySelectorAll('.link-row')),
+        ...Array.from(document.querySelectorAll('.proj-row'))
+    ];
+    if(!allItems.length) return;
+    const HOLD=2000, GAP=350;
+    let idx=0, tid=null, paused=false, running=false;
+    function next(){
+        if(paused||!running) return;
+        allItems.forEach(it=>it.classList.remove('cream-active'));
+        allItems[idx].classList.add('cream-active');
+        idx=(idx+1)%allItems.length;
+        tid=setTimeout(next, HOLD+GAP);
+    }
+    allItems.forEach(it=>{
+        it.addEventListener('mouseenter',()=>{ paused=true; clearTimeout(tid); allItems.forEach(o=>o.classList.remove('cream-active')); });
+        it.addEventListener('mouseleave',()=>{ paused=false; if(running) tid=setTimeout(next,600); });
+    });
+    function start(){ if(running)return; running=true; idx=0; tid=setTimeout(next,500); }
+    function stop(){ running=false; clearTimeout(tid); allItems.forEach(it=>it.classList.remove('cream-active')); }
+    const origPch=window._pch;
+    window._pch=function(i){ if(origPch)origPch(i); if(i===8)start(); else stop(); };
+})();
+
+/* ── LOGO SWEEP ── */
+(function(){
+    const el=document.getElementById('nav-logo');if(!el)return;
+    el.innerHTML='ANOAEYTO'.split('').map(c=>`<span>${c}</span>`).join('');
+    const ch=el.querySelectorAll('span');let a=false;
+    function run(){if(a)return;a=true;let i=0;const t=setInterval(()=>{if(i<ch.length){if(i>0)ch[i-1].classList.remove('cyan');ch[i].classList.add('cyan');i++;}else{ch[ch.length-1].classList.remove('cyan');clearInterval(t);a=false;setTimeout(run,4000);}},160);}
+    setTimeout(run,1400);
+})();
+
+/* ── COPYRIGHT SWEEP ── */
+(function(){
+    const el=document.getElementById('copy-text');if(!el)return;
     el.innerHTML=el.textContent.split('').map(c=>`<span>${c}</span>`).join('');
-    const ch=el.querySelectorAll('span'); let a=false;
-    function run(){if(a)return;a=true;let i=0;const t=setInterval(()=>{if(i<ch.length){if(i>0)ch[i-1].classList.remove('cyan');ch[i].classList.add('cyan');i++;}else{ch[ch.length-1].classList.remove('cyan');clearInterval(t);a=false;setTimeout(run,7000);}},480);}
-    setTimeout(run,2000);
+    const ch=el.querySelectorAll('span');let a=false;
+    function run(){if(a)return;a=true;let i=0;const t=setInterval(()=>{if(i<ch.length){if(i>0)ch[i-1].classList.remove('cyan');ch[i].classList.add('cyan');i++;}else{ch[ch.length-1].classList.remove('cyan');clearInterval(t);a=false;setTimeout(run,8000);}},480);}
+    setTimeout(run,2500);
 })();
 </script>
 </body>

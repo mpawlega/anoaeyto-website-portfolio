@@ -3,512 +3,585 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Centered Text</title>
+    <title>hello, this is</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,300;1,300&family=Courier+Prime&display=swap" rel="stylesheet">
     <style>
-        @font-face {
-            font-family: 'Press Start 2P';
-            src: url('PressStart2P-Regular.ttf') format('truetype');
-        }
         * { margin:0; padding:0; box-sizing:border-box; user-select:none; }
-
         body {
-            margin:0; padding:0;
-            background-color: black;
+            background:#000;
             display:flex; justify-content:center; align-items:center;
-            height:100vh;
-            font-family:'Eurostile','Eurostile Extended',monospace;
-            overflow:hidden; position:relative;
+            height:100vh; overflow:hidden; position:relative;
+            cursor:none;
+            font-family:'Cormorant',Georgia,serif;
         }
-
-        .pixel-particles {
-            position:absolute; top:0; left:0; width:100%; height:100%;
-            overflow:hidden; z-index:1; pointer-events:none;
+        .atmo-vignette {
+            position:fixed; inset:0; z-index:1; pointer-events:none;
+            background:radial-gradient(ellipse 80% 80% at 50% 50%,
+                transparent 30%, rgba(0,0,0,0.5) 68%, rgba(0,0,0,0.93) 100%);
+            animation:breathe 9s ease-in-out infinite alternate;
         }
-        .pixel { position:absolute; background:rgba(255,255,255,0.7); opacity:0; animation:floatPixel linear infinite both; }
-        .pixel.small  { width:2px; height:2px; }
-        .pixel.medium { width:4px; height:4px; }
-        .pixel.large  { width:6px; height:6px; }
-
-        .text {
-            display:flex; align-items:center; white-space:nowrap;
-            cursor:pointer; font-size:140px; font-weight:100;
-            color:white; letter-spacing:2px;
-            -webkit-font-smoothing:antialiased;
-            text-rendering:optimizeLegibility;
-            pointer-events:none; user-select:none;
-            position:relative; z-index:10;
-            transform:scale(1); transition:transform 0.5s ease;
-        }
-        .text.interactive { pointer-events:auto; }
-        .text.enlarge { transform:scale(1.08); }
+        @keyframes breathe { 0%{opacity:.84} 100%{opacity:1} }
 
         .grid-overlay {
-            position:absolute; top:0; left:0; width:100%; height:100%;
-            z-index:0; pointer-events:none; opacity:0.65;
+            position:fixed; inset:0; z-index:3; pointer-events:none;
+            background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='6' height='6'%3E%3Crect width='6' height='6' fill='none'/%3E%3Crect x='.5' y='.5' width='5' height='5' fill='none' stroke='rgba(0%2C200%2C180%2C0.07)' stroke-width='.4'/%3E%3Crect x='1.5' y='1.5' width='3' height='3' fill='rgba(0%2C200%2C180%2C0.018)'/%3E%3C/svg%3E");
+            background-size:6px 6px;
         }
-
+        .pixel-particles { position:fixed; inset:0; overflow:hidden; z-index:4; pointer-events:none; }
+        .pixel { position:absolute; background:rgb(255,255,255); opacity:0; animation:floatPx linear infinite both; }
+        @keyframes floatPx {
+            0%   { transform:translateY(100vh) translateX(0) rotate(var(--rs)); opacity:0; }
+            6%   { opacity:1; }
+            88%  { opacity:.4; }
+            100% { transform:translateY(-80px) translateX(var(--drift)) rotate(var(--re)); opacity:0; }
+        }
+        .centre-stack { position:relative; display:flex; flex-direction:column; align-items:center; z-index:10; }
+        .text {
+            display:flex; align-items:center; white-space:nowrap;
+            font-size:clamp(72px,10vw,140px); font-weight:300;
+            font-style:italic;
+            letter-spacing:-0.03em;
+            -webkit-font-smoothing:antialiased;
+            pointer-events:none;
+            transform:scale(1); transition:transform 5.0s cubic-bezier(0.16,1,0.3,1);
+            font-family:'Cormorant',Georgia,serif;
+        }
+        .text.interactive { pointer-events:auto; }
+        .text.enlarge { transform:scale(1.10); }
+        .letter-wrap { position:relative; display:inline-block; will-change:transform; }
         .letter {
-            opacity:0; transition:opacity 0.5s ease, font-family 0s;
-            display:inline-block; will-change:transform;
-            font-family:'Eurostile','Eurostile Extended',monospace;
+            opacity:0; display:block;
+            transition: opacity 1.1s cubic-bezier(.4,0,.2,1), color 0.9s ease;
+            font-family:'Cormorant',Georgia,serif;
+            color:#ffffff; position:relative; z-index:1;
         }
         .letter.visible { opacity:1; }
-        .letter.glitch-swap {
-            font-family:'Press Start 2P',monospace; font-size:90px;
-            text-shadow: 2px 2px 0 rgba(0,255,0,0.3), -2px -2px 0 rgba(255,0,0,0.3);
-            margin: 0 -8px;
+        .glitch-layer {
+            position:absolute; inset:0; z-index:2; display:block; pointer-events:none;
+            font-family:'Cormorant',Georgia,serif;
+            font-size:inherit; font-weight:inherit; letter-spacing:inherit;
+            color:#c8c4bc; opacity:0; white-space:nowrap;
         }
-        .letter:last-child { letter-spacing:0; }
+        /* enter hint — cream, small, monospace to match original */
+        .enter-hint {
+            font-family:'Courier Prime','Courier New',monospace;
+            font-size:clamp(8px,.65vw,11px); letter-spacing:5px; text-transform:uppercase;
+            color:rgba(200,196,190,0); pointer-events:none;
+            transition:color 1.6s ease;
+            white-space:nowrap; margin-top:clamp(10px,1.6vh,22px); position:relative;
+        }
+        .enter-hint.visible { color:rgba(200,196,190,.28); }
+        .enter-hint::before,.enter-hint::after {
+            content:''; position:absolute; top:50%; transform:translateY(-50%);
+            width:0; height:1px; background:rgba(200,196,190,.18);
+            transition:width 1.8s cubic-bezier(.22,1,.36,1);
+        }
+        .enter-hint::before { right:calc(100% + 14px); }
+        .enter-hint::after  { left:calc(100% + 14px); }
+        .enter-hint.visible::before,.enter-hint.visible::after { width:28px; }
+        .cursor-row {
+            margin-top:clamp(14px,2vh,26px); display:flex; align-items:center;
+            justify-content:center; width:32px; height:32px;
+            opacity:0; transition:opacity 1.2s ease; pointer-events:none;
+        }
+        .cursor-row.visible { opacity:1; }
+        /* cursor — cream/white, no teal */
+        #cursor-dot {
+            position:fixed; width:4px; height:4px;
+            background:rgba(200,196,190,.85); border-radius:50%;
+            pointer-events:none; z-index:99999; transform:translate(-50%,-50%);
+            opacity:0; transition:opacity .8s ease;
+        }
+        #cursor-dot.visible { opacity:1; }
+        #cursor-ring {
+            position:fixed; width:18px; height:18px;
+            border:1px solid rgba(200,196,190,.22); border-radius:50%;
+            pointer-events:none; z-index:99998; transform:translate(-50%,-50%);
+            transition:width .22s ease,height .22s ease,border-color .22s ease; opacity:0;
+        }
+        #cursor-ring.visible { opacity:1; }
+        #cursor-ring.expanded { width:32px; height:32px; border-color:rgba(200,196,190,.5); }
 
-        #noiseCanvas {
-            position:fixed; top:0; left:0; width:100%; height:100%;
-            z-index:1000; pointer-events:none; opacity:0;
+        #implodeCanvas {
+            position:fixed; inset:0;
+            z-index:2147483647;
+            pointer-events:none;
+            opacity:0;
         }
-
-        @keyframes floatPixel {
-            0%   { transform:translateY(100vh) translateX(0) rotate(0deg); opacity:0; }
-            10%  { opacity:1; }
-            90%  { opacity:1; }
-            100% { transform:translateY(-100px) translateX(var(--drift)) rotate(360deg); opacity:0; }
-        }
+        #implodeCanvas.active { opacity:1; }
     </style>
 </head>
 <body>
+<div class="atmo-vignette"></div>
 <div class="grid-overlay"></div>
 <div class="pixel-particles" id="pixel-particles"></div>
-<div class="text" id="text"></div>
-<canvas id="noiseCanvas"></canvas>
+<div id="cursor-dot"></div>
+<div id="cursor-ring"></div>
+<div class="centre-stack">
+    <div class="text" id="text"></div>
+    <div class="enter-hint" id="enter-hint">try hover</div>
+    <div class="cursor-row" id="cursor-row"></div>
+</div>
+<canvas id="implodeCanvas"></canvas>
 <script>
-// ============================================================
-// PARAMETERS
-// ============================================================
-const GRID_BASE_SIZE        = 40;
-const GRID_SUB_SIZE         = 20;   // GRID_BASE_SIZE / 2
+// ── CONFIG ───────────────────────────────────────────────────
+const REVEAL_DELAY      = 820;
+const REVEAL_START      = 1400;
+const DRIFT_START_DELAY = 2800;
+const DRIFT_RX=100, DRIFT_RY=68, DRIFT_ROTA=8.5, DRIFT_RAMP=0.12;
+const RETURN_LERP=0.028, RETURN_SNAP=0.3;
+const IDLE_AMP=1.8, IDLE_ROTA=0.35;
 
-const REVEAL_DELAY          = 450;
-const REVEAL_START_DELAY    = 5000;
-const DRIFT_START_DELAY     = 15000;
-const DRIFT_STAGGER_DELAY   = 150;
-const AUTO_RETURN_DELAY     = 100;
-const HOVER_ENLARGE_DELAY   = 25;     // ms cursor must sit on a letter
-// ============================================================
+// ── STATE ────────────────────────────────────────────────────
+const textEl=document.getElementById('text');
+const word='anoaeyto';
+const letterWraps=[], letters=[], states=[];
+let physicsOn=false, glitchTimer=null, revealDone=false, cursorReady=false;
+let lastT=performance.now();
+let mouse={x:innerWidth/2, y:innerHeight/2}, mouseMoved=false;
+let cursorX=innerWidth/2, cursorY=innerHeight/2, ringX=cursorX, ringY=cursorY;
+let lettersSettled=false, wasNear=false, clicked=false;
 
-const RETURN_LERP           = 0.025;
-const DRIFT_SPEED           = 0.0001;
+// ── CURSOR ───────────────────────────────────────────────────
+const dot=document.getElementById('cursor-dot');
+const ring=document.getElementById('cursor-ring');
+const cursorRowEl=document.getElementById('cursor-row');
 
-const textElement = document.getElementById('text');
-const word        = 'anoaeyto';
-const letters     = [];
-const letterState = [];
-const spiralConfigs = [];
+document.addEventListener('mousemove',e=>{ mouse.x=e.clientX; mouse.y=e.clientY; mouseMoved=true; });
 
-let physicsActive     = false;
-let glitchInterval    = null;
-let revealDone        = false;
-let autoReturnTimeout = null;
-let hoverHomeTimer    = 0;
-let lastPhysicsTime   = performance.now();
-let mouse             = { x: -9999, y: -9999 };
-
-// ─── grid ───────────────────────────────────────────────────
-(function setupGrid() {
-    const g = document.querySelector('.grid-overlay');
-    g.style.backgroundImage = [
-        'linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px)',
-        'linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px)',
-        'linear-gradient(rgba(255,255,255,0.01) 1px, transparent 1px)',
-        'linear-gradient(90deg, rgba(255,255,255,0.01) 1px, transparent 1px)'
-    ].join(',');
-    g.style.backgroundSize = [
-        GRID_BASE_SIZE+'px '+GRID_BASE_SIZE+'px',
-        GRID_BASE_SIZE+'px '+GRID_BASE_SIZE+'px',
-        GRID_SUB_SIZE+'px '+GRID_SUB_SIZE+'px',
-        GRID_SUB_SIZE+'px '+GRID_SUB_SIZE+'px'
-    ].join(',');
+(function cursorLoop(){
+    let tx,ty;
+    if(cursorReady){ tx=mouse.x; ty=mouse.y; }
+    else { const a=getAnchorPos(); tx=a.x; ty=a.y; }
+    cursorX+=(tx-cursorX)*0.08; cursorY+=(ty-cursorY)*0.08;
+    ringX+=(cursorX-ringX)*0.07; ringY+=(cursorY-ringY)*0.07;
+    dot.style.left=cursorX+'px'; dot.style.top=cursorY+'px';
+    ring.style.left=ringX+'px'; ring.style.top=ringY+'px';
+    requestAnimationFrame(cursorLoop);
 })();
 
-// ─── particles ──────────────────────────────────────────────
-(function() {
-    const c = document.getElementById('pixel-particles');
-    for (let i = 0; i < 25; i++) {
-        const p = document.createElement('div');
-        p.className = 'pixel ' + ['small','medium','large'][Math.floor(Math.random()*3)];
-        p.style.left = Math.random()*100+'%';
-        p.style.animationDuration = (12+Math.random()*18)+'s';
-        p.style.animationDelay = (1+Math.random()*8)+'s';
-        p.style.setProperty('--drift', ((Math.random()-0.5)*150)+'px');
+function getAnchorPos(){
+    const r=cursorRowEl.getBoundingClientRect();
+    return{x:r.left+r.width/2, y:r.top+r.height/2};
+}
+function activateCursor(){
+    cursorReady=true;
+}
+
+textEl.addEventListener('mouseenter',()=>{ if(cursorReady) ring.classList.add('expanded'); });
+textEl.addEventListener('mouseleave',()=> ring.classList.remove('expanded'));
+
+// ── PARTICLES ────────────────────────────────────────────────
+(function(){
+    const c=document.getElementById('pixel-particles');
+    const sz=()=>Math.max(4,Math.round(Math.min(innerWidth,innerHeight)*0.006));
+    let s=sz();
+    for(let i=0;i<8;i++){
+        const p=document.createElement('div'); p.className='pixel';
+        p.style.width=p.style.height=s+'px';
+        p.style.left=(8+Math.random()*84)+'%';
+        p.style.animationDuration=(20+Math.random()*28)+'s';
+        p.style.animationDelay=(Math.random()*18)+'s';
+        p.style.setProperty('--drift',((Math.random()-.5)*120)+'px');
+        p.style.setProperty('--rs',(Math.random()*360)+'deg');
+        p.style.setProperty('--re',(Math.random()*360+(Math.random()<.5?1:-1)*(90+Math.random()*270))+'deg');
         c.appendChild(p);
     }
+    window.addEventListener('resize',()=>{ s=sz(); c.querySelectorAll('.pixel').forEach(p=>p.style.width=p.style.height=s+'px'); });
 })();
 
-// ─── letters ────────────────────────────────────────────────
-word.split('').forEach((char) => {
-    const span = document.createElement('span');
-    span.className = 'letter';
-    span.textContent = char;
-    // Hit detection is done per-frame in the physics loop (mouseenter/mouseleave
-    // don't fire when an element slides under a stationary cursor)
-    textElement.appendChild(span);
-    letters.push(span);
-    letterState.push({ t:0, x:0, y:0, rot:0, returning:false, drifting:false, easing:false });
-
+// ── BUILD LETTERS ─────────────────────────────────────────────
+word.split('').forEach(char=>{
+    const wrap=document.createElement('span'); wrap.className='letter-wrap';
+    const base=document.createElement('span'); base.className='letter'; base.textContent=char;
+    const g1=document.createElement('span'); g1.className='glitch-layer'; g1.textContent=char;
+    const g2=document.createElement('span'); g2.className='glitch-layer'; g2.textContent=char;
+    wrap.appendChild(base); wrap.appendChild(g1); wrap.appendChild(g2);
+    textEl.appendChild(wrap);
+    letterWraps.push(wrap); letters.push(base);
+    states.push({
+        x:0,y:0,rot:0, vx:0,vy:0,vr:0,
+        drifting:false,returning:false,settled:false,driftRamp:0,
+        time:Math.random()*1000,
+        fx:0.22+Math.random()*0.18, fy:0.15+Math.random()*0.14, fr:0.12+Math.random()*0.10,
+        px:Math.random()*Math.PI*2, py:Math.random()*Math.PI*2, pr:Math.random()*Math.PI*2,
+        ax:0.65+Math.random()*0.70, ay:0.55+Math.random()*0.70, ar:0.50+Math.random()*0.80,
+        idleT:Math.random()*100,
+        idleFreqX:0.4+Math.random()*0.3, idleFreqY:0.3+Math.random()*0.3,
+        idlePhX:Math.random()*Math.PI*2, idlePhY:Math.random()*Math.PI*2, idlePhR:Math.random()*Math.PI*2,
+    });
 });
 
-// Lock width
-letters.forEach(l => l.style.opacity='1');
-textElement.offsetWidth;
-textElement.style.width = textElement.getBoundingClientRect().width+'px';
-textElement.style.justifyContent = 'center';
-letters.forEach(l => l.style.opacity='');
+letters.forEach(l=>l.style.opacity='1');
+textEl.offsetWidth;
+textEl.style.width=textEl.getBoundingClientRect().width+'px';
+textEl.style.justifyContent='center';
+letters.forEach(l=>l.style.opacity='');
 
-// ─── spiral ─────────────────────────────────────────────────
-const PHI      = 1.6180339887;
-const GOLDEN_B = Math.log(PHI) / (Math.PI / 2);
+// ── CYAN (kept for click flash only, hint uses cream) ─────────
+const cyanStyle=document.createElement('style');
+document.head.appendChild(cyanStyle);
+function setCyan(){ cyanStyle.textContent='.letter { color:#00ffff !important; }'; lettersSettled=true; }
+function clearCyan(){ cyanStyle.textContent=''; lettersSettled=false; }
 
-function getSpiralPos(cfg, t) {
-    const theta  = cfg.startAngle + cfg.direction * cfg.totalAngle * t;
-    const rStart = cfg.scale * Math.exp(GOLDEN_B * cfg.startAngle);
-    const r      = cfg.scale * Math.exp(GOLDEN_B * theta) - rStart;
-    return {
-        x:   r * Math.cos(theta),
-        y:   r * Math.sin(theta),
-        rot: cfg.direction * cfg.totalAngle * t * (180 / Math.PI) * 0.5
-    };
+// ── GLITCH ───────────────────────────────────────────────────
+function nierGlitch(wrapEl){
+    if(lettersSettled) return;
+    const base=wrapEl.querySelector('.letter');
+    if(base.classList.contains('click-dark')||base.classList.contains('click-white')) return;
+    const [g1,g2]=wrapEl.querySelectorAll('.glitch-layer');
+    const h=wrapEl.getBoundingClientRect().height||80;
+    const b1y=0.22+Math.random()*.20, b1h=(2+Math.random()*3)/h;
+    const b2y=0.55+Math.random()*.20, b2h=(1+Math.random()*3)/h;
+    const s1=(Math.random()<.5?1:-1)*(4+Math.random()*7);
+    const s2=(Math.random()<.5?1:-1)*(3+Math.random()*5);
+    const pct=v=>(v*100).toFixed(1)+'%';
+    g1.style.cssText+=`;clip-path:inset(${pct(b1y)} 0 ${pct(1-b1y-b1h)} 0);transform:translateX(${s1}px);color:rgba(210,205,196,.9);opacity:1`;
+    g2.style.cssText+=`;clip-path:inset(${pct(b2y)} 0 ${pct(1-b2y-b2h)} 0);transform:translateX(${s2}px);color:rgba(190,185,176,.7);opacity:1`;
+    base.style.color='rgba(180,175,168,.45)'; base.style.transition='color 0s';
+    const dur=60+Math.random()*90;
+    if(Math.random()<.4){
+        const f=dur*.4;
+        setTimeout(()=>{g1.style.transform=`translateX(${-s1*.5}px)`;g2.style.opacity='0'},f);
+        setTimeout(()=>{g1.style.transform=`translateX(${s1}px)`;g2.style.opacity='1'},f+25);
+    }
+    setTimeout(()=>{
+        g1.style.opacity=g2.style.opacity='0';
+        g1.style.clipPath=g2.style.clipPath='none';
+        base.style.color=''; base.style.transition='';
+    },dur);
+}
+function startGlitch(){
+    clearInterval(glitchTimer);
+    glitchTimer=setInterval(()=>{
+        const n=Math.random()<.2?2:1;
+        const idx=letters.map((_,i)=>i).sort(()=>Math.random()-.5);
+        for(let j=0;j<n;j++) setTimeout(()=>nierGlitch(letterWraps[idx[j]]),j*(40+Math.random()*60));
+    },3200+Math.random()*2800);
 }
 
-function generateSpiralConfigs() {
-    spiralConfigs.length = 0;
-    const count = letters.length;
-    for (let i = 0; i < count; i++) {
-        spiralConfigs.push({
-            startAngle: (i / count) * Math.PI * 2,
-            direction:  (i % 2 === 0) ? 1 : -1,
-            scale:      40 + i * 18 + Math.random() * 15,
-            totalAngle: Math.PI * (2.5 + Math.random() * 1.5)
+// ── REVEAL SEQUENCE ───────────────────────────────────────────
+let ri=0;
+setTimeout(function revealNext(){
+    if(ri<letters.length){ letters[ri].classList.add('visible'); ri++; setTimeout(revealNext,REVEAL_DELAY); }
+    else{
+        textEl.classList.add('interactive'); revealDone=true; startGlitch();
+        setTimeout(()=>{
+            const hint = document.getElementById('enter-hint');
+            setTimeout(() => hint.classList.add('visible'), 800);
+            textEl.addEventListener('mouseenter', () => {
+                if(!hint.classList.contains('visible')) return;
+                hint.style.transition = 'opacity 0.3s ease';
+                hint.style.opacity = '0';
+                setTimeout(() => {
+                    hint.innerHTML = 'try <span id="hint-click-word">click</span>';
+                    hint.style.color = '';
+                    hint.style.opacity = '';
+                    const word = document.getElementById('hint-click-word');
+                    if(!word) return;
+                    word.style.transition = 'color 600ms ease-in-out';
+                    let flashing = true;
+                    let on = true;
+                    function flashWord(){
+                        if(!flashing) return;
+                        word.style.color = on ? '#00ffff' : 'rgba(200,196,190,0.28)';
+                        on = !on;
+                        setTimeout(flashWord, 700);
+                    }
+                    flashWord();
+                    hint._stopFlash = () => { flashing = false; };
+                }, 300);
+            });
+            textEl.addEventListener('mouseleave', () => {
+                if(!hint.classList.contains('visible')) return;
+                if(clicked) return;
+                hint.style.transition = 'opacity 0.3s ease';
+                hint.style.opacity = '0';
+                setTimeout(() => {
+                    if(clicked) return;
+                    if(hint._stopFlash) { hint._stopFlash(); hint._stopFlash = null; }
+                    hint.textContent = 'try hover';
+                    hint.style.color = '';
+                    hint.style.opacity = '';
+                }, 300);
+            });
+        }, 700);
+        setTimeout(()=>{
+            cursorRowEl.classList.add('visible');
+            dot.classList.add('visible');
+            ring.classList.add('visible');
+            setTimeout(activateCursor, 1600);
+        }, 3800);
+        setTimeout(()=>{ physicsOn=true; startDrift(); },DRIFT_START_DELAY);
+    }
+},REVEAL_START);
+
+// ── DRIFT CONTROL ─────────────────────────────────────────────
+let idleTimer = null;
+function resetIdleTimer(){
+    clearTimeout(idleTimer);
+    idleTimer = setTimeout(() => {
+        states.forEach(s => {
+            s.drifting  = false;
+            s.returning = true;
+            s.settled   = false;
         });
+        const checkSettled = setInterval(() => {
+            if(states.every(s => s.settled || (!s.drifting && !s.returning && s.x === 0))){
+                clearInterval(checkSettled);
+                physicsOn = false;
+                states.forEach(s => {
+                    s.x = s.y = s.rot = s.vx = s.vy = s.vr = 0;
+                    s.drifting = s.returning = false;
+                    s.settled  = true;
+                });
+                letterWraps.forEach(w => w.style.transform = '');
+            }
+        }, 200);
+    }, 120000);
+}
+
+document.addEventListener('mousemove', resetIdleTimer, { passive: true });
+
+function startDrift(){
+    clearCyan();
+    states.forEach(s=>{ s.drifting=true; s.returning=false; s.settled=false; s.driftRamp=0; s.vx=s.vy=s.vr=0; });
+    resetIdleTimer();
+}
+let divergeTimer=null;
+function exitDrift(){
+    clearTimeout(divergeTimer);
+    textEl.classList.remove('enlarge');
+    clearCyan();
+    const fullyHome=states.every(s=>s.settled);
+    if(fullyHome){
+        divergeTimer=setTimeout(()=>{
+            states.forEach(s=>{ s.drifting=true; s.returning=false; s.settled=false; s.driftRamp=0; s.vx=s.vy=s.vr=0; });
+        },1400);
+    } else {
+        states.forEach(s=>{ s.drifting=true; s.returning=false; s.settled=false; s.vx=s.vy=s.vr=0; s.driftRamp=0; });
     }
 }
 
-// ─── reveal ─────────────────────────────────────────────────
-let revealIdx = 0;
-setTimeout(() => {  // ADD THIS
-    (function revealNext() {
-        if (revealIdx < letters.length) {
-            letters[revealIdx].classList.add('visible');
-            revealIdx++;
-            setTimeout(revealNext, REVEAL_DELAY);
-        } else {
-            textElement.classList.add('interactive');
-            startGlitchEffects();
-            generateSpiralConfigs();
-            revealDone = true;
-            setTimeout(() => {
-                physicsActive = true;
-                startSmoothDrift();
-                scheduleAutoReturn();
-            }, DRIFT_START_DELAY);
+// ── PHYSICS TICK ──────────────────────────────────────────────
+function tick(now){
+    const dt=Math.min((now-lastT)/1000,0.05); lastT=now;
+    const tr=textEl.getBoundingClientRect();
+    const near=cursorReady&&mouseMoved&&
+        mouse.x>=tr.left&&mouse.x<=tr.right&&
+        mouse.y>=tr.top&&mouse.y<=tr.bottom;
+
+    if(clicked) { requestAnimationFrame(tick); return; }
+    if(wasNear&&!near&&physicsOn) exitDrift();
+    wasNear=near;
+
+    if(revealDone){
+        if(near) textEl.classList.add('enlarge');
+        else     textEl.classList.remove('enlarge');
+    }
+
+    if(!physicsOn){
+        if(cursorReady&&mouseMoved){
+            const tr2=textEl.getBoundingClientRect();
+            const over=mouse.x>=tr2.left&&mouse.x<=tr2.right&&mouse.y>=tr2.top&&mouse.y<=tr2.bottom;
+            if(over&&!lettersSettled) setCyan();
+            if(!over&&lettersSettled) clearCyan();
         }
-    })();
-}, 1500); 
+        requestAnimationFrame(tick); return;
+    }
 
-// ─── drift lifecycle ────────────────────────────────────────
-function startSmoothDrift() {
-    letters.forEach((letter, idx) => {
-        const s = letterState[idx];
-        const delay = idx * DRIFT_STAGGER_DELAY;
-        setTimeout(() => {
-            s.drifting = true;
-        }, delay);
+    let allSettledNow=true;
+    states.forEach((s,i)=>{
+        if(near||s.returning){
+            s.drifting=false; s.returning=true; s.vx=s.vy=s.vr=0;
+            s.x+=(0-s.x)*RETURN_LERP; s.y+=(0-s.y)*RETURN_LERP; s.rot+=(0-s.rot)*RETURN_LERP;
+            if(Math.abs(s.x)<RETURN_SNAP&&Math.abs(s.y)<RETURN_SNAP&&Math.abs(s.rot)<RETURN_SNAP*0.5){
+                s.x=s.y=s.rot=s.vx=s.vy=s.vr=0; s.returning=false;
+                if(near){ s.settled=true; } else{ s.settled=false; s.drifting=true; s.driftRamp=0; }
+            }
+            if(!s.settled) allSettledNow=false;
+        } else if(s.settled){
+            s.idleT+=dt;
+            s.x=Math.sin(s.idleT*s.idleFreqX+s.idlePhX)*IDLE_AMP;
+            s.y=Math.cos(s.idleT*s.idleFreqY+s.idlePhY)*IDLE_AMP*.55;
+            s.rot=Math.sin(s.idleT*.22+s.idlePhR)*IDLE_ROTA;
+        } else if(s.drifting){
+            allSettledNow=false;
+            s.time+=dt; s.driftRamp=Math.min(1,s.driftRamp+dt*DRIFT_RAMP);
+            const tgtX=Math.sin(s.time*s.fx+s.px)*DRIFT_RX*s.ax*s.driftRamp;
+            const tgtY=Math.cos(s.time*s.fy+s.py)*DRIFT_RY*s.ay*s.driftRamp;
+            const tgtR=Math.sin(s.time*s.fr+s.pr)*DRIFT_ROTA*s.ar*s.driftRamp;
+            s.x+=(tgtX-s.x)*0.06; s.y+=(tgtY-s.y)*0.06; s.rot+=(tgtR-s.rot)*0.06;
+        } else { allSettledNow=false; }
+        letterWraps[i].style.transform=`translate(${s.x.toFixed(2)}px,${s.y.toFixed(2)}px) rotate(${s.rot.toFixed(3)}deg)`;
     });
-}
 
-function scheduleAutoReturn() {
-    if (autoReturnTimeout) clearTimeout(autoReturnTimeout);
-    autoReturnTimeout = setTimeout(forceReturnHome, AUTO_RETURN_DELAY);
+    if(near&&allSettledNow&&!lettersSettled) setCyan();
+    if(!near&&lettersSettled) clearCyan();
+    requestAnimationFrame(tick);
 }
+requestAnimationFrame(tick);
 
-function forceReturnHome() {
-    letterState.forEach(s => { s.returning=true; s.drifting=false; });
+// ── CLICK ─────────────────────────────────────────────────────
+function handleClick(){
+    textEl.removeEventListener('click',handleClick);
+    textEl.style.pointerEvents='none';
+
+    dot.style.transition  = 'opacity 0.4s ease';
+    ring.style.transition = 'opacity 0.4s ease';
+    dot.style.opacity  = '0';
+    ring.style.opacity = '0';
+
+    clicked = true;
+    physicsOn = false;
+    textEl.style.transition = 'transform 1.8s cubic-bezier(0.16,1,0.3,1)';
+    textEl.classList.add('enlarge');
+
+    letters.forEach(l => { l.style.transition = 'color 0s'; });
+    cyanStyle.textContent = '.letter { color:#00ffff !important; transition: color 0s !important; }';
 
     setTimeout(() => {
-        letterState.forEach(s => { s.t=0; s.returning=false; });
-        startSmoothDrift();
-        scheduleAutoReturn();
-    }, 2000);
+        cyanStyle.textContent = '.letter { color:rgba(0,200,200,0.35) !important; transition: color 320ms ease !important; }';
+        setTimeout(() => {
+            cyanStyle.textContent = '.letter { color:#00ffff !important; transition: color 380ms ease !important; }';
+            setTimeout(() => {
+                cyanStyle.textContent = '.letter { color:#c8c4bc !important; text-shadow:none !important; transition: color 600ms ease !important; }';
+                letters.forEach(l => { l.style.transition = ''; });
+
+                setTimeout(() => {
+                    const hint  = document.getElementById('enter-hint');
+                    [hint].forEach(el => {
+                        if(el){ el.style.transition = 'opacity 1.4s ease'; el.style.opacity = '0'; }
+                    });
+                }, 400);
+
+                setTimeout(() => {
+                    textEl.style.transition = 'transform 1.6s cubic-bezier(0.4,0,0.2,1)';
+                    textEl.classList.remove('enlarge');
+                }, 600);
+
+                blackHoleImplosion();
+            }, 420);
+        }, 340);
+    }, 180);
 }
+textEl.addEventListener('click',handleClick);
 
-// ─── glitch ─────────────────────────────────────────────────
-function glitchLetter(el) {
-    el.classList.add('glitch-swap');
-    setTimeout(() => el.classList.remove('glitch-swap'), 140+Math.random()*160);
-}
-function startGlitchEffects() {
-    if (glitchInterval) clearInterval(glitchInterval);
-    glitchInterval = setInterval(() => {
-        const n = 1+Math.floor(Math.random()*3);
-        const idx = letters.map((_,i)=>i).sort(()=>Math.random()-0.5);
-        for (let j=0; j<n; j++)
-            setTimeout(() => glitchLetter(letters[idx[j]]), j*(60+Math.random()*80));
-    }, 2500+Math.random()*2000);
-}
-
-// ─── physics ────────────────────────────────────────────────
-document.addEventListener('mousemove', e => { mouse.x=e.clientX; mouse.y=e.clientY; });
-
-function updateLetterPhysics(now) {
-    const dt = Math.min((now - lastPhysicsTime)/1000, 0.1);
-    lastPhysicsTime = now;
-
-    const cx = window.innerWidth/2;
-    const cy = window.innerHeight/2;
-    const mouseDist = Math.sqrt((mouse.x-cx)**2 + (mouse.y-cy)**2);
-    const mouseIsNear = mouseDist < 350;
-
-    // ── per-frame hit detection for enlarge ──
-    // Check each letter's actual screen rect vs mouse. This works even when
-    // the element slides under a stationary cursor (mouseenter wouldn't fire).
-    if (revealDone) {
-        let cursorOnLetter = false;
-        for (let i = 0; i < letters.length; i++) {
-            const rect = letters[i].getBoundingClientRect();
-            if (mouse.x >= rect.left && mouse.x <= rect.right &&
-                mouse.y >= rect.top  && mouse.y <= rect.bottom) {
-                cursorOnLetter = true;
-                break;
-            }
-        }
-        const allHome = letterState.every(s => Math.abs(s.x)<1 && Math.abs(s.y)<1);
-        if (cursorOnLetter && allHome) {
-            hoverHomeTimer += dt * 1000;
-            if (hoverHomeTimer > HOVER_ENLARGE_DELAY) textElement.classList.add('enlarge');
-        } else {
-            hoverHomeTimer = 0;
-            textElement.classList.remove('enlarge');
-        }
-    }
-
-    if (!physicsActive) { requestAnimationFrame(updateLetterPhysics); return; }
-
-    letters.forEach((letter, idx) => {
-        const s   = letterState[idx];
-        const cfg = spiralConfigs[idx];
-
-        if (mouseIsNear) {
-         s.returning = true;
-        s.drifting  = false;
-    s.x   += (0 - s.x)   * RETURN_LERP;
-    s.y   += (0 - s.y)   * RETURN_LERP;
-    s.rot += (0 - s.rot) * RETURN_LERP;
-    if (Math.abs(s.x) < 0.5 && Math.abs(s.y) < 0.5) {
-        s.x=0; s.y=0; s.rot=0; s.t=0;
-        s.returning = false;
-    }
-    scheduleAutoReturn();
-} else {
-    // If we were returning but didn't make it home, resume drifting from current position
-    if (s.returning) {
-        s.returning = false;
-        s.drifting = true;
-        s.easing = true;  // Mark as easing back into drift
-        
-        // Find the t value on the spiral that's closest to current position
-        let bestT = s.t;
-        let bestDist = Infinity;
-        for (let testT = 0; testT <= 1; testT += 0.01) {
-            const pos = getSpiralPos(cfg, testT);
-            const dist = Math.sqrt((pos.x - s.x)**2 + (pos.y - s.y)**2);
-            if (dist < bestDist) {
-                bestDist = dist;
-                bestT = testT;
-            }
-        }
-        s.t = bestT;
-    }
-    
-    if (s.drifting) {
-        const targetT = Math.min(s.t + DRIFT_SPEED * 60, 1);
-        s.t += (targetT - s.t) * 0.04;
-        const pos = getSpiralPos(cfg, s.t);
-        
-        // Use slower lerp when easing back, faster when normal drifting
-        const lerpSpeed = s.easing ? 0.015 : 0.05;  // Slower during ease-in
-        s.x   += (pos.x   - s.x)   * lerpSpeed;
-        s.y   += (pos.y   - s.y)   * lerpSpeed;
-        s.rot += (pos.rot - s.rot) * lerpSpeed;
-        
-        // Once close to target, stop easing
-        const dist = Math.sqrt((pos.x - s.x)**2 + (pos.y - s.y)**2);
-        if (s.easing && dist < 5) {
-            s.easing = false;
-        }
-    }
-}
-
-        // Collision avoidance — advances along spiral path
-        if (!s.returning && s.drifting) {
-            for (let j=0; j<letters.length; j++) {
-                if (j===idx) continue;
-                const o = letterState[j];
-                if (!o.drifting) continue;
-                const dx = s.x - o.x;
-                const dy = s.y - o.y;
-                const dist = Math.sqrt(dx*dx + dy*dy);
-                if (dist < 90 && dist > 0) {
-                    const push = (90 - dist) / 90 * 0.003;
-                    s.t = Math.min(s.t + push, 1);
-                    const pos = getSpiralPos(cfg, s.t);
-                    s.x   += (pos.x   - s.x)   * 0.05;
-                    s.y   += (pos.y   - s.y)   * 0.05;
-                    s.rot += (pos.rot - s.rot) * 0.05;
-                }
-            }
-        }
-
-        letter.style.transform = `translate(${s.x}px,${s.y}px) rotate(${s.rot}deg)`;
-    });
-
-    requestAnimationFrame(updateLetterPhysics);
-}
-requestAnimationFrame(updateLetterPhysics);
-
-// ============================================================
-// Perlin Noise
-// ============================================================
-class PerlinNoise {
-    constructor() { this.g={}; this.m={}; }
-    rv() { const t=Math.random()*Math.PI*2; return {x:Math.cos(t),y:Math.sin(t)}; }
-    dp(x,y,vx,vy) {
-        const k=vx+','+vy;
-        const g=this.g[k]||(this.g[k]=this.rv());
-        return (x-vx)*g.x+(y-vy)*g.y;
-    }
-    ss(x) { return 6*x**5-15*x**4+10*x**3; }
-    interp(x,a,b) { return a+this.ss(x)*(b-a); }
-    get(x,y) {
-        const k=x+','+y;
-        if (this.m[k]!==undefined) return this.m[k];
-        const xf=Math.floor(x), yf=Math.floor(y);
-        return this.m[k] = this.interp(y-yf,
-            this.interp(x-xf, this.dp(x,y,xf,yf),   this.dp(x,y,xf+1,yf)),
-            this.interp(x-xf, this.dp(x,y,xf,yf+1), this.dp(x,y,xf+1,yf+1))
-        );
-    }
-}
-
-// ============================================================
-// Click: stroke flash then random-walk flood fill
-// ============================================================
-function handleClick() {
-    // Check if all letters are at home position
-    const allHome = letterState.every(s => Math.abs(s.x) < 1 && Math.abs(s.y) < 1);
-    if (!allHome) return; // Don't allow click if letters aren't home
-    
-    textElement.removeEventListener('click', handleClick);
-    textElement.style.pointerEvents = 'none';
-    randomWalkTransition();
-}
-
-
-textElement.addEventListener('click', handleClick);
-
-function randomWalkTransition() {
-    const canvas = document.getElementById('noiseCanvas');
+// ── TRANSITION ───────────────────────────────────────────────
+function blackHoleImplosion(){
+    const canvas = document.getElementById('implodeCanvas');
     const ctx    = canvas.getContext('2d');
-    canvas.width  = window.innerWidth;
-    canvas.height = window.innerHeight;
-    canvas.style.opacity = '1';
+    canvas.width  = innerWidth;
+    canvas.height = innerHeight;
 
-    const ps   = GRID_SUB_SIZE/2;
-    const cols = Math.ceil(canvas.width/ps)+1;
-    const rows = Math.ceil(canvas.height/ps)+1;
-    const cx   = Math.floor(canvas.width/2/ps);
-    const cy   = Math.floor(canvas.height/2/ps);
+    const W = canvas.width;
+    const H = canvas.height;
 
-    const perlin = new PerlinNoise();
-    const scale  = 0.05;
-    const seed   = Math.random()*1000;
+    setTimeout(() => {
+        clicked = true;
+        physicsOn = false;
 
-    const visited  = new Set();
-    // frontier is a plain array; we swap it each frame (no mutation during iteration)
-    let frontier   = [];
+        const textRect = textEl.getBoundingClientRect();
+        const tcx = textRect.left + textRect.width  / 2;
+        const tcy = textRect.top  + textRect.height / 2;
 
-    function k(x,y) { return x+','+y; }
-    function inB(x,y) { return x>=0 && x<cols && y>=0 && y<rows; }
+        const launch = states.map((s, i) => {
+            const r      = letterWraps[i].getBoundingClientRect();
+            const lx     = r.left + r.width  / 2;
+            const ly     = r.top  + r.height / 2;
+            const baseAngle = Math.atan2(ly - tcy, lx - tcx);
+            const spread    = (Math.random() - 0.5) * (Math.PI * 1.55);
+            const angle     = baseAngle + spread;
+            const force     = 6 + Math.random() * Math.random() * 38;
+            const lateralAngle = angle + Math.PI / 2;
+            const lateral      = (Math.random() - 0.5) * 18;
+            return {
+                x: s.x, y: s.y, rot: s.rot,
+                vx: Math.cos(angle) * force + Math.cos(lateralAngle) * lateral,
+                vy: Math.sin(angle) * force + Math.sin(lateralAngle) * lateral,
+                vr: (Math.random() - 0.5) * 9,
+            };
+        });
 
-    function draw(gx,gy) {
-        const n   = (perlin.get(gx*scale+seed, gy*scale+seed)+1)/2;
-        const thr = 0.45+(Math.random()-0.5)*0.3;
-        const c   = n>thr ? 255 : 0;
-        ctx.fillStyle = `rgb(${c},${c},${c})`;
-        ctx.fillRect(gx*ps, gy*ps, ps, ps);
-    }
+        const pixelEls = document.querySelectorAll('.pixel');
+        const pixelLaunch = Array.from(pixelEls).map(el => {
+            const r  = el.getBoundingClientRect();
+            const px = r.left + r.width  / 2;
+            const py = r.top  + r.height / 2;
+            const currentOpacity = parseFloat(window.getComputedStyle(el).opacity) || 0;
+            el.style.animation = 'none';
+            el.style.left = px - r.width  / 2 + 'px';
+            el.style.top  = py - r.height / 2 + 'px';
+            el.style.opacity = currentOpacity;
+            el.style.transform = '';
+            const baseAngle = Math.atan2(py - innerHeight / 2, px - innerWidth / 2);
+            const spread    = (Math.random() - 0.5) * (Math.PI * 1.6);
+            const angle     = baseAngle + spread;
+            const force     = 5 + Math.random() * Math.random() * 32;
+            const lateralAngle = angle + Math.PI / 2;
+            const lateral      = (Math.random() - 0.5) * 14;
+            return {
+                el,
+                startOpacity: currentOpacity,
+                x: 0, y: 0, rot: 0,
+                vx: Math.cos(angle) * force + Math.cos(lateralAngle) * lateral,
+                vy: Math.sin(angle) * force + Math.sin(lateralAngle) * lateral,
+                vr: (Math.random() - 0.5) * 10,
+            };
+        });
 
-    // Seed entire center row + center column so the fill races along two axes
-    // immediately — the leading edge becomes a jagged cross, not a radial diamond.
-    for (let x = 0; x < cols; x++) {
-        visited.add(k(x, cy));
-        frontier.push({ gx: x, gy: cy });
-    }
-    for (let y = 0; y < rows; y++) {
-        const key = k(cx, y);
-        if (!visited.has(key)) {
-            visited.add(key);
-            frontier.push({ gx: cx, gy: y });
-        }
-    }
-    // Scatter a few outlier seed points so stray clusters pop up at the edges
-    // before the main wave arrives — breaks symmetry further.
-    for (let i = 0; i < 12; i++) {
-        const ox = Math.floor(Math.random() * cols);
-        const oy = Math.floor(Math.random() * rows);
-        const key = k(ox, oy);
-        if (!visited.has(key)) {
-            visited.add(key);
-            frontier.push({ gx: ox, gy: oy });
-        }
-    }
+        const FREEZE_DUR = 180;
+        const BLAST_DUR  = 1600;
+        const t0 = performance.now();
+        let last = t0;
 
-    const startTime   = performance.now();
-    const TOTAL_TIME  = 1000;
+        function vacuumTick(now){
+            const dt      = Math.min((now - last) / 16.67, 3);
+            last = now;
+            const elapsed = now - t0;
 
-    function animate(now) {
-        const progress   = Math.min((now-startTime)/TOTAL_TIME, 1);
-        const budget     = Math.floor(15 + progress*120);  // 15→135 pixels/frame
-        const fireChance = 0.15 + progress*0.7;            // 0.15→0.85 per-pixel chance
+            if(elapsed < FREEZE_DUR){
+                requestAnimationFrame(vacuumTick);
+                return;
+            }
 
-        let fired = 0;
-        const keep = [];      // frontier pixels that didn't fire — carry to next frame
-        const spawn = [];     // newly discovered neighbours — added to next frontier
+            const blastElapsed = elapsed - FREEZE_DUR;
+            const p = Math.min(blastElapsed / BLAST_DUR, 1);
+            const accel = p * p * p * p;
 
-        for (let i=0; i<frontier.length; i++) {
-            if (fired >= budget) { keep.push(frontier[i]); continue; }
-            if (Math.random() < fireChance) {
-                const {gx,gy} = frontier[i];
-                draw(gx,gy);
-                fired++;
-                // Spawn neighbours that haven't been seen
-                [[0,-1],[1,0],[0,1],[-1,0]].forEach(([dx,dy]) => {
-                    const nx=gx+dx, ny=gy+dy, nk=k(nx,ny);
-                    if (inB(nx,ny) && !visited.has(nk)) {
-                        visited.add(nk);
-                        spawn.push({gx:nx,gy:ny});
-                    }
-                });
+            launch.forEach((l, i) => {
+                l.x   += l.vx * accel * dt * 5.5;
+                l.y   += l.vy * accel * dt * 5.5;
+                l.rot += l.vr * (0.2 + accel * 6.0) * dt;
+                letterWraps[i].style.transform =
+                    `translate(${l.x.toFixed(2)}px,${l.y.toFixed(2)}px) rotate(${l.rot.toFixed(3)}deg)`;
+                letters[i].style.opacity = p > 0.88
+                    ? Math.max(0, 1 - (p - 0.88) / 0.12).toFixed(3)
+                    : '1';
+            });
+
+            pixelLaunch.forEach(pl => {
+                pl.x   += pl.vx * accel * dt * 4.5;
+                pl.y   += pl.vy * accel * dt * 4.5;
+                pl.rot += pl.vr * (0.15 + accel * 4.5) * dt;
+                pl.el.style.transform =
+                    `translate(${pl.x.toFixed(2)}px,${pl.y.toFixed(2)}px) rotate(${pl.rot.toFixed(2)}deg)`;
+                if(p > 0.82){
+                    pl.el.style.opacity = Math.max(0, pl.startOpacity * (1 - (p - 0.82) / 0.18)).toFixed(3);
+                }
+            });
+
+            if(p < 1){
+                requestAnimationFrame(vacuumTick);
             } else {
-                keep.push(frontier[i]);   // try again next frame
+                setTimeout(() => window.location.href = './testing2.html', 120);
             }
         }
 
-        // Next frontier = pixels that didn't fire + newly spawned neighbours
-        frontier = keep.concat(spawn);
-
-        if (frontier.length > 0) {
-            requestAnimationFrame(animate);
-        } else {
-            setTimeout(() => { window.location.href='./anoaeyto.html'; }, 100);
-        }
-    }
-    requestAnimationFrame(animate);
+        requestAnimationFrame(vacuumTick);
+    }, 3000);
 }
 </script>
 </body>
