@@ -6,432 +6,1436 @@
     <title>Gallery — anoaeyto</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,300;0,400;1,300;1,400&family=Courier+Prime:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Montserrat:wght@200;300;400&display=swap" rel="stylesheet">
     <style>
-
+    /* ── Local Cormorant fallbacks (display / wordmark) ── */
+    @font-face {
+        font-family: 'Cormorant';
+        src: url('./fonts/cormorant-v21-latin-300.woff2') format('woff2');
+        font-weight: 300; font-style: normal; font-display: swap;
+    }
+    @font-face {
+        font-family: 'Cormorant';
+        src: url('./fonts/cormorant-v21-latin-300italic.woff2') format('woff2');
+        font-weight: 300; font-style: italic; font-display: swap;
+    }
+    @font-face {
+        font-family: 'Cormorant';
+        src: url('./fonts/cormorant-v21-latin-regular.woff2') format('woff2');
+        font-weight: 400; font-style: normal; font-display: swap;
+    }
+    @font-face {
+        font-family: 'Cormorant';
+        src: url('./fonts/cormorant-v21-latin-italic.woff2') format('woff2');
+        font-weight: 400; font-style: italic; font-display: swap;
+    }
+    @font-face {
+        font-family: 'Cormorant';
+        src: url('./fonts/cormorant-v21-latin-600.woff2') format('woff2');
+        font-weight: 600; font-style: normal; font-display: swap;
+    }
+    @font-face {
+        font-family: 'Cormorant';
+        src: url('./fonts/cormorant-v21-latin-600italic.woff2') format('woff2');
+        font-weight: 600; font-style: italic; font-display: swap;
+    }
 *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; user-select:none; }
 
 :root {
-    --teal:       #00c8b4;
-    --teal-dark:  #009d8e;
-    --teal-line:  rgba(0,200,180,0.2);
-    --cream:      #ddd8cc;
-    --paper:      #e6d9c0;
-    --ink:        #0e0c0a;
-    --bg:         #000;
+    --teal: #00c8b4;
+    --teal-dark: #009d8e;
+    --cream: #ddd8cc;
+    --paper: #e6d9c0;
+    --page-bg: #e3dac7;
+    --ink: #0e0c0a;
+    --bar-pad: clamp(20px, 2.5vh, 32px);
+    --page-pad: clamp(24px, 4vw, 64px);
+    --site-ui-font: 'Montserrat', 'Helvetica Neue', Arial, sans-serif;
+    --display-font: 'Cormorant', Georgia, serif;
 }
-
-html { scroll-behavior:smooth; }
+/* auto: dragging / clicking the scrollbar stays instant; smooth can fight fast input */
+html { scroll-behavior:auto; }
+html, body {
+    width:100%;
+    min-height:100%;
+}
 body {
-    background:var(--bg); color:var(--cream);
-    font-family:'Courier Prime', monospace;
-    overflow-x:hidden; overflow-y:auto;
-    opacity:0; animation:fadeBody 0.5s 0.1s ease forwards;
+    background:var(--page-bg);
+    color:rgba(14,12,10,0.82);
+    font-family:var(--site-ui-font);
+    font-weight:300;
+    min-height:100vh;
     cursor:none;
-}
-@keyframes fadeBody { to { opacity:1; } }
-
-/* grain */
-body::before {
-    content:''; position:fixed; inset:0; z-index:9999; pointer-events:none;
-    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
-    background-size:200px 200px; opacity:0.28; mix-blend-mode:overlay;
-}
-
-a, button { cursor:none; }
-
-/* CURSOR */
-#cursor-dot  { position:fixed; width:6px; height:6px; background:var(--teal); border-radius:50%; pointer-events:none; z-index:999999; top:0; left:0; transform:translate(-50%,-50%); transition:background 0.18s ease; }
-#cursor-ring { position:fixed; width:24px; height:24px; border:1.5px solid rgba(0,200,180,0.6); border-radius:50%; pointer-events:none; z-index:999998; top:0; left:0; transform:translate(-50%,-50%); transition:width 0.18s ease, height 0.18s ease, border-color 0.18s ease; }
-#cursor-ring.expanded { width:36px; height:36px; border-color:rgba(0,200,180,1); }
-
-/* HUD */
-
-
-
-/* ── TOP BAR ── */
-#top-bar {
-    position:fixed; top:0; left:0; right:0; z-index:500;
-    padding:clamp(20px,2.5vh,32px) clamp(28px,4vw,60px);
-    display:flex; align-items:center; justify-content:space-between;
-    background:linear-gradient(to bottom, rgba(0,0,0,0.85) 0%, transparent 100%);
-    pointer-events:none;
-}
-.back-link {
-    display:inline-flex; align-items:center; gap:10px;
-    font-size:clamp(9px,0.72vw,12px); letter-spacing:3px; text-transform:uppercase;
-    color:rgba(255,255,255,0.6); text-decoration:none;
-    transition:color 0.25s; pointer-events:all;
-}
-.back-link .arrow { color:var(--teal); }
-.back-link:hover { color:#fff; }
-.top-logo {
-    font-size:clamp(9px,0.72vw,12px); letter-spacing:3px; text-transform:uppercase;
-    color:rgba(255,255,255,0.72); pointer-events:all;
-}
-.top-logo span { display:inline-block; transition:color 0.15s; }
-.top-logo span.cyan { color:var(--teal); }
-
-/* ── PAGE LAYOUT ── */
-.page-content {
-    padding-top:clamp(90px,11vh,130px);
-    padding-bottom:clamp(80px,10vh,120px);
-}
-
-/* ── GALLERY HEADER ── */
-.gallery-header {
-    padding:0 clamp(24px,4vw,64px) 0;
-    margin-bottom:clamp(28px,4vh,48px);
-    display:flex; flex-direction:column; gap:clamp(20px,3vh,32px);
-}
-.gallery-header-top {
-    display:flex; align-items:flex-end; justify-content:space-between;
-}
-.gallery-header-left { display:flex; flex-direction:column; gap:7px; }
-.gallery-eyebrow {
-    font-size:clamp(8px,0.7vw,11px); letter-spacing:4px; text-transform:uppercase;
-    color:var(--teal); opacity:0.75;
-}
-.gallery-title {
-    font-family:'Cormorant', Georgia, serif;
-    font-weight:300; font-size:clamp(28px,3.5vw,60px);
-    letter-spacing:-0.02em; line-height:0.92; color:#fff;
-    font-style:italic;
-}
-.gallery-meta {
-    font-size:clamp(8px,0.68vw,11px); letter-spacing:3px; text-transform:uppercase;
-    color:rgba(220,216,204,0.45); margin-top:4px;
-    display:flex; align-items:center; gap:10px;
-}
-.gallery-meta-sep { color:rgba(0,200,180,0.2); }
-.gallery-count-live { color:var(--teal); opacity:0.75; }
-
-/* ── CATEGORY TABS ── */
-.cat-tabs {
-    display:flex; align-items:center; gap:0;
-    border-bottom:1px solid rgba(0,200,180,0.1);
-}
-.cat-tab {
-    display:inline-flex; align-items:center; gap:8px;
-    padding:clamp(10px,1.4vh,16px) clamp(16px,2vw,28px);
-    font-size:clamp(9px,0.72vw,12px); letter-spacing:3px; text-transform:uppercase;
-    color:rgba(221,216,204,0.45); background:none; border:none;
-    border-bottom:2px solid transparent; margin-bottom:-1px;
-    transition:color 0.22s, border-color 0.22s;
+    overflow-x:hidden;
     position:relative;
 }
-.cat-tab:first-child { padding-left:0; }
-.cat-tab:hover { color:rgba(221,216,204,0.8); }
-.cat-tab.active { color:#fff; border-bottom-color:var(--teal); }
-.cat-tab-count {
-    font-size:clamp(7px,0.55vw,9px); letter-spacing:2px;
-    color:rgba(0,200,180,0.5);
-    transition:color 0.22s;
+body::before {
+    content:'';
+    position:fixed;
+    inset:0;
+    z-index:9990;
+    pointer-events:none;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    background-size:200px 200px;
+    opacity:0.22;
+    mix-blend-mode:multiply;
 }
-.cat-tab.active .cat-tab-count { color:var(--teal); }
+/* Gallery images: keep grain subtle so tiles don’t brown out */
+body.gallery-page::before {
+    opacity:0.06;
+    mix-blend-mode:normal;
+}
+/* Gallery: let document height follow content so there’s no dead band below the last row */
+body:has(#gallery-main.gal-page:has(.gal-mosaic--digital)) {
+    min-height:0;
+}
 
-/* ── SUB-TABS (photography only) ── */
-.sub-tabs-wrap {
-    padding:0 clamp(24px,4vw,64px);
-    margin-bottom:clamp(16px,2.5vh,28px);
-    display:none;
-    border-bottom:1px solid rgba(255,255,255,0.05);
-}
-.sub-tabs-wrap.visible { display:flex; }
-.sub-tabs {
-    display:flex; align-items:center; gap:0; overflow-x:auto;
-    scrollbar-width:none; -ms-overflow-style:none;
-}
-.sub-tabs::-webkit-scrollbar { display:none; }
-.sub-tab {
-    padding:clamp(8px,1.1vh,12px) clamp(14px,1.6vw,22px);
-    font-size:clamp(8px,0.65vw,10px); letter-spacing:3px; text-transform:uppercase;
-    color:rgba(221,216,204,0.38); background:none; border:none;
-    border-bottom:1px solid transparent; margin-bottom:-1px;
-    white-space:nowrap; flex-shrink:0;
-    transition:color 0.2s, border-color 0.2s;
-}
-.sub-tab:first-child { padding-left:0; }
-.sub-tab:hover { color:rgba(221,216,204,0.7); }
-.sub-tab.active { color:rgba(221,216,204,0.88); border-bottom-color:rgba(0,200,180,0.35); }
-
-/* ── MASONRY GRID ── */
-.masonry-grid {
-    display:flex;
-    gap:8px;
-    padding:0 clamp(24px,4vw,64px);
-    opacity:0;
-    transition:opacity 0.5s ease;
-    align-items:flex-start;
-}
-.masonry-grid.ready { opacity:1; }
-.masonry-grid.switching { opacity:0; transition:opacity 0.25s ease; }
-
-.masonry-col {
-    flex:1;
+/* Full-viewport cover — same shell as tea-club / graphic-design .gd-hero.p-hero */
+body.gallery-page .gd-hero.p-hero.gal-hero {
+    background:#000;
+    justify-content:flex-end;
+    position:relative;
+    min-height:100vh;
+    min-height:100dvh;
     display:flex;
     flex-direction:column;
+    margin-bottom:0;
+    width:100%;
+    max-width:100%;
+    box-sizing:border-box;
+}
+body.gallery-page .gd-hero.gal-hero::before {
+    content:'';
+    position:absolute;
+    inset:0;
+    z-index:2;
+    pointer-events:none;
+    background:linear-gradient(180deg,rgba(0,0,0,0.55) 0%,transparent 28%,rgba(0,0,0,0.55) 60%,rgba(0,0,0,0.96) 88%,#000 100%),
+               linear-gradient(90deg,rgba(0,0,0,0.45) 0%,transparent 45%);
+}
+body.gallery-page .gd-hero.gal-hero::after {
+    content:'';
+    position:absolute;
+    inset:0;
+    z-index:0;
+    pointer-events:none;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+    background-size:200px 200px;
+    opacity:0.18;
+    mix-blend-mode:overlay;
+}
+body.gallery-page .gd-hero.gal-hero .hero-img {
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+    max-width:none;
+    object-fit:cover;
+    object-position:center top;
+    filter:brightness(0.72) saturate(1.05);
+    transition:filter 0.9s cubic-bezier(0.22,1,0.36,1);
+    z-index:1;
+}
+body.gallery-page .gd-hero.gal-hero:hover .hero-img {
+    filter:brightness(0.82) saturate(1.1);
+}
+body.gallery-page .gd-hero.gal-hero .hero-scanline {
+    position:absolute;
+    bottom:0;
+    left:0;
+    right:0;
+    z-index:9;
+    height:1px;
+    background:linear-gradient(90deg,transparent,rgba(0,200,180,0.6) 15%,rgba(0,200,180,0.25) 50%,rgba(0,200,180,0.6) 85%,transparent);
+    pointer-events:none;
+}
+body.gallery-page .gd-hero.gal-hero .hud-tl {
+    position:absolute;
+    top:clamp(72px,9vh,100px);
+    left:clamp(32px,4vw,56px);
+    z-index:10;
+    display:flex;
+    flex-direction:column;
+    gap:4px;
+    pointer-events:none;
+}
+body.gallery-page .gd-hero.gal-hero .hud-tr {
+    position:absolute;
+    top:clamp(72px,9vh,100px);
+    right:clamp(32px,4vw,56px);
+    z-index:10;
+    display:flex;
+    flex-direction:column;
+    align-items:flex-end;
+    gap:4px;
+    pointer-events:none;
+}
+body.gallery-page .gd-hero.gal-hero .hud-item {
+    font-family:var(--site-ui-font);
+    font-size:clamp(7px,0.55vw,9px);
+    letter-spacing:2.5px;
+    text-transform:uppercase;
+    color:rgba(255,255,255,0.22);
+    display:flex;
+    align-items:center;
     gap:8px;
+}
+body.gallery-page .gd-hero.gal-hero .hud-item strong { color:var(--teal); font-weight:400; opacity:0.8; }
+body.gallery-page .gd-hero.gal-hero .hud-item.active { color:rgba(255,255,255,0.72); }
+body.gallery-page .gd-hero.gal-hero .hero-text {
+    position:absolute;
+    z-index:6;
+    bottom:clamp(88px,13vh,148px);
+    left:clamp(32px,4vw,56px);
+    display:flex;
+    flex-direction:column;
+    align-items:flex-start;
+}
+body.gallery-page .gd-hero.gal-hero .hero-sub {
+    display:inline-flex;
+    align-items:center;
+    gap:16px;
+    font-family:var(--site-ui-font);
+    font-size:clamp(10px,0.8vw,13px);
+    letter-spacing:5px;
+    text-transform:uppercase;
+    color:rgba(255,255,255,0.55);
+    margin-bottom:16px;
+    animation:riseIn 0.7s 0.3s ease both;
+}
+body.gallery-page .gd-hero.gal-hero .hero-sub::before {
+    content:'';
+    width:24px;
+    height:1px;
+    background:var(--teal);
+    opacity:0.75;
+    flex-shrink:0;
+}
+body.gallery-page .gd-hero.gal-hero .hero-h1 {
+    font-family:var(--display-font);
+    font-style:italic;
+    font-weight:300;
+    font-size:clamp(72px,11vw,172px);
+    letter-spacing:-0.03em;
+    text-transform:none;
+    color:#fff;
+    line-height:0.92;
+    animation:riseIn 1.1s 0.5s ease both;
+}
+body.gallery-page .gd-hero.gal-hero .hero-hint {
+    margin-top:clamp(20px,2.8vh,32px);
+    display:inline-flex;
+    align-items:center;
+    gap:14px;
+    font-family:var(--site-ui-font);
+    font-size:clamp(11px,1vw,15px);
+    letter-spacing:3px;
+    text-transform:uppercase;
+    color:rgba(255,255,255,0.90);
+    animation:riseIn 0.7s 1.0s ease both, galHeroHintCycle 1.8s 1.5s ease-in-out 3;
+}
+body.gallery-page .gd-hero.gal-hero .hero-hint-line {
+    width:28px;
+    height:1px;
+    background:var(--teal);
+    opacity:0.75;
+    flex-shrink:0;
+    display:inline-block;
+}
+body.gallery-page .gd-hero.gal-hero .hint-arr { color:var(--teal); animation:nudge 1.4s 7s ease-in-out infinite; }
+@keyframes galHeroHintCycle { 0%,100%{color:rgba(255,255,255,0.90);} 50%{color:var(--teal);} }
+body.gallery-page .gd-hero.gal-hero .scroll-ind {
+    position:absolute;
+    right:clamp(18px,2.2vw,32px);
+    bottom:clamp(48px,8vh,80px);
+    z-index:12;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:32px;
+    animation:riseIn 0.6s 2s ease both;
+}
+body.gallery-page .gd-hero.gal-hero .scroll-ind span {
+    display:block;
+    font-family:var(--site-ui-font);
+    font-size:clamp(8px,0.6vw,10px);
+    letter-spacing:5px;
+    text-transform:uppercase;
+    color:rgba(255,255,255,0.22);
+    white-space:nowrap;
+    transform:rotate(90deg);
+    transform-origin:center;
+    margin-bottom:-4px;
+}
+body.gallery-page .gd-hero.gal-hero .scroll-line {
+    width:1px;
+    height:clamp(36px,5vh,60px);
+    background:rgba(0,200,180,0.25);
+    position:relative;
+    overflow:hidden;
+}
+body.gallery-page .gd-hero.gal-hero .scroll-line::after {
+    content:'';
+    position:absolute;
+    top:-100%;
+    left:0;
+    width:100%;
+    height:100%;
+    background:linear-gradient(to bottom,transparent,var(--teal),transparent);
+    animation:scrollDrop 2.2s cubic-bezier(0.4,0,0.2,1) infinite;
+}
+@keyframes scrollDrop { 0%{top:-100%;opacity:1;} 100%{top:200%;opacity:0.2;} }
+@keyframes nudge { 0%,100%{transform:translateX(0);} 50%{transform:translateX(7px);} }
+a, button { cursor:none; }
+
+#cursor-dot  { position:fixed; width:6px; height:6px; background:transparent; border-radius:50%; pointer-events:none; z-index:999999; top:0; left:0; transform:translate(-50%,calc(-50% + var(--scroll-drag-y, 0px))); }
+#cursor-dot .cursor-dot-bob { display:block; width:6px; height:6px; border-radius:50%; background:var(--teal); }
+#cursor-ring { position:fixed; width:24px; height:24px; border:1.5px solid rgba(0,200,180,0.6); border-radius:50%; pointer-events:none; z-index:999998; top:0; left:0; transform:translate(-50%,-50%); transition:width 0.22s, height 0.22s, border-color 0.22s; }
+#cursor-ring.expanded { width:36px; height:36px; border-color:rgba(0,200,180,1); }
+#cursor-dot.cursor-scroll-up .cursor-dot-bob { animation:cursorBobUp 0.55s cubic-bezier(0.42,0,0.58,1) infinite; }
+#cursor-dot.cursor-scroll-down .cursor-dot-bob { animation:cursorBobDown 0.55s cubic-bezier(0.42,0,0.58,1) infinite; }
+@keyframes cursorBobUp { 0%,100%{transform:translateY(0);} 50%{transform:translateY(-2px);} }
+@keyframes cursorBobDown { 0%,100%{transform:translateY(0);} 50%{transform:translateY(2px);} }
+
+.top-bar {
+    position:fixed;
+    top:0;
+    left:0;
+    right:0;
+    z-index:8000;
+    padding:var(--bar-pad) clamp(28px,4vw,56px);
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    /* Case-study banner pages: dark bar on hero; cream when scrolled to editorial */
+    background:linear-gradient(180deg, rgba(0,0,0,0.50) 0%, rgba(0,0,0,0.15) 60%, transparent 100%);
+    pointer-events:none;
+}
+body.gallery-page .top-bar.is-cream {
+    background:linear-gradient(180deg, rgba(227,218,199,0.96) 0%, rgba(227,218,199,0.68) 60%, transparent 100%);
+}
+body.gallery-page .top-bar.is-cream .back-link { color:rgba(14,12,10,0.72); }
+body.gallery-page .top-bar.is-cream .back-link:hover { color:var(--ink); }
+body.gallery-page .top-bar.is-cream .top-bar-logo span { color:rgba(14,12,10,0.72); }
+body.gallery-page .top-bar.is-cream .top-bar-logo span.cyan { color:var(--teal); }
+body.gallery-page .top-bar.is-dark {
+    background:linear-gradient(180deg, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.15) 60%, transparent 100%);
+}
+body.gallery-page .top-bar.is-dark .back-link { color:rgba(255,255,255,0.72); }
+body.gallery-page .top-bar.is-dark .back-link:hover { color:#fff; }
+body.gallery-page .top-bar.is-dark .top-bar-logo,
+body.gallery-page .top-bar.is-dark .top-bar-logo span { color:rgba(255,255,255,0.72); }
+body.gallery-page .top-bar.is-dark .top-bar-logo span.cyan { color:var(--teal); }
+.back-link {
+    font-family:var(--site-ui-font);
+    font-weight:300;
+    font-size:clamp(10px,0.72vw,12px);
+    letter-spacing:3px;
+    text-transform:uppercase;
+    color:rgba(255,255,255,0.72);
+    text-decoration:none;
+    transition:color 0.25s;
+    pointer-events:all;
+    display:inline-flex;
+    align-items:center;
+    gap:10px;
+    position:relative;
+}
+.back-link::after {
+    content:'';
+    position:absolute;
+    left:0;
+    bottom:0;
+    width:0;
+    height:1px;
+    background:var(--teal);
+    transition:width 0.3s cubic-bezier(0.22,1,0.36,1);
+}
+.back-link:hover::after {
+    width:100%;
+}
+.back-link .back-arrow { color:var(--teal); }
+.back-link:hover { color:#fff; }
+body.gallery-page a:focus-visible { outline:none; }
+.top-bar-logo {
+    font-family:var(--site-ui-font);
+    font-weight:300;
+    font-size:clamp(10px,0.72vw,12px);
+    letter-spacing:3px;
+    text-transform:uppercase;
+    color:rgba(255,255,255,0.72);
+    pointer-events:all;
+}
+.top-bar-logo span { display:inline-block; transition:color 0.15s; }
+.top-bar-logo span.cyan { color:var(--teal); }
+
+.progress-bar-wrap {
+    position:fixed;
+    bottom:0;
+    left:0;
+    right:0;
+    z-index:9000;
+    height:2px;
+    background:rgba(14,12,10,0.07);
+}
+.progress-bar-fill {
+    height:100%;
+    background:var(--teal);
+    width:0%;
+    transition:width 0.08s linear;
+    opacity:0.55;
+}
+
+.gal-page {
+    position:relative;
+    z-index:1;
+    padding-top:0;
+    padding-bottom:0;
+    width:100%;
+    max-width:100%;
+    background:transparent;
+    /* Avoid scroll anchoring nudging the page when distant tiles finish painting */
+    overflow-anchor:none;
+}
+#gallery-main:has(.gal-mosaic--digital) {
+    overflow-x:hidden;
+    max-width:none;
+}
+@supports (overflow:clip) {
+    #gallery-main:has(.gal-mosaic--digital) {
+        overflow-x:clip;
+    }
+}
+
+/*
+   tea-club stacked .panel — click dots/arrows (not wheel): outgoing + incoming
+   crossfade together via opacity 0.5s ease + visibility delays (goTo toggles .active).
+*/
+.gal-stage-stack {
+    display:grid;
+    grid-template-columns:1fr;
+    max-width:42rem;
+    min-height:clamp(120px,22vh,240px);
+}
+.gal-stage-layer {
+    grid-column:1;
+    grid-row:1;
+    opacity:0;
+    visibility:hidden;
+    pointer-events:none;
+    transition:opacity 0.5s ease, visibility 0s linear 0.5s;
+    contain:layout style;
+    will-change:opacity;
+}
+.gal-stage-layer.active {
+    opacity:1;
+    visibility:visible;
+    pointer-events:auto;
+    z-index:1;
+    transition:opacity 0.5s ease, visibility 0s linear 0s;
+}
+.gal-stage-layer:not(.active) {
+    z-index:0;
+}
+
+/* tea-club .panel-anim + riseIn — only inside the incoming layer, after goTo-style toggle */
+@keyframes riseIn { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:translateY(0)} }
+.gal-stage-layer .panel-anim { opacity:0; transform:translateY(14px); }
+.gal-stage-layer .panel-anim.fired { animation:riseIn 0.55s ease both; }
+.gal-stage-layer .panel-anim-d1.fired { animation-delay:0.12s; }
+.gal-stage-layer .panel-anim-d2.fired { animation-delay:0.26s; }
+
+.gal-shell {
+    width:100%;
+    max-width:min(1200px, 100%);
+    margin:0 auto;
+    padding:0 var(--page-pad);
+    position:relative;
+    z-index:1;
+}
+
+.gal-article {
     min-width:0;
 }
 
-.grid-item {
-    position:relative; overflow:hidden;
-    background:#050808;
-    display:block;
-    cursor:none;
+.gal-masthead {
+    padding-top:clamp(40px,6vh,72px);
+    padding-bottom:clamp(24px,3.5vh,40px);
+    margin-bottom:0;
+    border-bottom:1px solid rgba(14,12,10,0.12);
+    position:relative;
+    background:var(--page-bg);
+}
+.gal-layer-head,
+.gal-kicker,
+.gal-cats {
+    padding-left:clamp(14px,1.85vw,22px);
+}
+
+.gal-layer-head {
+    min-width:0;
+}
+
+/* Category tabs — cyan underline (active + hover) */
+.gal-cats {
+    display:flex;
+    flex-wrap:wrap;
+    align-items:center;
+    gap:clamp(10px,2.5vw,28px);
+    margin-top:clamp(18px,2.5vh,28px);
+}
+.gal-cats button {
+    font-family:var(--site-ui-font);
+    font-weight:300;
+    font-size:clamp(9px,0.72vw,12px);
+    letter-spacing:0.12em;
+    text-transform:uppercase;
+    color:rgba(14,12,10,0.62);
+    background:none;
+    border:none;
+    padding:10px 6px;
+    margin:-10px -6px;
+    position:relative;
+    transition:color 0.2s ease;
+}
+.gal-cats button::after {
+    content:'';
+    position:absolute;
+    bottom:6px;
+    left:6px;
+    width:0;
+    height:1px;
+    background:var(--teal);
+    transition:width 0.28s ease;
+    pointer-events:none;
+}
+.gal-cats button:hover {
+    color:var(--ink);
+}
+.gal-cats button:hover::after {
+    width:calc(100% - 12px);
+}
+.gal-cats button:focus-visible {
+    outline:none;
+}
+.gal-cats button.active {
+    color:var(--ink);
+}
+.gal-cats button.active::after {
+    width:calc(100% - 12px);
+}
+
+/* Intro (overview) — identical structure/typography to tea/graphic-design */
+.panel-overview {
+    position:relative;
+    display:flex;
+    flex-direction:row;
+    align-items:stretch;
+    flex-wrap:wrap;
+    padding:clamp(56px,8vh,96px) 0 clamp(48px,7vh,88px);
+    overflow:hidden;
     width:100%;
-}
-.grid-item img {
-    width:100%; height:auto; display:block;
-    filter:brightness(0.72) saturate(0.85);
-    transition:filter 0.45s ease, transform 0.55s cubic-bezier(0.22,1,0.36,1);
-    transform:scale(1.0);
-}
-.grid-item:hover img { filter:brightness(0.9) saturate(1.08); transform:scale(1.02); }
-
-.grid-overlay {
-    position:absolute; inset:0; pointer-events:none;
-    display:flex; align-items:flex-end; justify-content:space-between;
-    padding:10px 12px;
-    background:linear-gradient(to top, rgba(0,0,0,0.55) 0%, transparent 45%);
-    opacity:0; transition:opacity 0.3s ease;
-}
-.grid-item:hover .grid-overlay { opacity:1; }
-.grid-idx {
-    font-size:clamp(7px,0.55vw,9px); letter-spacing:3px;
-    color:var(--teal); opacity:0.7;
-}
-.grid-open-hint {
-    font-size:clamp(7px,0.55vw,9px); letter-spacing:2px; text-transform:uppercase;
-    color:rgba(221,216,204,0.5);
+    max-width:100%;
+    box-sizing:border-box;
+    background:var(--page-bg);
 }
 
-/* ── SECTION RULE between groups (digital art) ── */
-.grid-section-break {
-    column-span:all; break-inside:avoid;
-    display:flex; align-items:center; gap:16px;
-    padding:clamp(24px,3vh,40px) 0 clamp(16px,2vh,24px);
+/* Gallery uses the same tighter “overview” spacing as graphic-design */
+body.gallery-page .panel-overview {
+    padding:clamp(34px,4.6vh,60px) 0 clamp(22px,3.2vh,40px);
+    align-items:flex-start;
 }
-.grid-section-label {
-    font-size:clamp(8px,0.65vw,10px); letter-spacing:4px; text-transform:uppercase;
-    color:rgba(0,200,180,0.55); white-space:nowrap;
-}
-.grid-section-line {
-    flex:1; height:1px;
-    background:linear-gradient(90deg, rgba(0,200,180,0.18), transparent);
+body.gallery-page .panel-overview .ov-left,
+body.gallery-page .panel-overview .ov-right {
+    justify-content:flex-start;
+    padding-top:clamp(18px,2.8vh,30px);
+    padding-bottom:clamp(14px,2.2vh,26px);
 }
 
-/* bottom glow */
-body::after {
-    content:''; position:fixed; bottom:0; left:0; right:0; height:55vh;
-    pointer-events:none; z-index:1;
-    background:
-        radial-gradient(ellipse 60vw 50vh at 80% 120%, rgba(0,200,180,0.09) 0%, transparent 70%),
-        radial-gradient(ellipse 35vw 30vh at 20% 115%, rgba(0,200,180,0.06) 0%, transparent 70%);
+/* Keep collection tabs readable without creating a big blank band */
+body.gallery-page .gal-cats { margin-top:clamp(10px,1.6vh,18px); }
+
+/* Gallery-specific readability tweaks */
+body.gallery-page .overview-tagline {
+    font-size:clamp(20px,2.6vw,44px);
+    line-height:1.22;
+}
+body.gallery-page .stat-val {
+    color:rgba(14,12,10,0.86);
+    text-shadow:0 1px 0 rgba(255,255,255,0.18);
+}
+body.gallery-page .stat-item:hover .stat-val { color:var(--ink); }
+.panel-overview::before {
+    content:'';
+    position:absolute;
+    inset:0;
+    pointer-events:none;
+    background:radial-gradient(ellipse 55% 55% at 0% 92%, rgba(0,200,180,0.06) 0%, transparent 55%),
+        radial-gradient(ellipse 28% 28% at 96% 8%, rgba(0,200,180,0.04) 0%, transparent 50%);
+}
+.ov-left {
+    flex:1 1 360px;
+    max-width:100%;
+    min-width:0;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    padding:clamp(24px,4vh,40px) var(--page-pad) clamp(32px,5vh,48px);
+    border-right:1px solid rgba(0,200,180,0.1);
+    position:relative;
+    z-index:2;
+    gap:clamp(18px,2.5vh,28px);
+}
+.overview-header { display:flex; align-items:center; gap:14px; }
+.overview-eyebrow { font-family:var(--site-ui-font); font-weight:300; font-size:clamp(10px,0.72vw,12px); letter-spacing:4px; text-transform:uppercase; color:rgba(0,200,180,0.7); flex-shrink:0; }
+.overview-rule { flex:1; height:1px; background:linear-gradient(90deg, rgba(0,200,180,0.2), transparent); }
+.overview-tagline { font-family:var(--display-font); font-weight:300; font-size:clamp(26px,3.5vw,56px); line-height:1.18; color:var(--ink); letter-spacing:-0.3px; }
+.overview-tagline em { font-style:italic; }
+.overview-tagline em .kw { color:rgba(0,200,180,0.78); font-style:italic; }
+.panel-overview .ov-anim { opacity:0; transform:translateY(22px); transition:opacity 0.9s cubic-bezier(0.22,1,0.36,1), transform 0.9s cubic-bezier(0.22,1,0.36,1); }
+.panel-overview .ov-anim-pull { opacity:0; transform:translateY(28px); transition:opacity 1.1s cubic-bezier(0.22,1,0.36,1), transform 1.1s cubic-bezier(0.22,1,0.36,1); }
+.panel-overview.overview-revealed .overview-header.ov-anim,
+.panel-overview.overview-revealed .overview-tagline.ov-anim-pull,
+.panel-overview.overview-revealed .overview-meta.ov-anim,
+.panel-overview.overview-revealed .ov-right-stack.ov-anim { opacity:1; transform:translateY(0); }
+.panel-overview.overview-revealed .overview-header.ov-anim { transition-delay:0s; }
+.panel-overview.overview-revealed .overview-tagline.ov-anim-pull { transition-delay:0.12s; }
+.panel-overview.overview-revealed .overview-meta.ov-anim { transition-delay:0.22s; }
+.panel-overview.overview-revealed .ov-right-stack.ov-anim { transition-delay:0.32s; }
+.overview-meta { font-family:var(--site-ui-font); font-weight:300; font-size:clamp(8px,0.68vw,10px); letter-spacing:2.5px; line-height:2; margin:0; }
+.overview-meta-sep { display:inline-block; margin:0 6px; color:rgba(0,200,180,0.18); }
+.overview-meta span:not(.overview-meta-sep) { color:rgba(14,12,10,0.48); transition:color 0.25s; white-space:nowrap; }
+.overview-meta span:not(.overview-meta-sep):hover { color:var(--ink); }
+.overview-meta span.tag-active { color:rgba(0,200,180,0.82); }
+.ov-right {
+    flex:1 1 320px;
+    max-width:100%;
+    min-width:0;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    padding:clamp(24px,4vh,40px) var(--page-pad) clamp(32px,5vh,48px);
+    position:relative;
+    z-index:2;
+    gap:clamp(8px,1.2vh,14px);
+}
+.ov-right-stack { display:flex; flex-direction:column; gap:clamp(8px,1.2vh,14px); }
+.ov-right-header { display:flex; align-items:center; gap:12px; margin-bottom:clamp(6px,1vh,12px); }
+.ov-right-label { font-family:var(--site-ui-font); font-weight:300; font-size:clamp(10px,0.72vw,12px); letter-spacing:4px; text-transform:uppercase; color:rgba(0,200,180,0.6); flex-shrink:0; }
+.ov-right-rule { flex:1; height:1px; background:linear-gradient(90deg, rgba(0,200,180,0.14), transparent); }
+.overview-stats { display:grid; grid-template-columns:1fr 1fr; gap:clamp(18px,2.75vh,36px) clamp(20px,3vw,48px); width:100%; }
+.stat-item { display:flex; flex-direction:column; gap:0; }
+.stat-val { font-family:var(--display-font); font-weight:300; font-size:clamp(36px,5vw,72px); line-height:0.9; color:var(--teal); letter-spacing:-2px; transition:color 0.3s; padding-bottom:clamp(8px,1.2vh,14px); }
+.stat-item:hover .stat-val { color:var(--ink); }
+.stat-label { font-family:var(--site-ui-font); font-weight:300; font-size:clamp(9px,0.65vw,10px); letter-spacing:2.8px; text-transform:uppercase; color:rgba(14,12,10,0.5); line-height:1.5; transition:color 0.3s; padding-top:clamp(8px,1.2vh,14px); }
+.stat-item:hover .stat-label { color:rgba(14,12,10,0.78); }
+
+@media (max-width:700px) {
+    .ov-left { border-right:none; border-bottom:1px solid rgba(0,200,180,0.1); }
+    .overview-meta span:not(.overview-meta-sep) { white-space:normal; }
 }
 
-footer {
-    position:fixed; bottom:0; right:0; z-index:600; pointer-events:none;
-    padding:clamp(18px,2.5vh,28px) clamp(20px,4vw,80px);
+/* Tea/GD blur plate (light page) behind overview */
+body.gallery-page .tea-blur-plate {
+    position:absolute; inset:0; z-index:0; pointer-events:none;
+    background:transparent; overflow:hidden; isolation:isolate;
 }
-.footer-copy { font-size:clamp(7px,0.65vw,11px); letter-spacing:2px; color:rgba(255,255,255,0.18); }
-.footer-copy span.cyan { color:var(--teal); }
+body.gallery-page .tea-blur-plate--overview {
+    inset:auto;
+    top:clamp(-52px,-6.8vh,-28px);
+    left:clamp(-16px,-2.4vw,-8px);
+    right:clamp(-16px,-2.4vw,-8px);
+    bottom:clamp(-30px,-4vh,-12px);
+    overflow:visible;
+}
+body.gallery-page .tea-blur-plate__frame { position:absolute; inset:0; overflow:hidden; width:100%; height:100%; }
+body.gallery-page .tea-blur-plate--overview .tea-blur-plate__frame { overflow:visible; z-index:0; }
+body.gallery-page .tea-blur-plate--overview img {
+    position:absolute;
+    left:-22%;
+    top:-26%;
+    width:144%;
+    height:148%;
+    max-width:none;
+    max-height:none;
+    object-fit:cover;
+    object-position:58% 0%;
+    transform:scale(1.14);
+    transform-origin:center center;
+    /* Keep colour vibrant on warm paper without turning brown */
+    filter:blur(60px) brightness(0.92) saturate(1.55) contrast(1.08) hue-rotate(-12deg);
+    opacity:0.30;
+    mix-blend-mode:screen;
+}
 
-/* ── LIGHTBOX ── */
-#lightbox {
-    position:fixed; inset:0; z-index:10000;
-    background:rgba(0,0,0,0.97);
-    display:flex; align-items:center; justify-content:center;
-    opacity:0; pointer-events:none; transition:opacity 0.35s ease;
+.gal-title {
+    font-family:var(--display-font);
+    font-weight:300;
+    font-style:italic;
+    font-size:clamp(36px,4.6vw,88px);
+    letter-spacing:-0.03em;
+    line-height:0.92;
+    color:var(--ink);
+    margin:0 0 clamp(14px,2vh,22px);
 }
-#lightbox.open { opacity:1; pointer-events:all; }
-#lightbox-backdrop { position:absolute; inset:0; z-index:1; }
-#lightbox-inner {
-    position:relative; z-index:2;
-    display:inline-flex; align-items:center; justify-content:center;
+
+.gal-desc {
+    font-family:var(--display-font);
+    font-weight:300;
+    font-style:italic;
+    font-size:clamp(17px,1.65vw,28px);
+    line-height:1.38;
+    letter-spacing:-0.01em;
+    color:rgba(14,12,10,0.74);
+    max-width:38rem;
+    margin-bottom:clamp(14px,2vh,18px);
 }
-#lightbox-img {
-    display:block; max-width:88vw; max-height:88vh;
-    object-fit:contain; pointer-events:all;
-    opacity:0; border:1px solid rgba(0,200,180,0.08);
+.gal-desc-link {
+    font-family:inherit;
+    font-size:inherit;
+    font-style:italic;
+    font-weight:400;
+    color:var(--teal);
+    cursor:pointer;
+    text-decoration:underline;
+    text-decoration-color:var(--teal);
+    text-decoration-thickness:max(1.5px,0.07em);
+    text-underline-offset:0.22em;
+    transition:color 0.38s cubic-bezier(0.25, 0.1, 0.25, 1),
+        text-decoration-color 0.38s cubic-bezier(0.25, 0.1, 0.25, 1);
 }
-#lightbox.open #lightbox-img { opacity:1; }
-#lb-close {
-    position:fixed; top:clamp(16px,2vh,28px); right:clamp(20px,2.5vw,40px); z-index:10003;
-    background:transparent; border:none; font-family:'Courier Prime', monospace;
-    font-size:clamp(8px,0.7vw,11px); letter-spacing:3px; text-transform:uppercase;
-    color:rgba(0,200,180,0.5); transition:color 0.2s; padding:6px;
+.gal-desc-link::after {
+    content:' \2197';
+    font-family:var(--site-ui-font);
+    font-size:0.62em;
+    font-style:normal;
+    font-weight:400;
+    letter-spacing:0;
+    color:inherit;
+    opacity:0.7;
+    vertical-align:0.15em;
+    margin-left:0.06em;
+    text-decoration:none;
+    display:inline-block;
+    transition:color 0.38s cubic-bezier(0.25, 0.1, 0.25, 1),
+        opacity 0.38s cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+.gal-desc-link:hover {
+    color:var(--teal-dark);
+    text-decoration-color:var(--teal-dark);
+}
+.gal-desc-link:hover::after {
+    opacity:1;
+}
+.gal-desc-link:focus-visible {
+    color:var(--teal-dark);
+    text-decoration-color:var(--teal-dark);
+    outline:2px solid rgba(0,200,180,0.5);
+    outline-offset:3px;
+}
+.gal-credits {
+    font-family:var(--site-ui-font);
+    font-weight:300;
+    font-size:clamp(9px,0.72vw,12px);
+    letter-spacing:0.28em;
+    text-transform:uppercase;
+    line-height:1.7;
+    max-width:40rem;
+    display:flex;
+    flex-wrap:wrap;
+    align-items:baseline;
+    gap:0;
+    margin:0 0 clamp(14px,2vh,18px);
+}
+/* anoaeyto .abt-tool-name / .abt-tool-dot — per-token white on hover */
+.gal-credit-part {
+    color:rgba(14,12,10,0.62);
+    cursor:default;
+    transition:color 0.25s ease;
+}
+.gal-credit-part:hover { color:var(--ink); }
+.gal-credit-dot {
+    color:var(--teal);
+    font-size:clamp(10px,0.9vw,14px);
+    opacity:0.7;
+    padding:0 clamp(2px,0.35vw,5px);
+    user-select:none;
+    pointer-events:none;
+}
+
+/* Full-bleed mosaic: landscape = full-width row; portrait runs = triptych (3) / pair (2) */
+.gal-mosaic-outer {
+    width:100vw;
+    position:relative;
+    left:50%;
+    right:50%;
+    margin-left:-50vw;
+    margin-right:-50vw;
+    margin-top:0;
+    padding-bottom:0;
+    overflow-x:hidden;
+    overflow-y:visible;
+    background:#0a0a0a;
+    isolation:isolate;
+    transform:translateZ(0);
+}
+.gal-mosaic-outer:has(.gal-mosaic--digital) {
+    padding-bottom:0;
+    margin-top:0;
+    /* True edge-to-edge (avoids left:50% + ±50vw drift / scrollbar inset on some engines) */
+    width:100vw;
+    max-width:none;
+    left:0;
+    right:auto;
+    margin-left:calc(50% - 50vw);
+    margin-right:calc(50% - 50vw);
+    box-sizing:border-box;
+    padding-left:0;
+    padding-right:0;
+}
+.gal-mosaic--digital,
+.gal-mosaic--digital .gal-mosaic-row {
+    width:100%;
+    max-width:none;
+}
+.gal-mosaic {
+    display:flex;
+    flex-direction:column;
+    gap:3px;
+    width:100%;
+    background:#0a0a0a;
+}
+/* Game Dev: flex stack — alternating 3-column row + one full-bleed row (see buildGameDevMosaic) */
+.gal-mosaic--digital {
+    display:flex;
+    flex-direction:column;
+    gap:0;
+    width:100%;
+    background:#0a0a0a;
+}
+@media (max-width:699px) {
+    .gal-mosaic--digital .gal-mosaic-row--triptych {
+        display:flex;
+        flex-direction:column;
+        height:auto;
+        min-height:0;
+        max-height:none;
+    }
+    .gal-mosaic--digital .gal-mosaic-row--triptych .gal-item {
+        flex:0 0 auto;
+        width:100%;
+        height:auto;
+    }
+}
+@media (min-width:700px) {
+    /* Flex thirds: no grid fr rounding hairlines; gap:0 flush joins */
+    .gal-mosaic--digital .gal-mosaic-row--triptych {
+        display:flex;
+        flex-direction:row;
+        flex-wrap:nowrap;
+        align-items:stretch;
+        width:100%;
+        max-width:100%;
+        gap:0;
+        column-gap:0;
+        grid-template-columns:unset;
+        grid-template-rows:unset;
+        height:var(--grid-row-h);
+        min-height:var(--grid-row-h);
+        max-height:var(--grid-row-max);
+    }
+    .gal-mosaic--digital .gal-mosaic-row--triptych .gal-item {
+        flex:1 1 0;
+        min-width:0;
+        width:0;
+    }
+    /* 1–2 tiles: still a 3-col grid so a single image is one column wide, not full viewport. */
+    .gal-mosaic--digital .gal-mosaic-row--triptych.gal-mosaic-row--t1 {
+        display:grid;
+        grid-template-columns:repeat(3, minmax(0, 1fr));
+        grid-template-rows:minmax(0, 1fr);
+    }
+    .gal-mosaic--digital .gal-mosaic-row--triptych.gal-mosaic-row--t1 .gal-item {
+        grid-column:1;
+        width:100%;
+        min-width:0;
+        flex:unset;
+    }
+    .gal-mosaic--digital .gal-mosaic-row--triptych.gal-mosaic-row--t2 {
+        display:grid;
+        grid-template-columns:repeat(3, minmax(0, 1fr));
+        grid-template-rows:minmax(0, 1fr);
+    }
+    .gal-mosaic--digital .gal-mosaic-row--triptych.gal-mosaic-row--t2 .gal-item {
+        width:100%;
+        min-width:0;
+        flex:unset;
+    }
+    .gal-mosaic--digital .gal-mosaic-row--triptych.gal-mosaic-row--t2 .gal-item:nth-child(1) {
+        grid-column:1;
+    }
+    .gal-mosaic--digital .gal-mosaic-row--triptych.gal-mosaic-row--t2 .gal-item:nth-child(2) {
+        grid-column:2;
+    }
+    .gal-mosaic--digital .gal-mosaic-row--bleed {
+        height:var(--bleed-min);
+        min-height:var(--bleed-min);
+        max-height:var(--bleed-max);
+    }
+}
+/* Photography — editorial rows: triples + wide+stack rhythm (denser aspect + gap = less scroll) */
+.gal-mosaic.gal-mosaic--photo {
+    display:flex;
+    flex-direction:column;
+    gap:1px;
+    width:100%;
+    background:#0a0a0a;
+}
+.gal-photo-row {
+    display:grid;
+    gap:1px;
+    width:100%;
+    min-height:0;
+}
+.gal-photo-row--3 {
+    grid-template-columns:repeat(3, minmax(0, 1fr));
+}
+.gal-photo-row--2 {
+    grid-template-columns:repeat(2, minmax(0, 1fr));
+}
+.gal-photo-row--1 {
+    grid-template-columns:minmax(0, 1fr);
+}
+.gal-photo-row--3 .gal-item,
+.gal-photo-row--2 .gal-item,
+.gal-photo-row--1 .gal-item {
+    aspect-ratio:3/2;
+}
+.gal-photo-row--split {
+    grid-template-columns:1.5fr 1fr;
+    align-items:stretch;
+}
+.gal-item.gal-item--photo-wide {
+    aspect-ratio:2/1;
+    min-height:0;
+}
+.gal-photo-stack {
+    display:flex;
+    flex-direction:column;
+    gap:1px;
+    min-height:0;
+    min-width:0;
+}
+.gal-photo-stack .gal-item {
+    flex:1 1 0;
+    min-height:0;
+    aspect-ratio:unset;
+}
+@media (max-width:640px) {
+    .gal-photo-row--3 {
+        grid-template-columns:repeat(2, minmax(0, 1fr));
+    }
+    .gal-photo-row--split {
+        grid-template-columns:1fr;
+    }
+    .gal-photo-stack {
+        flex-direction:row;
+    }
+    .gal-photo-stack .gal-item {
+        flex:1 1 0;
+        aspect-ratio:3/2;
+    }
+}
+@media (max-width:380px) {
+    .gal-photo-row--3 {
+        grid-template-columns:minmax(0, 1fr);
+    }
+}
+
+.gal-mosaic-row {
+    display:grid;
+    gap:3px;
+    width:100%;
+    margin:0;
+}
+/* Digital/Game Dev: no cell gap — images sit edge-to-edge for full-width feel */
+.gal-mosaic--digital .gal-mosaic-row {
+    gap:0;
+}
+/* Lotus: slightly tighter row rhythm than default 3px */
+.gal-mosaic--lotus .gal-mosaic-row {
+    gap:2px;
+}
+.gal-mosaic-row--bleed {
+    grid-template-columns:1fr;
+    --bleed-min:min(100vh, 85vw);
+    --bleed-max:min(100vh, 85vw);
+    min-height:var(--bleed-min);
+    max-height:var(--bleed-max);
+}
+.gal-mosaic-row--bleed.gal-mosaic-row--portrait {
+    --bleed-min:min(100vh, 140vw);
+    --bleed-max:min(100vh, 140vw);
+}
+.gal-mosaic-row--pair {
+    grid-template-columns:1fr 1fr;
+    min-height:var(--grid-row-h, min(100vh, 80vh));
+    max-height:var(--grid-row-max, 100vh);
+}
+.gal-mosaic-row--triptych {
+    grid-template-columns:repeat(3, 1fr);
+    min-height:var(--grid-row-h, min(100vh, 80vh));
+    max-height:var(--grid-row-max, 100vh);
+}
+@media (max-width:699px) {
+    .gal-mosaic-row--bleed {
+        min-height:0;
+        max-height:none;
+    }
+    .gal-mosaic-row--pair,
+    .gal-mosaic-row--triptych {
+        grid-template-columns:1fr;
+        min-height:0;
+        max-height:none;
+    }
+    .gal-mosaic-row--bleed .gal-item,
+    .gal-mosaic-row--pair .gal-item,
+    .gal-mosaic-row--triptych .gal-item {
+        min-height:0;
+        max-height:none;
+        height:auto;
+        aspect-ratio:var(--g-ar);
+    }
+}
+@media (min-width:700px) {
+    .gal-mosaic-row--pair .gal-item,
+    .gal-mosaic-row--triptych .gal-item {
+        aspect-ratio:unset;
+    }
+}
+
+.gal-item {
+    position:relative;
+    border:none;
+    padding:0;
+    background:#0a0a0a;
+    overflow:hidden;
+    display:block;
+    width:100%;
+    min-height:0;
+    align-self:stretch;
+}
+.gal-mosaic-row--bleed .gal-item {
+    min-height:var(--bleed-min);
+    max-height:var(--bleed-max);
+}
+.gal-mosaic-row--bleed.gal-mosaic-row--portrait .gal-item {
+    min-height:var(--bleed-min);
+    max-height:var(--bleed-max);
+}
+.gal-mosaic-row--pair .gal-item,
+.gal-mosaic-row--triptych .gal-item {
+    min-height:0;
+    height:100%;
+}
+.gal-item img {
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+    min-width:100%;
+    min-height:100%;
+    object-fit:cover;
+    object-position:center center;
+    display:block;
+    opacity:0;
+    transition:opacity 0.3s ease;
+}
+/* Mosaic: show images immediately — same “already there” feel as scrolling the main portfolio (no per-tile fade reload). */
+#gallery-grid.gal-mosaic .gal-item img {
+    opacity:1;
+    transition:none;
+    image-rendering:auto;
+}
+/* Game Dev 3-up: tight columns (flex); tile bg matches page so any subpixel is invisible */
+.gal-mosaic--digital .gal-mosaic-row--triptych .gal-item {
+    background:#000;
+}
+.gal-mosaic--digital .gal-item {
+    min-width:0;
+}
+.gal-mosaic--digital .gal-mosaic-row--triptych .gal-item img {
+    object-fit:cover;
+    object-position:center center;
+    min-width:100%;
+    min-height:100%;
+}
+/* Center column: full artwork, no crop — row height is derived from this image’s aspect */
+.gal-mosaic--digital .gal-mosaic-row--triptych .gal-item.gal-item--triptych-hero img {
+    object-fit:contain;
+    object-position:center center;
+    min-width:0;
+    min-height:0;
+    max-width:none;
+    max-height:none;
+}
+/* Game Dev full-width bleed: cover so the strip stays 100vw with no side bands when height is min(100vh, …). */
+.gal-mosaic--digital .gal-mosaic-row--bleed .gal-item img {
+    object-fit:cover;
+    object-position:center center;
+    min-width:100%;
+    min-height:100%;
+}
+.gal-item img.gal-img-in {
+    opacity:1;
+}
+@media (prefers-reduced-motion: reduce) {
+    .gal-item img {
+        opacity:1;
+        transition:none;
+    }
+    #gallery-grid.gal-mosaic .gal-item img {
+        opacity:1;
+    }
+}
+
+.gal-empty {
     display:none;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    min-height:28vh;
+    text-align:center;
+    padding:clamp(32px,6vh,64px) 24px;
 }
-#lightbox.open #lb-close { display:block; }
-#lb-close:hover { color:var(--teal); }
-.lb-arrow {
-    position:absolute; top:50%; transform:translateY(-50%);
-    z-index:3; background:transparent; border:none;
-    padding:18px 14px; font-size:clamp(14px,1.4vw,22px);
-    color:rgba(0,200,180,0.28); transition:color 0.2s; line-height:1;
+.gal-empty.visible { display:flex; }
+.gal-empty-label {
+    font-family:var(--site-ui-font);
+    font-weight:300;
+    font-size:clamp(8px,0.65vw,11px);
+    letter-spacing:0.22em;
+    text-transform:uppercase;
+    color:rgba(0,200,180,0.35);
+    margin-bottom:12px;
 }
-.lb-arrow:hover { color:var(--teal); }
-.lb-arrow.prev { left:-52px; }
-.lb-arrow.next { right:-52px; }
-#lb-counter {
-    position:absolute; bottom:-28px; left:50%; transform:translateX(-50%);
-    z-index:3; font-size:clamp(8px,0.65vw,10px); letter-spacing:3px;
-    color:rgba(0,200,180,0.38); white-space:nowrap;
+.gal-empty-msg {
+    font-family:var(--display-font);
+    font-style:italic;
+    font-weight:300;
+    font-size:clamp(18px,2.2vw,32px);
+    color:rgba(255,255,255,0.3);
 }
 
-/* ── EMPTY STATE ── */
-.empty-state {
-    padding:clamp(48px,8vh,96px) clamp(24px,4vw,64px);
-    display:flex; flex-direction:column; align-items:flex-start; gap:12px;
-    display:none;
+/* Footer — copy of anoaeyto.html footer (sizing, spacing, fonts); .gal-page-endcap is layout shell only */
+.gal-page-endcap {
+    position:relative;
+    z-index:1;
+    background:#000;
+    border-top:1px solid rgba(255,255,255,0.08);
+    padding-top:0;
 }
-.empty-state.visible { display:flex; }
-.empty-label {
-    font-size:clamp(8px,0.68vw,11px); letter-spacing:4px; text-transform:uppercase;
-    color:rgba(0,200,180,0.4);
+footer.gal-page-footer {
+    position:relative;
+    background:#000;
+    border-top:1px solid rgba(255,255,255,0.08);
+    overflow:hidden;
+    padding:clamp(48px,7vh,80px) clamp(28px,4vw,72px) clamp(28px,4vh,48px);
+    /* Default (used briefly before JS sets [data-gal-cat]) */
+    --gd-footer-ink:linear-gradient(90deg, rgba(205,196,178,0.95) 0%, rgba(0,200,180,0.92) 45%, rgba(188,128,142,0.92) 70%, rgba(220,180,120,0.88) 100%);
+    --gd-footer-ink-soft:linear-gradient(90deg, rgba(205,196,178,0.62) 0%, rgba(188,128,142,0.66) 62%, rgba(220,180,120,0.60) 100%);
 }
-.empty-msg {
-    font-family:'Cormorant', Georgia, serif; font-weight:300; font-style:italic;
-    font-size:clamp(22px,2.5vw,40px); color:rgba(255,255,255,0.25);
+
+/* Footer hues track the active banner/collection */
+#gallery-main[data-gal-cat="digital"] footer.gal-page-footer {
+    --gd-footer-ink:linear-gradient(90deg, rgba(205,196,178,0.95) 0%, rgba(0,200,180,0.92) 38%, rgba(188,128,142,0.94) 70%, rgba(220,170,110,0.90) 100%);
+    --gd-footer-ink-soft:linear-gradient(90deg, rgba(205,196,178,0.62) 0%, rgba(188,128,142,0.68) 58%, rgba(220,170,110,0.62) 100%);
+}
+#gallery-main[data-gal-cat="photography"] footer.gal-page-footer {
+    --gd-footer-ink:linear-gradient(90deg, rgba(205,196,178,0.95) 0%, rgba(128,142,120,0.92) 40%, rgba(0,200,180,0.92) 70%, rgba(188,128,142,0.88) 100%);
+    --gd-footer-ink-soft:linear-gradient(90deg, rgba(205,196,178,0.62) 0%, rgba(128,142,120,0.64) 55%, rgba(188,128,142,0.62) 100%);
+}
+#gallery-main[data-gal-cat="lotus"] footer.gal-page-footer {
+    --gd-footer-ink:linear-gradient(90deg, rgba(205,196,178,0.95) 0%, rgba(220,170,110,0.92) 36%, rgba(188,128,142,0.92) 66%, rgba(0,200,180,0.88) 100%);
+    --gd-footer-ink-soft:linear-gradient(90deg, rgba(205,196,178,0.62) 0%, rgba(188,128,142,0.66) 58%, rgba(0,200,180,0.58) 100%);
+}
+footer.gal-page-footer .footer-wordmark {
+    position:absolute;
+    bottom:-0.28em;
+    left:50%;
+    transform:translateX(calc(-50% + clamp(10px,1.15vw,22px)));
+    font-family:var(--display-font);
+    font-style:italic;
+    font-weight:300;
+    font-size:clamp(80px,14vw,220px);
+    letter-spacing:0.01em;
+    color:rgba(230,217,192,0.22);
+    white-space:nowrap;
+    pointer-events:none;
+    user-select:none;
+    line-height:1;
+}
+footer.gal-page-footer .footer-content {
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    position:relative;
+    z-index:1;
+}
+footer.gal-page-footer .footer-left {
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+}
+footer.gal-page-footer .footer-location {
+    font-family:var(--site-ui-font);
+    font-weight:300;
+    font-size:clamp(8px,0.6vw,10px);
+    letter-spacing:3px;
+    text-transform:uppercase;
+    color:rgba(255,255,255,0.28);
+}
+footer.gal-page-footer .footer-copy {
+    font-family:var(--site-ui-font);
+    font-weight:300;
+    font-size:clamp(8px,0.6vw,10px);
+    letter-spacing:2px;
+    color:rgba(255,255,255,0.22);
+}
+footer.gal-page-footer .footer-copy span.cyan { color:var(--teal); }
+footer.gal-page-footer .footer-links {
+    display:flex;
+    gap:clamp(12px,1.65vw,28px);
+    align-items:center;
+}
+footer.gal-page-footer .footer-links a {
+    font-family:var(--site-ui-font);
+    font-weight:300;
+    font-size:clamp(8px,0.65vw,10px);
+    letter-spacing:3px;
+    text-transform:uppercase;
+    color:rgba(255,255,255,0.35);
+    text-decoration:none;
+    transition:color 0.25s ease;
+    position:relative;
+    display:inline-block;
+    padding:12px 6px;
+    margin:-12px -6px;
+    cursor:none;
+}
+footer.gal-page-footer .footer-links a::after {
+    content:'';
+    position:absolute;
+    bottom:9px;
+    left:6px;
+    width:0;
+    height:1px;
+    background:var(--teal);
+    transition:width 0.3s ease;
+}
+footer.gal-page-footer .footer-links a:hover { color:#fff; }
+footer.gal-page-footer .footer-links a:hover::after { width:calc(100% - 12px); }
+footer.gal-page-footer .footer-wordmark { color:rgba(205,196,178,0.34); }
+footer.gal-page-footer .footer-location,
+footer.gal-page-footer .footer-copy,
+footer.gal-page-footer .footer-links a { color:rgba(205,196,178,0.50); }
+footer.gal-page-footer .footer-links a:hover { color:rgba(245,236,228,0.92); }
+footer.gal-page-footer .footer-copy span.cyan { color:var(--teal); }
+footer.gal-page-footer .footer-links a::after {
+    background:linear-gradient(90deg, rgba(188,128,142,0.88), rgba(128,142,120,0.82));
+}
+@supports ((-webkit-background-clip:text) or (background-clip:text)) {
+    footer.gal-page-footer .footer-wordmark,
+    footer.gal-page-footer .footer-location,
+    footer.gal-page-footer .footer-copy,
+    footer.gal-page-footer .footer-links a {
+        background-image:var(--gd-footer-ink-soft);
+        -webkit-background-clip:text;
+        background-clip:text;
+        color:transparent;
+        -webkit-text-fill-color:transparent;
+    }
+    footer.gal-page-footer .footer-wordmark {
+        background-image:var(--gd-footer-ink);
+        opacity:0.55;
+    }
+    footer.gal-page-footer .footer-links a:hover {
+        background-image:var(--gd-footer-ink);
+        opacity:1;
+    }
+    footer.gal-page-footer .footer-copy span.cyan {
+        background-image:linear-gradient(90deg, var(--teal) 0%, #00e8d4 100%);
+        -webkit-background-clip:text;
+        background-clip:text;
+        color:transparent;
+        -webkit-text-fill-color:transparent;
+        opacity:1;
+    }
+}
+@media (max-width:480px) {
+    footer.gal-page-footer .footer-wordmark { font-size:clamp(40px,14vw,80px); }
+    footer.gal-page-footer .footer-content {
+        flex-direction:column;
+        gap:16px;
+        align-items:flex-start;
+    }
+    footer.gal-page-footer .footer-links { gap:clamp(12px,4vw,22px); }
+    footer.gal-page-footer {
+        padding:clamp(32px,5vh,56px) clamp(16px,4vw,28px) clamp(24px,4vh,40px);
+    }
+}
+@media (min-width:481px) and (max-width:768px) {
+    footer.gal-page-footer {
+        padding:clamp(40px,6vh,72px) clamp(24px,4vw,40px) clamp(28px,4vh,48px);
+    }
+    footer.gal-page-footer .footer-content {
+        flex-direction:column;
+        gap:20px;
+        align-items:flex-start;
+    }
 }
 
     </style>
 </head>
-<body>
+<body class="gallery-page">
 
 <div id="cursor-dot"></div>
 <div id="cursor-ring"></div>
 
-<div id="top-bar">
-    <a href="./anoaeyto.html" class="back-link"><span class="arrow">←</span> Portfolio</a>
-    <div class="top-logo" id="top-logo">ANOAEYTO</div>
+<div class="top-bar" id="gallery-top-bar">
+    <a href="./anoaeyto.html#gallery" class="back-link"><span class="back-arrow">←</span> Portfolio</a>
+    <div class="top-bar-logo" id="top-bar-logo">ANOAEYTO</div>
 </div>
+<div class="progress-bar-wrap"><div class="progress-bar-fill" id="progress"></div></div>
 
-<div class="page-content">
-    <div class="gallery-header">
-        <div class="gallery-header-top">
-            <div class="gallery-header-left">
-                <div class="gallery-eyebrow">Gallery</div>
-                <div class="gallery-title" id="gal-title">Art Explorations</div>
-                <div class="gallery-meta">
-                    <span id="gal-desc">Digital Art · Photography · Ongoing</span>
-                    <span class="gallery-meta-sep">·</span>
-                    <span class="gallery-count-live" id="gal-count"></span>
+<main class="gal-page" id="gallery-main" data-gal-cat="digital">
+    <section class="gd-hero p-hero gal-hero" aria-label="Cover">
+        <img class="hero-img" id="gal-hero-img" src="gallery/environment/planeyts.png" alt="" onerror="this.onerror=null;this.style.opacity='0'">
+        <div class="hero-scanline"></div>
+        <div class="hud-tl">
+            <div class="hud-item active"><strong>Project</strong> Gallery</div>
+            <div class="hud-item"><strong>Collection</strong> <span id="gal-hero-hud-collection">Game Dev</span></div>
+            <div class="hud-item"><strong>Year</strong> <span id="gal-hero-hud-year">2024 — Present</span></div>
+        </div>
+        <div class="hud-tr">
+            <div class="hud-item"><strong>Medium</strong> <span id="gal-hero-hud-medium">Procreate · Blender · Aseprite · Photoshop</span></div>
+        </div>
+        <div class="hero-text">
+            <div class="hero-sub" id="gal-hero-sub">Photography and Art Explorations</div>
+            <h1 class="hero-h1" id="gal-hero-h1">Game Dev</h1>
+            <div class="hero-hint"><span class="hero-hint-line"></span>Scroll to explore <span class="hint-arr">&#8594;</span></div>
+        </div>
+        <div class="scroll-ind">
+            <span>Scroll</span>
+            <div class="scroll-line"></div>
+        </div>
+    </section>
+    <section class="panel-overview" id="intro">
+        <div class="tea-blur-plate tea-blur-plate--overview" aria-hidden="true">
+            <div class="tea-blur-plate__frame">
+                <img id="gal-overview-banner-blur" src="gallery/environment/planeyts.png" alt="" decoding="async" fetchpriority="low" onerror="this.style.display='none'">
+            </div>
+        </div>
+        <div class="ov-left">
+            <div class="overview-header ov-anim">
+                <span class="overview-eyebrow">00 — Gallery</span>
+                <div class="overview-rule"></div>
+            </div>
+            <h2 class="overview-tagline ov-anim-pull" data-gal="desc"></h2>
+            <p class="overview-meta ov-anim" data-gal="meta"></p>
+            <nav class="gal-cats" id="gal-cats" aria-label="Collections"></nav>
+        </div>
+        <div class="ov-right">
+            <div class="ov-right-stack ov-anim">
+                <div class="ov-right-header">
+                    <span class="ov-right-label">Index</span>
+                    <div class="ov-right-rule"></div>
+                </div>
+                <div class="overview-stats">
+                    <div class="stat-item"><span class="stat-val" id="gal-stat-works">—</span><span class="stat-label">Works in collection</span></div>
+                    <div class="stat-item"><span class="stat-val" id="gal-stat-sections">—</span><span class="stat-label">Sections</span></div>
+                    <div class="stat-item"><span class="stat-val" id="gal-stat-collections">3</span><span class="stat-label">Collections</span></div>
+                    <div class="stat-item"><span class="stat-val" id="gal-stat-year">—</span><span class="stat-label">Year</span></div>
                 </div>
             </div>
         </div>
-
-        <!-- CATEGORY TABS -->
-        <div class="cat-tabs" id="cat-tabs">
-            <button class="cat-tab active" data-cat="digital">
-                Art Explorations <span class="cat-tab-count" id="count-digital"></span>
-            </button>
-<button class="cat-tab" data-cat="photography">
-                Photography <span class="cat-tab-count" id="count-photography"></span>
-            </button>
-            <button class="cat-tab" data-cat="lotus">
-                Lotus <span class="cat-tab-count" id="count-lotus"></span>
-            </button>
+    </section>
+    <div class="gal-mosaic-outer" aria-label="Image gallery">
+        <div class="gal-mosaic" id="gallery-grid" role="list"></div>
+        <div class="gal-empty" id="gal-empty" aria-live="polite">
+            <p class="gal-empty-label">Empty</p>
+            <p class="gal-empty-msg">No images in this collection yet.</p>
         </div>
     </div>
-
-    <!-- SUB-TABS (photography) -->
-    <div class="sub-tabs-wrap" id="sub-tabs-wrap">
-        <div class="sub-tabs" id="sub-tabs"></div>
+    <div class="gal-page-endcap">
+        <footer class="gal-page-footer">
+            <div class="footer-wordmark">anoaeyto.</div>
+            <div class="footer-content">
+                <div class="footer-links">
+                    <a href="https://www.instagram.com/anoaeyto/" target="_blank" rel="noopener noreferrer">Instagram</a>
+                    <a href="https://www.linkedin.com/in/matilda-pawlega-973383220" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+                    <a href="https://github.com/mpawlega" target="_blank" rel="noopener noreferrer">GitHub</a>
+                </div>
+                <div class="footer-left" style="align-items:flex-end;">
+                    <div class="footer-location">Waterloo, Ontario — 2026</div>
+                    <div class="footer-copy" id="copyright-text">© anoaeyto</div>
+                </div>
+            </div>
+        </footer>
     </div>
-
-    <div class="masonry-grid" id="masonry-grid"></div>
-    <div class="empty-state" id="empty-state">
-        <div class="empty-label">No images</div>
-        <div class="empty-msg">Coming soon.</div>
-    </div>
-</div>
-
-<footer>
-    <div class="footer-copy" id="copyright-text">© 2026 anoaeyto</div>
-</footer>
-
-<div id="lightbox">
-    <div id="lightbox-backdrop"></div>
-    <div id="lightbox-inner">
-        <img id="lightbox-img" src="" alt="">
-        <button class="lb-arrow prev" id="lb-prev">&#8592;</button>
-        <button class="lb-arrow next" id="lb-next">&#8594;</button>
-        <div id="lb-counter"><span id="lb-cur">1</span>&thinsp;/&thinsp;<span id="lb-tot">1</span></div>
-    </div>
-    <button id="lb-close">close</button>
-</div>
+</main>
 
 <script>
 if (history.scrollRestoration) history.scrollRestoration = 'manual';
-window.scrollTo(0, 0);
 
-/* ── DATA ── */
 const DATA = {
     digital: {
-        label: 'Art Explorations',
-        desc: 'Game Dev · Art Explorations · Ongoing',
+        label: 'Game Dev',
+        blurImage: 'gallery/environment/planeyts.png',
+        desc: 'Mostly concept art and mockup environment design, with some character development—personal and experimental game work.',
+        year: '2024 — Present',
+        medium: 'Procreate · Blender · Aseprite · Photoshop',
         sections: [
             {
                 label: 'Character & Environment',
                 images: [
-                    'gallery/character/flame.jpg','gallery/character/june_21_46.jpg',
-                    'gallery/character/july_26_bird.png','gallery/character/HD_1.jpg',
-                    'gallery/character/july_6_13.jpg','gallery/character/dude_1.jpg',
-                    'gallery/character/unwritten_2.png','gallery/character/untitled - Copy.png',
-                    'gallery/character/june_21_57.jpg','gallery/character/image (19).PNG',
-                    'gallery/character/dog4.jpg','gallery/character/june_15_1.jpg',
+                    'gallery/character/flame.jpg',
+                    'gallery/character/june_21_57.jpg',
+                    'gallery/character/july_26_bird.png',
+                    'landing/Untitled_3_comp.png',
+                    'gallery/character/june_15_1.jpg',
+                    'gallery/character/unwritten_2.png',
+                    'gallery/character/july_6_13.jpg',
+                    'gallery/environment/test3.png',
+                    'gallery/character/dude_1.jpg',
+                    'gallery/character/june_21_46.jpg',
+                    'gallery/environment/12_12_2025_10.png',
                     'gallery/character/Sprite-0001.png',
-                    'gallery/environment/planeyts.png','gallery/environment/test3.png',
-                    'gallery/environment/12_12_2025_10.png','gallery/environment/humpty_dumpty.png'
-                ]
-            },
-            {
-                label: 'Abstract',
-                images: [
-                    'gallery/abstract/june_12_50_comp.jpg','gallery/abstract/sept_6_3_comp.jpg',
-                    'gallery/abstract/july_24_10_comp.jpg','gallery/abstract/June_7_11_comp.jpg',
-                    'gallery/abstract/june_3_10_comp.jpg','gallery/abstract/july_1_1_comp.jpg',
-                    'gallery/abstract/june_8_25_comp.jpg','gallery/abstract/cool donut 1_comp.jpg',
-                    'gallery/abstract/dec_27_1_comp.jpg','gallery/abstract/June_7_1_comp.jpg',
-                    'gallery/abstract/june_12_42_comp.jpg','gallery/abstract/may_29_35_comp.jpg',
-                    'gallery/abstract/june_12_86_comp.jpg','gallery/abstract/june_6_1_comp.jpg',
-                    'gallery/abstract/june_12_75_comp.jpg','gallery/abstract/bg1_comp.png',
-                    'gallery/abstract/sept_14_1_comp.jpg','gallery/abstract/4_comp.jpg',
-                    'gallery/abstract/Untitled_comp.png','gallery/abstract/june_9_37_comp.jpg',
-                    'gallery/abstract/june_3_28 - Copy_comp.jpg','gallery/abstract/s041_comp.png',
-                    'gallery/abstract/june_12_12_comp.jpg','gallery/abstract/july_4_5_comp.jpg',
-                    'gallery/abstract/june_3_2_comp.jpg',
-                    'gallery/abstract/Screenshot 2025-05-27 2010521_comp.jpg',
-                    'gallery/abstract/oct_5_2_comp.jpg',
-                    'gallery/abstract/Screenshot 2025-05-27 201051_comp.jpg',
-                    'gallery/abstract/Untitled_3_comp.png','gallery/abstract/time1_comp.jpg',
-                    'gallery/abstract/june_8_31_comp.jpg','gallery/abstract/12_16_2025_1_comp.png',
-                    'gallery/abstract/Untitled_2_comp.png','gallery/abstract/july_24_5_comp.jpg',
-                    'gallery/abstract/may_28_42_comp.jpg','gallery/abstract/sept_6_15_comp.jpg',
-                    'gallery/abstract/june_5_1_comp.jpg','gallery/abstract/sept_6_11_comp.jpg',
-                    'gallery/abstract/cubes_comp.png','gallery/abstract/june_12_5_comp.jpg'
+                    'gallery/character/image (19).PNG',
+                    'gallery/character/untitled - Copy.png',
+                    'gallery/environment/planeyts.png'
                 ]
             }
         ]
     },
     photography: {
         label: 'Photography',
-        desc: 'Photography · Ongoing',
-        subTabs: true,
+        blurImage: 'gallery/photography/final/july_2.jpg',
+        desc: 'Everyday scenes and portraits—digital capture on a Canon EOS R5. More photographs on ',
+        featured: {
+            url: 'https://www.instagram.com/illa.novaa/',
+            linkPhrase: '@illa.novaa',
+            linkTitle: 'Open @illa.novaa on Instagram (new tab)'
+        },
+        year: '2023 — Present',
+        medium: 'Canon EOS R5',
         sections: [
             {
-                label: 'All',
-                images: [] // populated dynamically as union
-            },
-            {
-                label: 'Film',
+                label: 'Photography',
                 images: [
+                    'landing/NCD00073.JPG',
                     'gallery/photography/final/NCD00005.JPG','gallery/photography/final/NCD00031.JPG',
                     'gallery/photography/final/NCD00033.JPG','gallery/photography/final/NCD00035.JPG',
-                    'gallery/photography/final/NCD00065.JPG','gallery/photography/final/NCD00073.JPG',
+                    'gallery/photography/final/NCD00065.JPG',
                     'gallery/photography/final/NCD00087.JPG','gallery/photography/final/NCD00110.JPG',
                     'gallery/photography/final/NCD00121.JPG','gallery/photography/final/NCD00170.JPG',
                     'gallery/photography/final/NCD00186.JPG','gallery/photography/final/NCD00203.JPG',
@@ -439,12 +1443,7 @@ const DATA = {
                     'gallery/photography/final/NCD00227.JPG','gallery/photography/final/NCD00233.JPG',
                     'gallery/photography/final/NCD00265.JPG','gallery/photography/final/NCD00367.JPG',
                     'gallery/photography/final/NCD00372.JPG','gallery/photography/final/NCD00407.JPG',
-                    'gallery/photography/final/NCD00446.JPG','gallery/photography/final/NCD00451.JPG'
-                ]
-            },
-            {
-                label: 'Digital',
-                images: [
+                    'gallery/photography/final/NCD00446.JPG','gallery/photography/final/NCD00451.JPG',
                     'gallery/photography/final/2I2A0059.JPG','gallery/photography/final/2I2A0288.JPG',
                     'gallery/photography/final/2I2A0371.JPG','gallery/photography/final/2I2A0376.JPG',
                     'gallery/photography/final/2I2A0382.JPG','gallery/photography/final/2I2A0430.JPG',
@@ -460,12 +1459,7 @@ const DATA = {
                     'gallery/photography/final/2I2A1496.JPG','gallery/photography/final/2I2A1535.JPG',
                     'gallery/photography/final/2I2A1555.JPG','gallery/photography/final/2I2A1578.JPG',
                     'gallery/photography/final/2I2A1760.JPG','gallery/photography/final/2I2A1812.JPG',
-                    'gallery/photography/final/2I2A1822.JPG'
-                ]
-            },
-            {
-                label: 'Misc',
-                images: [
+                    'gallery/photography/final/2I2A1822.JPG',
                     'gallery/photography/final/IMG_3739.JPG','gallery/photography/final/IMG_3740.JPG',
                     'gallery/photography/final/IMG_3875.JPG','gallery/photography/final/july_2.jpg'
                 ]
@@ -474,11 +1468,21 @@ const DATA = {
     },
     lotus: {
         label: 'Lotus',
-        desc: 'Mixed Media · 2024',
+        blurImage: 'gallery/lotus/NCD00611.JPG',
+        desc: 'Final project for FINE 204, shown in the course exhibition at the Artery Gallery, University of Waterloo—installation documentation and studies from the body of work. ',
+        featured: {
+            url: 'https://www.instagram.com/p/C9z2YfuO8u5/',
+            linkBefore: 'See the work on ',
+            linkPhrase: 'Instagram',
+            linkTitle: 'View the Instagram post (opens in a new tab)'
+        },
+        year: '2024',
+        medium: 'Mixed media · exhibition',
         sections: [
             {
                 label: 'Lotus Exhibition',
                 images: [
+                    'landing/nNCD00654.JPG',
                     'gallery/lotus/NCD00723.JPG','gallery/lotus/NCD00657.JPG',
                     'gallery/lotus/NCD00611.JPG','gallery/lotus/NCD00780.JPG',
                     'gallery/lotus/NCD00538.JPG','gallery/lotus/NCD00673.JPG',
@@ -497,322 +1501,936 @@ const DATA = {
     }
 };
 
-// Populate "All" for photography as union of other sub-sections
-(function(){
-    const ph = DATA.photography.sections;
-    const all = [];
-    ph.slice(1).forEach(s => all.push(...s.images));
-    ph[0].images = all;
-})();
+const CAT_ORDER = ['digital', 'photography', 'lotus'];
 
-// Count badges
-function totalImages(cat) {
-    return DATA[cat].sections.reduce((a, s) => a + s.images.length, 0);
-}
-['digital','photography','lotus'].forEach(cat => {
-    const el = document.getElementById('count-' + cat);
-    if (el) el.textContent = totalImages(cat);
-});
-
-/* ── STATE ── */
-let activeCat = 'digital';
-let activeSubTab = 0; // index into sections
-let lightboxImages = [];
-
-/* ── GRID ── */
-const grid       = document.getElementById('masonry-grid');
-const emptyState = document.getElementById('empty-state');
-const countEl    = document.getElementById('gal-count');
-const titleEl    = document.getElementById('gal-title');
-const descEl     = document.getElementById('gal-desc');
-
-function getColCount() {
-    const w = window.innerWidth;
-    if (w <= 480) return 1;
-    if (w <= 800) return 2;
-    if (w <= 1200) return 3;
-    return 4;
-}
-
-function buildGrid(images, sections) {
-    grid.innerHTML = '';
-    grid.classList.remove('ready');
-    let globalIdx = 0;
-    lightboxImages = [];
-
-    const useSections = sections && sections.length > 1 && activeSubTab === 0 && activeCat !== 'photography';
-    const colCount = getColCount();
-
-    // build column containers
-    const cols = Array.from({length: colCount}, () => {
-        const c = document.createElement('div');
-        c.className = 'masonry-col';
-        grid.appendChild(c);
-        return c;
-    });
-
-    let allItems = []; // flat list of {item, img} for load tracking
-
-    function addItem(src, dispIdx, lbIdx, colIdx) {
-        lightboxImages.push(src);
-        const {item, img} = makeItem(src, dispIdx, lbIdx);
-        cols[colIdx % colCount].appendChild(item);
-        allItems.push({item, img});
-    }
-
-    if (useSections) {
-        sections.forEach(sec => {
-            if (!sec.images.length) return;
-            // section label injected into col 0 spanning via a full-width marker
-            // (we skip DOM section breaks in column layout — just group by natural order)
-            sec.images.forEach(src => {
-                lightboxImages.push(src);
-                const {item, img} = makeItem(src, globalIdx, lightboxImages.length - 1);
-                cols[globalIdx % colCount].appendChild(item);
-                allItems.push({item, img});
-                globalIdx++;
-            });
-        });
-    } else {
-        images.forEach((src, i) => {
-            lightboxImages.push(src);
-            const {item, img} = makeItem(src, i, i);
-            cols[i % colCount].appendChild(item);
-            allItems.push({item, img});
-        });
-    }
-
-    emptyState.classList.toggle('visible', lightboxImages.length === 0);
-    grid.style.display = lightboxImages.length === 0 ? 'none' : '';
-    countEl.textContent = lightboxImages.length + ' images';
-    updateLbTot();
-
-    // reveal entire grid only after all images are settled
-    if (allItems.length === 0) { grid.classList.add('ready'); return; }
-
-    let loaded = 0;
-    const total = allItems.length;
-    function onOne() {
-        loaded++;
-        if (loaded >= total) {
-            requestAnimationFrame(() => grid.classList.add('ready'));
+function gameDevTriptychAspectFromCenter(metas, indices) {
+    if (indices.length === 3) {
+        const m = metas[indices[1]];
+        if (m && m.w > 0 && m.h > 0) {
+            return m.h / m.w;
         }
     }
-    allItems.forEach(({img}) => {
-        if (img.complete) { onOne(); return; }
-        img.addEventListener('load',  onOne, {once:true});
-        img.addEventListener('error', onOne, {once:true});
-    });
-
-    // safety: reveal after 1.5s regardless (slow connections)
-    setTimeout(() => grid.classList.add('ready'), 1500);
+    let maxHw = 0;
+    for (let j = 0; j < indices.length; j++) {
+        const m = metas[indices[j]];
+        if (m && m.w > 0 && m.h > 0) {
+            maxHw = Math.max(maxHw, m.h / m.w);
+        }
+    }
+    return maxHw;
 }
 
-function makeItem(src, displayIdx, lbIdx) {
-    const item = document.createElement('div');
-    item.className = 'grid-item';
-    item.dataset.lbidx = lbIdx;
+/**
+ * Only these may use a full-viewport strip (.gal-mosaic-row--bleed). All other assets stay in 3-up rows only
+ * (no single-tile row with empty columns except a possible short last row if the list length isn’t a multiple of 3).
+ */
+function gameDevIsFullBleedSrc(sources, idx) {
+    if (idx < 0 || idx >= sources.length) {
+        return false;
+    }
+    const p = String(sources[idx]).replace(/\\/g, '/');
+    if (p === 'landing/Untitled_3_comp.png' || p.endsWith('/Untitled_3_comp.png')) {
+        return true;
+    }
+    if (p === 'gallery/character/dude_1.jpg' || p.endsWith('/dude_1.jpg')) {
+        return true;
+    }
+    return p.indexOf('gallery/environment/') !== -1;
+}
 
-    const img = document.createElement('img');
-    img.alt = '';
-    img.loading = 'eager';
-    img.decoding = 'async';
+let activeCat = 'digital';
+/** Which .gal-stage-layer index is currently active (0 or 1) — tea-style ping-pong buffer */
+let activeGalLayer = 0;
+
+(function initUrlCat() {
+    try {
+        const q = new URLSearchParams(window.location.search).get('c');
+        if (q && DATA[q] && CAT_ORDER.includes(q)) activeCat = q;
+    } catch (e) { /* ignore */ }
+})();
+
+/** Every image from all sections, deduped (no missing items when multiple sections exist). */
+function getImagesForView(d) {
+    if (!d.sections || !d.sections.length) {
+        if (d.imagesPhone && d.imagesMonitor) return d.imagesPhone.concat(d.imagesMonitor);
+        return [];
+    }
+    const seen = new Set();
+    const out = [];
+    for (let s = 0; s < d.sections.length; s++) {
+        const sec = d.sections[s];
+        if (!sec || !sec.images) continue;
+        for (let k = 0; k < sec.images.length; k++) {
+            const src = sec.images[k];
+            if (!seen.has(src)) {
+                seen.add(src);
+                out.push(src);
+            }
+        }
+    }
+    return out;
+}
+
+/** Blurred atmosphere: optional per-section blurImage, else first plate; fallback any collection. */
+function resolveAtmosphereImageSrc(d, imgs) {
+    if (d && d.blurImage) return d.blurImage;
+    if (imgs && imgs.length) return imgs[0];
+    for (let i = 0; i < CAT_ORDER.length; i++) {
+        const dd = DATA[CAT_ORDER[i]];
+        if (dd.blurImage) return dd.blurImage;
+        const list = getImagesForView(dd);
+        if (list.length) return list[0];
+    }
+    return '';
+}
+
+/** First URL that actually loads — keeps the blur plate visible when blurImage or early list items 404. */
+async function resolveAtmosphereSrcProbed(d, imgs) {
+    const seen = Object.create(null);
+    const candidates = [];
+    function push(s) {
+        if (!s || seen[s]) return;
+        seen[s] = true;
+        candidates.push(s);
+    }
+    push(resolveAtmosphereImageSrc(d, imgs));
+    if (imgs && imgs.length) {
+        for (let i = 0; i < imgs.length; i++) {
+            push(imgs[i]);
+        }
+    }
+    for (let j = 0; j < candidates.length; j++) {
+        const m = await loadImageMeta(candidates[j]);
+        if (m) {
+            return candidates[j];
+        }
+    }
+    return '';
+}
+
+/** Cover plate — sharp hero image (same provenance as former blur band) */
+function setGalleryHeroFromSrc(src) {
+    const img = document.getElementById('gal-hero-img');
+    if (!img || !src) return;
+    const cur = img.getAttribute('src') || '';
+    if (cur === src) return;
     img.src = src;
-
-    const ov = document.createElement('div');
-    ov.className = 'grid-overlay';
-    ov.innerHTML = `<span class="grid-idx">${String(displayIdx+1).padStart(2,'0')}</span><span class="grid-open-hint">open</span>`;
-
-    item.appendChild(img);
-    item.appendChild(ov);
-    return {item, img};
 }
 
-function switchCat(cat) {
+async function resolveOverviewBlurSrcProbed(d, imgs) {
+    const seen = Object.create(null);
+    const candidates = [];
+    function push(s) {
+        if (!s || seen[s]) return;
+        seen[s] = true;
+        candidates.push(s);
+    }
+    // Prefer a different plate than the hero blurImage when possible.
+    const blur = d && d.blurImage ? d.blurImage : '';
+    if (imgs && imgs.length) {
+        for (let i = 0; i < imgs.length; i++) {
+            if (imgs[i] && imgs[i] !== blur) {
+                push(imgs[i]);
+                break;
+            }
+        }
+    }
+    push(blur);
+    for (let j = 0; j < candidates.length; j++) {
+        const m = await loadImageMeta(candidates[j]);
+        if (m) return candidates[j];
+    }
+    return '';
+}
+
+function syncGalleryHero(d) {
+    if (!d) return;
+    const h1 = document.getElementById('gal-hero-h1');
+    if (h1) h1.textContent = d.label;
+    const sub = document.getElementById('gal-hero-sub');
+    if (sub) sub.textContent = 'Photography and Art Explorations';
+    const col = document.getElementById('gal-hero-hud-collection');
+    if (col) col.textContent = d.label;
+    const yr = document.getElementById('gal-hero-hud-year');
+    if (yr) yr.textContent = d.year || '';
+    const med = document.getElementById('gal-hero-hud-medium');
+    if (med) med.textContent = d.medium || '';
+}
+
+function setUrlCat(cat) {
+    try {
+        const u = new URL(window.location.href);
+        u.searchParams.set('c', cat);
+        history.replaceState({}, '', u.pathname + u.search);
+    } catch (e) { /* ignore */ }
+}
+
+let gallerySectionTxReady = false;
+let galleryTxBusy = false;
+
+function layerGalField(layerEl, key) {
+    return layerEl.querySelector('[data-gal="' + key + '"]');
+}
+
+function setGalleryMetaEl(el, d) {
+    if (!el || !d) return;
+    el.innerHTML = '';
+    const parts = [];
+    if (d.year) parts.push(d.year);
+    if (d.medium) parts.push(d.medium);
+    parts.push(d.label);
+    const tokens = parts
+        .join(' · ')
+        .split('·')
+        .map(s => (s || '').trim())
+        .filter(Boolean);
+    for (let i = 0; i < tokens.length; i++) {
+        const span = document.createElement('span');
+        span.textContent = tokens[i];
+        el.appendChild(span);
+        if (i !== tokens.length - 1) {
+            const sep = document.createElement('span');
+            sep.className = 'overview-meta-sep';
+            sep.textContent = '·';
+            el.appendChild(sep);
+        }
+    }
+}
+
+function setGalleryOverviewBlurFromSrc(src) {
+    const img = document.getElementById('gal-overview-banner-blur');
+    if (!img || !src) return;
+    const cur = img.getAttribute('src') || '';
+    if (cur === src) return;
+    img.src = src;
+}
+
+function syncGalleryOverviewStats(d, imgs) {
+    const worksEl = document.getElementById('gal-stat-works');
+    const sectionsEl = document.getElementById('gal-stat-sections');
+    const collectionsEl = document.getElementById('gal-stat-collections');
+    const yearEl = document.getElementById('gal-stat-year');
+    if (worksEl) worksEl.textContent = String((imgs && imgs.length) ? imgs.length : 0);
+    const secCount = d && d.sections ? d.sections.length : 0;
+    if (sectionsEl) sectionsEl.textContent = String(secCount);
+    if (collectionsEl) collectionsEl.textContent = String(CAT_ORDER.length);
+    if (yearEl) yearEl.textContent = d && d.year ? d.year : '—';
+}
+
+function fireGalleryPanelAnims(layerRoot) {
+    if (!layerRoot) return;
+    layerRoot.querySelectorAll('.panel-anim').forEach(el => {
+        el.classList.remove('fired');
+        void el.offsetWidth;
+        el.classList.add('fired');
+    });
+}
+
+function syncGalleryLayerHead(layerEl, d) {
+    if (!layerEl || !d) return;
+    syncGalleryHero(d);
+    setGalleryDescEl(layerGalField(layerEl, 'desc'), d);
+    setGalleryMetaEl(layerGalField(layerEl, 'meta'), d);
+}
+
+function switchGallerySection(cat) {
     if (cat === activeCat) return;
     activeCat = cat;
-    activeSubTab = 0;
-
-    // update tab UI
-    document.querySelectorAll('.cat-tab').forEach(t => t.classList.toggle('active', t.dataset.cat === cat));
-
-    // update header text
-    const d = DATA[cat];
-    titleEl.textContent  = d.label;
-    descEl.textContent   = d.desc;
-
-    buildSubTabs();
-    switchGrid();
+    setUrlCat(cat);
+    const overview = document.getElementById('intro');
+    if (overview) syncGalleryLayerHead(overview, DATA[activeCat]);
+    applyGalleryContent({ initialFire: true });
+    galleryScrollToTop();
 }
 
-function buildSubTabs() {
-    const wrap    = document.getElementById('sub-tabs-wrap');
-    const tabsEl  = document.getElementById('sub-tabs');
-    const d       = DATA[activeCat];
+function buildCategoryNav() {
+    const nav = document.getElementById('gal-cats');
+    nav.innerHTML = '';
+    CAT_ORDER.forEach(cat => {
+        const d = DATA[cat];
+        const el = document.createElement('button');
+        el.type = 'button';
+        el.textContent = d.label;
+        el.classList.toggle('active', cat === activeCat);
+        el.addEventListener('click', () => {
+            if (cat === activeCat) return;
+            switchGallerySection(cat);
+        });
+        nav.appendChild(el);
+    });
+}
 
-    tabsEl.innerHTML = '';
+const _imgMetaCache = Object.create(null);
+function loadImageMeta(src) {
+    if (_imgMetaCache[src]) return Promise.resolve(_imgMetaCache[src]);
+    return new Promise(resolve => {
+        const im = new Image();
+        im.onload = () => {
+            const m = { w: im.naturalWidth, h: im.naturalHeight };
+            _imgMetaCache[src] = m;
+            resolve(m);
+        };
+        im.onerror = () => resolve(null);
+        im.src = src;
+    });
+}
 
-    if (!d.subTabs || !d.sections || d.sections.length <= 1) {
-        wrap.classList.remove('visible');
+/** Drops paths that 404 or fail to decode so the grid only shows files present on the server. */
+async function filterToLoadedSources(sources) {
+    const results = await Promise.all(sources.map(src => loadImageMeta(src)));
+    const outSources = [];
+    const outMetas = [];
+    for (let i = 0; i < sources.length; i++) {
+        if (results[i]) {
+            outSources.push(sources[i]);
+            outMetas.push(results[i]);
+        }
+    }
+    return { sources: outSources, metas: outMetas };
+}
+
+function createGalleryItem(src, revealIndex, meta) {
+    const cell = document.createElement('div');
+    cell.className = 'gal-item';
+    cell.setAttribute('role', 'listitem');
+    if (meta && meta.w > 0 && meta.h > 0) {
+        cell.style.setProperty('--g-ar', meta.w + '/' + meta.h);
+    }
+    const img = document.createElement('img');
+    img.alt = '';
+    img.src = src;
+    img.loading = 'eager';
+    if (revealIndex < 8) {
+        img.fetchPriority = 'high';
+    }
+    cell.appendChild(img);
+    return cell;
+}
+
+/**
+ * Game Dev 3-up / bleed: triptych ruler row uses raw proportional height (no 100vh cap) so the hero isn’t letterboxed; bleed can still use min(100vh, …).
+ * Lotus: tighter caps than full-viewport strips to reduce scroll fatigue.
+ */
+function mosaicRowHeightBand(rawCalc, cat, kind, opts) {
+    opts = opts || {};
+    if (cat !== 'digital') {
+        if (cat === 'lotus') {
+            if (kind === 'bleed' && opts.portraitBleed) {
+                return 'min(68vh, ' + rawCalc + ')';
+            }
+            if (kind === 'bleed') {
+                return 'min(48vh, ' + rawCalc + ')';
+            }
+            return 'min(56vh, ' + rawCalc + ')';
+        }
+        return 'min(100vh, ' + rawCalc + ')';
+    }
+    /* No min(100vh,…) here: a shorter cap makes the hero letterbox sideways (grey “gaps”). Tall rows scroll. */
+    if (kind === 'grid' && opts.gameDevTriptychRuler === true) {
+        return rawCalc;
+    }
+    if (kind === 'bleed' && opts.gameDevBleedIntrinsic === true) {
+        return 'min(100vh, ' + rawCalc + ')';
+    }
+    const first = opts.firstRow === true;
+    if (first) {
+        if (kind === 'grid') {
+            return 'min(100vh, max(64vh, ' + rawCalc + '))';
+        }
+        if (kind === 'bleed' && opts.portraitBleed) {
+            return 'min(100vh, max(50vh, ' + rawCalc + '))';
+        }
+        return 'min(95vh, max(50vh, ' + rawCalc + '))';
+    }
+    if (kind === 'grid') {
+        return 'min(100vh, max(72vh, ' + rawCalc + '))';
+    }
+    if (kind === 'bleed' && opts.portraitBleed) {
+        return 'min(100vh, max(40vh, ' + rawCalc + '))';
+    }
+    return 'min(95vh, max(40vh, ' + rawCalc + '))';
+}
+
+function applyGridRowSizing(row, indices, metas, colCount, cat, opts, fixedAspectHw, rulerColCount) {
+    if (typeof window.matchMedia === 'function' && !window.matchMedia('(min-width:700px)').matches) {
+        return;
+    }
+    let maxHw = 0;
+    if (typeof fixedAspectHw === 'number' && fixedAspectHw > 0) {
+        maxHw = fixedAspectHw;
+    } else {
+        for (let j = 0; j < indices.length; j++) {
+            const m = metas[indices[j]];
+            if (m && m.w > 0 && m.h > 0) {
+                maxHw = Math.max(maxHw, m.h / m.w);
+            }
+        }
+    }
+    if (maxHw <= 0) return;
+    const colsForRuler = typeof rulerColCount === 'number' && rulerColCount > 0 ? rulerColCount : colCount;
+    /* Digital uses gap:0 between cells; other cats use 3px */
+    const gapPx = cat === 'digital' ? 0 : (colCount - 1) * 3;
+    const raw = 'calc((100vw - ' + gapPx + 'px) / ' + colsForRuler + ' * ' + maxHw + ')';
+    const band = mosaicRowHeightBand(raw, cat, 'grid', opts);
+    row.style.setProperty('--grid-row-h', band);
+    row.style.setProperty('--grid-row-max', band);
+}
+
+/** Photography layout: cycle triple → triple → wide + stacked pair (repeat). */
+function buildPhotographyMosaic(container, sources) {
+    let i = 0;
+    let revealIx = 0;
+    let cycle = 0;
+    while (i < sources.length) {
+        const left = sources.length - i;
+        const phase = cycle % 3;
+        cycle += 1;
+
+        if (phase === 0 || phase === 1) {
+            const n = Math.min(3, left);
+            const row = document.createElement('div');
+            row.className = 'gal-photo-row gal-photo-row--' + (n === 1 ? '1' : n === 2 ? '2' : '3');
+            for (let k = 0; k < n; k++) {
+                row.appendChild(createGalleryItem(sources[i], revealIx, null));
+                i += 1;
+                revealIx += 1;
+            }
+            container.appendChild(row);
+            continue;
+        }
+
+        if (left === 1) {
+            const row = document.createElement('div');
+            row.className = 'gal-photo-row gal-photo-row--1';
+            row.appendChild(createGalleryItem(sources[i], revealIx, null));
+            i += 1;
+            revealIx += 1;
+            container.appendChild(row);
+            continue;
+        }
+
+        const row = document.createElement('div');
+        row.className = 'gal-photo-row gal-photo-row--split';
+        const wide = createGalleryItem(sources[i], revealIx, null);
+        wide.classList.add('gal-item--photo-wide');
+        row.appendChild(wide);
+        i += 1;
+        revealIx += 1;
+        const stack = document.createElement('div');
+        stack.className = 'gal-photo-stack';
+        const stackN = Math.min(2, sources.length - i);
+        for (let k = 0; k < stackN; k++) {
+            stack.appendChild(createGalleryItem(sources[i], revealIx, null));
+            i += 1;
+            revealIx += 1;
+        }
+        row.appendChild(stack);
+        container.appendChild(row);
+    }
+}
+
+function applyBleedSizing(row, m, cat, opts) {
+    if (typeof window.matchMedia === 'function' && !window.matchMedia('(min-width:700px)').matches) {
+        return;
+    }
+    if (!m || !m.w || !m.h) return;
+    const w = m.w;
+    const h = m.h;
+    const raw = 'calc(100vw * ' + h + ' / ' + w + ')';
+    const bleedOpts = Object.assign({}, opts || {});
+    if ((cat === 'digital' || cat === 'lotus') && w < h) bleedOpts.portraitBleed = true;
+    const band = mosaicRowHeightBand(raw, cat, 'bleed', bleedOpts);
+    row.style.setProperty('--bleed-min', band);
+    row.style.setProperty('--bleed-max', band);
+}
+
+function appendGameDevTriptychRow(grid, sources, metas, indices, rowOpts, revealIx) {
+    const n = indices.length;
+    const row = document.createElement('div');
+    row.className = 'gal-mosaic-row gal-mosaic-row--triptych';
+    if (n === 1) {
+        row.classList.add('gal-mosaic-row--t1');
+    } else if (n === 2) {
+        row.classList.add('gal-mosaic-row--t2');
+    }
+    const aspectHw = gameDevTriptychAspectFromCenter(metas, indices);
+    /* Short rows still sit in a 3-column layout — row height from one column width (100vw/3). */
+    const rulerCols = n < 3 ? 3 : n;
+    applyGridRowSizing(
+        row,
+        indices,
+        metas,
+        n,
+        'digital',
+        Object.assign({}, rowOpts, { gameDevTriptychRuler: true }),
+        aspectHw,
+        rulerCols
+    );
+    for (let k = 0; k < n; k++) {
+        const idx = indices[k];
+        const cell = createGalleryItem(sources[idx], revealIx, metas[idx]);
+        if (n === 3 && k === 1) {
+            cell.classList.add('gal-item--triptych-hero');
+        }
+        row.appendChild(cell);
+        revealIx += 1;
+    }
+    grid.appendChild(row);
+    return revealIx;
+}
+
+/**
+ * Game Dev: preserve list order. Full-bleed rows only for gameDevIsFullBleedSrc; everything else is packed into
+ * triptych rows of up to 3 (never a deliberate “solo column” between bleeds).
+ */
+function buildGameDevMosaic(grid, sources, metas) {
+    grid.innerHTML = '';
+    grid.className = 'gal-mosaic gal-mosaic--digital';
+
+    const remaining = [];
+    for (let r = 0; r < sources.length; r++) {
+        remaining.push(r);
+    }
+
+    let digitalRowCount = 0;
+    let revealIx = 0;
+
+    function appendBleedForIx(ix) {
+        digitalRowCount += 1;
+        const rowOpts = { firstRow: digitalRowCount === 1 };
+        const m = metas[ix];
+        const row = document.createElement('div');
+        const isPortrait = m && m.w > 0 && m.h > 0 && m.w < m.h;
+        row.className = 'gal-mosaic-row gal-mosaic-row--bleed' + (isPortrait ? ' gal-mosaic-row--portrait' : '');
+        applyBleedSizing(row, m, 'digital', Object.assign({}, rowOpts, { gameDevBleedIntrinsic: true }));
+        row.appendChild(createGalleryItem(sources[ix], revealIx, metas[ix]));
+        revealIx += 1;
+        grid.appendChild(row);
+    }
+
+    while (remaining.length > 0) {
+        if (gameDevIsFullBleedSrc(sources, remaining[0])) {
+            appendBleedForIx(remaining.shift());
+        } else {
+            const batch = [];
+            while (
+                batch.length < 3 &&
+                remaining.length > 0 &&
+                !gameDevIsFullBleedSrc(sources, remaining[0])
+            ) {
+                batch.push(remaining.shift());
+            }
+            if (batch.length > 0) {
+                digitalRowCount += 1;
+                const rowOpts = { firstRow: digitalRowCount === 1 };
+                revealIx = appendGameDevTriptychRow(grid, sources, metas, batch, rowOpts, revealIx);
+            }
+        }
+    }
+}
+
+/** Two rAFs so row heights / flex metrics settle before paint. */
+function afterLayoutThenBind() {
+    return new Promise(function (resolve) {
+        requestAnimationFrame(function () {
+            requestAnimationFrame(function () {
+                resolve();
+            });
+        });
+    });
+}
+
+async function finalizeMosaicInDocument(grid, skipBind) {
+    if (!grid || skipBind) return;
+    await afterLayoutThenBind();
+}
+
+/**
+ * @param {object} [opts]
+ * @param {boolean} [opts.skipBind] — skip post-build layout rAF wait (e.g. off-DOM before swap).
+ */
+async function renderMosaic(sources, grid, empty, cat, opts) {
+    opts = opts || {};
+    const skipBind = opts.skipBind === true;
+    if (!grid || !empty) return;
+
+    if (!sources.length) {
+        grid.innerHTML = '';
+        grid.style.removeProperty('--game-portrait-ar');
+        grid.className = cat === 'photography' ? 'gal-mosaic gal-mosaic--photo' : cat === 'digital' ? 'gal-mosaic gal-mosaic--digital' : cat === 'lotus' ? 'gal-mosaic gal-mosaic--lotus' : 'gal-mosaic';
+        empty.classList.add('visible');
         return;
     }
 
-    wrap.classList.add('visible');
-    d.sections.forEach((sec, i) => {
-        const btn = document.createElement('button');
-        btn.className = 'sub-tab' + (i === activeSubTab ? ' active' : '');
-        btn.textContent = sec.label;
-        if (i > 0) btn.textContent += ` (${sec.images.length})`;
-        btn.addEventListener('click', () => {
-            activeSubTab = i;
-            tabsEl.querySelectorAll('.sub-tab').forEach((t, j) => t.classList.toggle('active', j === i));
-            switchGrid();
+    const filtered = await filterToLoadedSources(sources);
+    const loaded = filtered.sources;
+    const metasAll = filtered.metas;
+
+    if (!loaded.length) {
+        grid.innerHTML = '';
+        grid.style.removeProperty('--game-portrait-ar');
+        grid.className = cat === 'photography' ? 'gal-mosaic gal-mosaic--photo' : cat === 'digital' ? 'gal-mosaic gal-mosaic--digital' : cat === 'lotus' ? 'gal-mosaic gal-mosaic--lotus' : 'gal-mosaic';
+        empty.classList.add('visible');
+        return;
+    }
+    empty.classList.remove('visible');
+
+    if (cat === 'photography') {
+        const temp = document.createElement('div');
+        temp.className = 'gal-mosaic gal-mosaic--photo';
+        buildPhotographyMosaic(temp, loaded);
+        grid.innerHTML = '';
+        grid.className = 'gal-mosaic gal-mosaic--photo';
+        grid.style.removeProperty('--game-portrait-ar');
+        while (temp.firstChild) {
+            grid.appendChild(temp.firstChild);
+        }
+        await finalizeMosaicInDocument(grid, skipBind);
+        return;
+    }
+
+    if (cat === 'digital') {
+        buildGameDevMosaic(grid, loaded, metasAll);
+        await finalizeMosaicInDocument(grid, skipBind);
+        return;
+    }
+
+    const temp = document.createElement('div');
+    temp.className = cat === 'lotus' ? 'gal-mosaic gal-mosaic--lotus' : 'gal-mosaic';
+
+    let idx = 0;
+
+    while (idx < loaded.length) {
+        const isLandscape = metasAll[idx].w >= metasAll[idx].h;
+
+        if (isLandscape) {
+            const row = document.createElement('div');
+            row.className = 'gal-mosaic-row gal-mosaic-row--bleed';
+            applyBleedSizing(row, metasAll[idx], cat, {});
+            row.appendChild(createGalleryItem(loaded[idx], idx, metasAll[idx]));
+            temp.appendChild(row);
+            idx++;
+        } else {
+            const group = [];
+            while (group.length < 3 && idx < loaded.length) {
+                if (metasAll[idx].w < metasAll[idx].h) {
+                    group.push(idx);
+                    idx++;
+                } else break;
+            }
+            if (!group.length) {
+                const row = document.createElement('div');
+                row.className = 'gal-mosaic-row gal-mosaic-row--bleed';
+                applyBleedSizing(row, metasAll[idx], cat, {});
+                row.appendChild(createGalleryItem(loaded[idx], idx, metasAll[idx]));
+                temp.appendChild(row);
+                idx++;
+                continue;
+            }
+
+            const row = document.createElement('div');
+            if (group.length === 1) {
+                row.className = 'gal-mosaic-row gal-mosaic-row--bleed gal-mosaic-row--portrait';
+                applyBleedSizing(row, metasAll[group[0]], cat, {});
+                row.appendChild(createGalleryItem(loaded[group[0]], group[0], metasAll[group[0]]));
+            } else if (group.length === 2) {
+                row.className = 'gal-mosaic-row gal-mosaic-row--pair';
+                applyGridRowSizing(row, group, metasAll, 2, cat, {});
+                group.forEach(i => row.appendChild(createGalleryItem(loaded[i], i, metasAll[i])));
+            } else {
+                row.className = 'gal-mosaic-row gal-mosaic-row--triptych';
+                applyGridRowSizing(row, group, metasAll, 3, cat, {});
+                group.forEach(i => row.appendChild(createGalleryItem(loaded[i], i, metasAll[i])));
+            }
+            temp.appendChild(row);
+        }
+    }
+
+    grid.innerHTML = '';
+    grid.className = cat === 'lotus' ? 'gal-mosaic gal-mosaic--lotus' : 'gal-mosaic';
+    grid.style.removeProperty('--game-portrait-ar');
+    while (temp.firstChild) {
+        grid.appendChild(temp.firstChild);
+    }
+    await finalizeMosaicInDocument(grid, skipBind);
+}
+
+/** Credits line as flex spans — same hover as anoaeyto .abt-tool-name */
+function setGalleryCreditsEl(el, d) {
+    if (!el) return;
+    const parts = [];
+    if (d && d.year) parts.push(d.year);
+    if (d && d.medium) {
+        d.medium.split(/\s*·\s*/).forEach(function (s) {
+            const t = s.trim();
+            if (t) parts.push(t);
         });
-        tabsEl.appendChild(btn);
-    });
-}
-
-function switchGrid() {
-    grid.classList.add('switching');
-    grid.classList.remove('ready');
-    setTimeout(() => {
-        const d = DATA[activeCat];
-        const sec = d.sections[activeSubTab] || d.sections[0];
-        buildGrid(sec.images, d.sections);
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-        grid.classList.remove('switching');
-    }, 280);
-}
-
-// rebuild on resize when column count changes
-let lastColCount = getColCount();
-window.addEventListener('resize', () => {
-    const newCount = getColCount();
-    if (newCount !== lastColCount) {
-        lastColCount = newCount;
-        switchGrid();
     }
-});
+    el.textContent = '';
+    if (!parts.length) return;
+    for (let i = 0; i < parts.length; i++) {
+        if (i > 0) {
+            const dot = document.createElement('span');
+            dot.className = 'gal-credit-dot';
+            dot.setAttribute('aria-hidden', 'true');
+            dot.textContent = '·';
+            el.appendChild(dot);
+        }
+        const span = document.createElement('span');
+        span.className = 'gal-credit-part';
+        span.textContent = parts[i];
+        el.appendChild(span);
+    }
+}
 
-/* ── CAT TAB EVENTS ── */
-document.querySelectorAll('.cat-tab').forEach(btn => {
-    btn.addEventListener('click', () => switchCat(btn.dataset.cat));
-});
+function setGalleryDescEl(el, d) {
+    if (!el) return;
+    el.textContent = '';
+    const prose = d.desc || '';
+    if (d.featured && d.featured.url) {
+        if (prose) el.appendChild(document.createTextNode(prose));
+        const before = d.featured.linkBefore;
+        if (before != null && before !== '') el.appendChild(document.createTextNode(before));
+        const a = document.createElement('a');
+        a.href = d.featured.url;
+        a.className = 'gal-desc-link';
+        a.target = '_blank';
+        a.rel = 'noopener noreferrer';
+        a.title = d.featured.linkTitle || 'Open link in a new tab';
+        a.textContent = d.featured.linkPhrase || d.featured.line || (before ? 'Instagram' : 'See the work on Instagram');
+        el.appendChild(a);
+        const tail = d.featured.after;
+        if (tail != null && tail !== '') el.appendChild(document.createTextNode(tail));
+    } else {
+        const trimmed = prose.trim();
+        if (trimmed) el.appendChild(document.createTextNode(trimmed));
+    }
+}
 
-/* ── INIT ── */
-buildSubTabs();
-(function(){
+function applyGalleryContentToLayer(layerEl, opts) {
     const d = DATA[activeCat];
-    titleEl.textContent = d.label;
-    descEl.textContent  = d.desc;
-    buildGrid(d.sections[0].images, d.sections);
-})();
-
-/* ── LIGHTBOX ── */
-(function(){
-    const lb    = document.getElementById('lightbox');
-    const lbImg = document.getElementById('lightbox-img');
-    const lbCur = document.getElementById('lb-cur');
-    const lbTot = document.getElementById('lb-tot');
-    let idx = 0, busy = false;
-
-    window.updateLbTot = () => { lbTot.textContent = lightboxImages.length; };
-
-    function open(i) {
-        idx = ((i % lightboxImages.length) + lightboxImages.length) % lightboxImages.length;
-        lbImg.style.opacity = '0'; lbImg.style.transition = '';
-        lbImg.src = lightboxImages[idx];
-        lbCur.textContent = idx + 1;
-        lb.classList.add('open');
-        document.body.style.overflow = 'hidden';
-        const show = () => { lbImg.style.transition = 'opacity 0.4s ease'; lbImg.style.opacity = '1'; };
-        if (lbImg.complete && lbImg.naturalWidth) show();
-        else { lbImg.addEventListener('load', show, {once:true}); lbImg.addEventListener('error', show, {once:true}); }
+    const mainEl = document.getElementById('gallery-main');
+    if (mainEl) mainEl.dataset.galCat = activeCat;
+    syncGalleryLayerHead(layerEl, d);
+    if (opts && opts.initialFire) {
+        window.requestAnimationFrame(() => fireGalleryPanelAnims(layerEl));
     }
 
-    function close() {
-        lb.classList.remove('open');
-        document.body.style.overflow = '';
-        setTimeout(() => { lbImg.src = ''; lbImg.style.opacity = '0'; lbImg.style.transition = ''; }, 400);
-    }
+    const imgs = getImagesForView(d);
+    const intro = document.getElementById('intro');
+    if (intro) intro.classList.add('overview-revealed');
+    syncGalleryOverviewStats(d, imgs);
 
-    function go(i) {
-        if (busy || !lightboxImages.length) return; busy = true;
-        lbImg.style.transition = 'opacity 0.18s ease';
-        lbImg.style.opacity = '0';
-        setTimeout(() => {
-            idx = ((i % lightboxImages.length) + lightboxImages.length) % lightboxImages.length;
-            lbImg.src = lightboxImages[idx];
-            lbCur.textContent = idx + 1;
-            const show = () => { lbImg.style.transition = 'opacity 0.28s ease'; lbImg.style.opacity = '1'; setTimeout(() => { lbImg.style.transition = ''; busy = false; }, 300); };
-            if (lbImg.complete && lbImg.naturalWidth) show();
-            else { lbImg.addEventListener('load', show, {once:true}); lbImg.addEventListener('error', show, {once:true}); }
-        }, 180);
-    }
-
-    grid.addEventListener('click', e => {
-        const item = e.target.closest('.grid-item');
-        if (item) open(parseInt(item.dataset.lbidx));
+    buildCategoryNav();
+    const grid = document.getElementById('gallery-grid');
+    const empty = document.getElementById('gal-empty');
+    return Promise.all([
+        resolveAtmosphereSrcProbed(d, imgs),
+        resolveOverviewBlurSrcProbed(d, imgs)
+    ]).then(function (resolved) {
+        const heroSrc = resolved[0];
+        const blurSrc = resolved[1] || heroSrc;
+        setGalleryHeroFromSrc(heroSrc);
+        setGalleryOverviewBlurFromSrc(blurSrc);
+        return renderMosaic(imgs, grid, empty, activeCat);
     });
+}
 
-    document.getElementById('lb-prev').addEventListener('click', e => { e.stopPropagation(); go(idx - 1); });
-    document.getElementById('lb-next').addEventListener('click', e => { e.stopPropagation(); go(idx + 1); });
-    document.getElementById('lb-close').addEventListener('click', close);
-    document.getElementById('lightbox-backdrop').addEventListener('click', close);
-    lbImg.addEventListener('click', e => e.stopPropagation());
+function applyGalleryContent(opts) {
+    const overview = document.getElementById('intro');
+    if (!overview) return Promise.resolve();
+    return applyGalleryContentToLayer(overview, opts);
+}
 
-    document.addEventListener('keydown', e => {
-        if (!lb.classList.contains('open')) return;
-        if (e.key === 'Escape')      close();
-        if (e.key === 'ArrowLeft')   go(idx - 1);
-        if (e.key === 'ArrowRight')  go(idx + 1);
-    });
-})();
-
-/* ── CURSOR ── */
 (function(){
-    const dot  = document.getElementById('cursor-dot');
+    const dot = document.getElementById('cursor-dot');
     const ring = document.getElementById('cursor-ring');
-    let mx=0,my=0,rx=0,ry=0;
+    if(dot && !dot.querySelector('.cursor-dot-bob')){ const b=document.createElement('span'); b.className='cursor-dot-bob'; b.setAttribute('aria-hidden','true'); dot.appendChild(b); }
+    let scrollNudgeT=null, lastScrollY=window.scrollY, lastWheelT=0, scrollDragGoal=0, scrollDragShow=0;
+    function clearScrollNudge(){ dot.classList.remove('cursor-scroll-up','cursor-scroll-down'); }
+    function nudge(isUp){
+        clearScrollNudge(); void dot.offsetWidth;
+        dot.classList.add(isUp?'cursor-scroll-up':'cursor-scroll-down');
+        clearTimeout(scrollNudgeT); scrollNudgeT=setTimeout(clearScrollNudge,150);
+    }
+    const SCROLL_DRAG_MAX=4;
+    const SCROLL_DRAG_LERP=0.13;
+    function bumpScrollDrag(raw){
+        if(!raw)return;
+        const s=raw>0?1:raw<0?-1:0;
+        if(!s)return;
+        const mag=Math.min(2.4,0.26+Math.min(Math.abs(raw),120)*0.014);
+        scrollDragGoal=Math.max(-SCROLL_DRAG_MAX,Math.min(SCROLL_DRAG_MAX,scrollDragGoal+s*mag));
+    }
+    window._bumpGalleryCursorScrollDrag=bumpScrollDrag;
+    window.addEventListener('wheel', e => {
+        if(!e||e.deltaY===0)return;
+        lastWheelT=(typeof performance!=='undefined'?performance.now():Date.now());
+        if(!window._lenis)bumpScrollDrag(e.deltaY);
+        nudge(e.deltaY<0);
+    }, { passive:true });
+    window.addEventListener('scroll', () => {
+        const y=window.scrollY, dy=y-lastScrollY; lastScrollY=y;
+        if(dy===0)return;
+        nudge(dy<0);
+        const t=typeof performance!=='undefined'?performance.now():Date.now();
+        if(!window._lenis&&t-lastWheelT>45)bumpScrollDrag(dy*2.2);
+    }, { passive:true });
+    let mx = 0, my = 0, rx = 0, ry = 0;
     document.addEventListener('mousemove', e => {
         mx = e.clientX; my = e.clientY;
-        dot.style.left = mx+'px'; dot.style.top = my+'px';
+        dot.style.left = mx + 'px'; dot.style.top = my + 'px';
     });
-    (function loop(){ rx+=(mx-rx)*0.1; ry+=(my-ry)*0.1; ring.style.left=rx+'px'; ring.style.top=ry+'px'; requestAnimationFrame(loop); })();
+    (function loop(){
+        rx += (mx - rx) * 0.1;
+        ry += (my - ry) * 0.1;
+        ring.style.left = rx + 'px';
+        ring.style.top = ry + 'px';
+        scrollDragGoal*=0.983;
+        scrollDragGoal=Math.max(-SCROLL_DRAG_MAX,Math.min(SCROLL_DRAG_MAX,scrollDragGoal));
+        scrollDragShow+=(scrollDragGoal-scrollDragShow)*SCROLL_DRAG_LERP;
+        if(Math.abs(scrollDragShow)<0.025&&Math.abs(scrollDragGoal)<0.025){scrollDragShow=0;scrollDragGoal=0;}
+        if(dot)dot.style.setProperty('--scroll-drag-y',scrollDragShow.toFixed(3)+'px');
+        requestAnimationFrame(loop);
+    })();
     document.addEventListener('mouseover', e => {
-        if (e.target.closest('a,button,.grid-item,.cat-tab,.sub-tab')) ring.classList.add('expanded');
+        if (e.target.closest('a,button,.back-link,.top-bar-logo')) ring.classList.add('expanded');
     });
     document.addEventListener('mouseout', e => {
-        if (e.target.closest('a,button,.grid-item,.cat-tab,.sub-tab')) ring.classList.remove('expanded');
+        if (e.target.closest('a,button,.back-link,.top-bar-logo')) ring.classList.remove('expanded');
     });
 })();
 
-/* ── LOGO SWEEP ── */
 (function(){
-    const el = document.getElementById('top-logo'); if (!el) return;
-    el.innerHTML = 'ANOAEYTO'.split('').map(c => `<span>${c}</span>`).join('');
-    const ch = el.querySelectorAll('span'); let anim = false;
-    function run(){ if(anim)return; anim=true; let i=0; const t=setInterval(()=>{
-        if(i<ch.length){if(i>0)ch[i-1].classList.remove('cyan');ch[i].classList.add('cyan');i++;}
-        else{ch[ch.length-1].classList.remove('cyan');clearInterval(t);anim=false;setTimeout(run,3000);}
-    },150); }
+    const pr = document.getElementById('progress');
+    function tick(){
+        if(!pr)return;
+        const d = document.documentElement;
+        const h = d.scrollHeight - d.clientHeight;
+        const p = h > 0 ? Math.min(100, (d.scrollTop / h) * 100) : 0;
+        pr.style.width = p + '%';
+    }
+    window._galleryProgressTick = tick;
+    window.addEventListener('scroll', tick, { passive:true });
+    window.addEventListener('resize', tick);
+    tick();
+})();
+
+(function(){
+    const bar = document.getElementById('gallery-top-bar');
+    const hero = document.querySelector('.gal-hero');
+    const mosaic = document.querySelector('.gal-mosaic-outer');
+    if (!bar || !mosaic) return;
+    function tick(){
+        const mosaicTop = mosaic.getBoundingClientRect().top;
+        if (mosaicTop < 72) {
+            bar.classList.add('is-dark');
+            bar.classList.remove('is-cream');
+            return;
+        }
+        bar.classList.remove('is-dark');
+        if (hero) {
+            const r = hero.getBoundingClientRect();
+            const inHeroBand = r.bottom > 0 && r.top < window.innerHeight * 0.35;
+            bar.classList.toggle('is-cream', !inHeroBand);
+        } else {
+            bar.classList.add('is-cream');
+        }
+    }
+    window._galleryTopBarTick = tick;
+    window.addEventListener('scroll', tick, { passive:true });
+    window.addEventListener('resize', tick);
+    tick();
+})();
+
+(function(){
+    const el = document.getElementById('top-bar-logo');
+    if (!el) return;
+    el.innerHTML = 'ANOAEYTO'.split('').map(c => '<span>' + c + '</span>').join('');
+    const ch = el.querySelectorAll('span');
+    let anim = false;
+    function run() {
+        if (anim) return;
+        anim = true;
+        let i = 0;
+        const t = setInterval(() => {
+            if (i < ch.length) {
+                if (i > 0) ch[i - 1].classList.remove('cyan');
+                ch[i].classList.add('cyan');
+                i++;
+            } else {
+                ch[ch.length - 1].classList.remove('cyan');
+                clearInterval(t);
+                anim = false;
+                setTimeout(run, 3000);
+            }
+        }, 150);
+    }
     setTimeout(run, 1200);
 })();
 
-/* ── COPYRIGHT SWEEP ── */
 (function(){
-    const el = document.getElementById('copyright-text'); if (!el) return;
-    el.innerHTML = '© 2026 anoaeyto'.split('').map(c=>`<span>${c}</span>`).join('');
-    const ch = el.querySelectorAll('span'); let a = false;
-    function run(){ if(a)return; a=true; let i=0; const t=setInterval(()=>{
-        if(i<ch.length){if(i>0)ch[i-1].classList.remove('cyan');ch[i].classList.add('cyan');i++;}
-        else{ch[ch.length-1].classList.remove('cyan');clearInterval(t);a=false;setTimeout(run,7000);}
-    },480); }
+    const el = document.getElementById('copyright-text');
+    if (!el) return;
+    el.innerHTML = '© anoaeyto'.split('').map(c => '<span>' + c + '</span>').join('');
+    const ch = Array.from(el.querySelectorAll('span')).filter(s => s.textContent.trim() !== '');
+    let a = false;
+    function run() {
+        if (a) return;
+        a = true;
+        let i = 0;
+        const t = setInterval(() => {
+            if (i < ch.length) {
+                if (i > 0) ch[i - 1].classList.remove('cyan');
+                ch[i].classList.add('cyan');
+                i++;
+            } else {
+                ch[ch.length - 1].classList.remove('cyan');
+                clearInterval(t);
+                a = false;
+                setTimeout(run, 7000);
+            }
+        }, 480);
+    }
     setTimeout(run, 2000);
 })();
 
-/* dummy so buildGrid can call it before lightbox init */
-function updateLbTot(){}
+(function () {
+    if (typeof Lenis === 'undefined') return;
+    var lenis = new Lenis({
+        duration: 1.35,
+        easing: function (t) { return Math.min(1, 1.001 - Math.pow(2, -10 * t)); },
+        orientation: 'vertical',
+        gestureOrientation: 'vertical',
+        smoothWheel: true,
+        wheelMultiplier: 0.85,
+        touchMultiplier: 1.4,
+        infinite: false
+    });
+    window._lenis = lenis;
+    lenis.on('scroll', function () {
+        if (typeof window._galleryProgressTick === 'function') window._galleryProgressTick();
+        if (typeof window._galleryTopBarTick === 'function') window._galleryTopBarTick();
+    });
+    (function () {
+        var dot = document.getElementById('cursor-dot');
+        if (!dot) return;
+        var t = null;
+        function nudge(isUp) {
+            dot.classList.remove('cursor-scroll-up', 'cursor-scroll-down');
+            void dot.offsetWidth;
+            dot.classList.add(isUp ? 'cursor-scroll-up' : 'cursor-scroll-down');
+            clearTimeout(t);
+            t = setTimeout(function () { dot.classList.remove('cursor-scroll-up', 'cursor-scroll-down'); }, 150);
+        }
+        lenis.on('virtual-scroll', function (d) { if (!d || typeof d.deltaY !== 'number' || Math.abs(d.deltaY) < 0.01) return; nudge(d.deltaY < 0); if (typeof window._bumpGalleryCursorScrollDrag === 'function') window._bumpGalleryCursorScrollDrag(d.deltaY); });
+    })();
+    function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
+    requestAnimationFrame(raf);
+})();
+
+applyGalleryContent({ initialFire: true });
+gallerySectionTxReady = true;
 </script>
 </body>
 </html>
