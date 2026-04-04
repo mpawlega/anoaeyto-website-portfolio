@@ -90,11 +90,19 @@
         /* cursor — cream/white, no teal */
         #cursor-dot {
             position:fixed; width:4px; height:4px;
-            background:rgba(200,196,190,.85); border-radius:50%;
-            pointer-events:none; z-index:99999; transform:translate(-50%,-50%);
+            background:transparent; border-radius:50%;
+            pointer-events:none; z-index:99999; transform:translate(-50%,calc(-50% + var(--scroll-drag-y, 0px)));
             opacity:0; transition:opacity .8s ease;
         }
+        #cursor-dot .cursor-dot-bob {
+            display:block; width:4px; height:4px; border-radius:50%;
+            background:rgba(200,196,190,.85);
+        }
         #cursor-dot.visible { opacity:1; }
+        #cursor-dot.cursor-scroll-up .cursor-dot-bob { animation:cursorBobUpSm 0.55s cubic-bezier(0.42,0,0.58,1) infinite; }
+        #cursor-dot.cursor-scroll-down .cursor-dot-bob { animation:cursorBobDownSm 0.55s cubic-bezier(0.42,0,0.58,1) infinite; }
+        @keyframes cursorBobUpSm { 0%,100%{transform:translateY(0);} 50%{transform:translateY(-1.5px);} }
+        @keyframes cursorBobDownSm { 0%,100%{transform:translateY(0);} 50%{transform:translateY(1.5px);} }
         #cursor-ring {
             position:fixed; width:18px; height:18px;
             border:1px solid rgba(200,196,190,.22); border-radius:50%;
@@ -148,6 +156,36 @@ let lettersSettled=false, wasNear=false, clicked=false;
 const dot=document.getElementById('cursor-dot');
 const ring=document.getElementById('cursor-ring');
 const cursorRowEl=document.getElementById('cursor-row');
+if(dot&&!dot.querySelector('.cursor-dot-bob')){const b=document.createElement('span');b.className='cursor-dot-bob';b.setAttribute('aria-hidden','true');dot.appendChild(b);}
+let scrollNudgeT=null,lastScrollY=window.scrollY,lastWheelT=0,scrollDragGoal=0,scrollDragShow=0;
+function clearScrollNudge(){ dot.classList.remove('cursor-scroll-up','cursor-scroll-down'); }
+function nudgeScrollBob(isUp){
+    clearScrollNudge(); void dot.offsetWidth;
+    dot.classList.add(isUp?'cursor-scroll-up':'cursor-scroll-down');
+    clearTimeout(scrollNudgeT); scrollNudgeT=setTimeout(clearScrollNudge,150);
+}
+var SCROLL_DRAG_MAX=3;
+var SCROLL_DRAG_LERP=0.13;
+function bumpCursorScrollDrag(raw){
+    if(!raw)return;
+    var s=raw>0?1:raw<0?-1:0;
+    if(!s)return;
+    var mag=Math.min(2.0,0.22+Math.min(Math.abs(raw),100)*0.012);
+    scrollDragGoal=Math.max(-SCROLL_DRAG_MAX,Math.min(SCROLL_DRAG_MAX,scrollDragGoal+s*mag));
+}
+window.addEventListener('wheel',e=>{
+    if(!e||e.deltaY===0)return;
+    lastWheelT=(typeof performance!=='undefined'?performance.now():Date.now());
+    bumpCursorScrollDrag(e.deltaY);
+    nudgeScrollBob(e.deltaY<0);
+},{passive:true});
+window.addEventListener('scroll',()=>{
+    const y=window.scrollY,dy=y-lastScrollY; lastScrollY=y;
+    if(dy===0)return;
+    nudgeScrollBob(dy<0);
+    const t=typeof performance!=='undefined'?performance.now():Date.now();
+    if(t-lastWheelT>45)bumpCursorScrollDrag(dy*2.2);
+},{passive:true});
 
 document.addEventListener('mousemove',e=>{ mouse.x=e.clientX; mouse.y=e.clientY; mouseMoved=true; });
 
@@ -157,6 +195,11 @@ document.addEventListener('mousemove',e=>{ mouse.x=e.clientX; mouse.y=e.clientY;
     else { const a=getAnchorPos(); tx=a.x; ty=a.y; }
     cursorX+=(tx-cursorX)*0.08; cursorY+=(ty-cursorY)*0.08;
     ringX+=(cursorX-ringX)*0.07; ringY+=(cursorY-ringY)*0.07;
+    scrollDragGoal*=0.975;
+    scrollDragGoal=Math.max(-SCROLL_DRAG_MAX,Math.min(SCROLL_DRAG_MAX,scrollDragGoal));
+    scrollDragShow+=(scrollDragGoal-scrollDragShow)*SCROLL_DRAG_LERP;
+    if(Math.abs(scrollDragShow)<0.025&&Math.abs(scrollDragGoal)<0.025){scrollDragShow=0;scrollDragGoal=0;}
+    if(dot)dot.style.setProperty('--scroll-drag-y',scrollDragShow.toFixed(3)+'px');
     dot.style.left=cursorX+'px'; dot.style.top=cursorY+'px';
     ring.style.left=ringX+'px'; ring.style.top=ringY+'px';
     requestAnimationFrame(cursorLoop);
